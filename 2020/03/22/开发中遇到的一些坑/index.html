@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
+  </script>
+
+  <meta name="description" content="html 引用文件路径 laydate插件使用方式首先引入laydate.js 1234567891011 mounted() &amp;#123; this.getaccountInfo(),this.laydate.render(&amp;#123;     elem: &amp;#x27;#test&amp;#x27;,      type: &amp;#x27;datetime&amp;#x27;,      format:&amp;#x27;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="开发中遇到的一些坑 ">
+<meta property="og:url" content="http://example.com/2020/03/22/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/index.html">
+<meta property="og:site_name" content="夏远建的博客">
+<meta property="og:description" content="html 引用文件路径 laydate插件使用方式首先引入laydate.js 1234567891011 mounted() &amp;#123; this.getaccountInfo(),this.laydate.render(&amp;#123;     elem: &amp;#x27;#test&amp;#x27;,      type: &amp;#x27;datetime&amp;#x27;,      format:&amp;#x27;">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/2.JPG">
+<meta property="og:image" content="http://example.com/images/2.png">
+<meta property="article:published_time" content="2020-03-22T13:42:28.000Z">
+<meta property="article:modified_time" content="2022-05-17T14:30:36.757Z">
+<meta property="article:author" content="夏远建">
+<meta property="article:tag" content="技术">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/2.JPG">
+
+<link rel="canonical" href="http://example.com/2020/03/22/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>开发中遇到的一些坑  | 夏远建的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">夏远建的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/03/22/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          开发中遇到的一些坑 
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-03-22 21:42:28" itemprop="dateCreated datePublished" datetime="2020-03-22T21:42:28+08:00">2020-03-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-17 22:30:36" itemprop="dateModified" datetime="2022-05-17T22:30:36+08:00">2022-05-17</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/03/22/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/03/22/%E5%BC%80%E5%8F%91%E4%B8%AD%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%9D%91/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>12k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>21 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="html-引用文件路径"><a href="#html-引用文件路径" class="headerlink" title="html 引用文件路径"></a>html 引用文件路径</h3><p><img src="/../images/2.JPG" alt="img"></p>
+<h3 id="laydate插件使用方式"><a href="#laydate插件使用方式" class="headerlink" title="laydate插件使用方式"></a>laydate插件使用方式</h3><p>首先引入laydate.js</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> mounted() &#123;</span><br><span class="line"> <span class="built_in">this</span>.getaccountInfo(),</span><br><span class="line"><span class="built_in">this</span>.laydate.render(&#123;</span><br><span class="line">     elem: <span class="string">&#x27;#test&#x27;</span>,</span><br><span class="line">      type: <span class="string">&#x27;datetime&#x27;</span>,</span><br><span class="line">      format:<span class="string">&#x27; yyyy-MM-dd &#x27;</span>,</span><br><span class="line">      done:value=&gt;&#123;</span><br><span class="line">                       <span class="built_in">this</span>.documentForm.birth=value;</span><br><span class="line">                       &#125;</span><br><span class="line">   &#125;)</span><br><span class="line"> &#125;,</span><br></pre></td></tr></table></figure>
+<h3 id="数组比较"><a href="#数组比较" class="headerlink" title="数组比较"></a>数组比较</h3><p>在比较两个数组是否相等时，不能直接调用数组对象的”equals”方法，<br>要使用Arrays.equals方法。<br>    final String[] str1 &#x3D; { “aaa” , “bbb” , “ccc” };<br>    final String[] str2 &#x3D; { “aaa” , “bbb” , “ccc” };<br>    System.out.println(str1.equals(str2)); &#x2F;&#x2F;false;<br>    System.out.println(Arrays.equals(str1, str2)); &#x2F;&#x2F;true</p>
+<h3 id="对象比较"><a href="#对象比较" class="headerlink" title="对象比较"></a>对象比较</h3><ol>
+<li><p>Java中的对象比较有两种形式：简单类型值比较和引用类型比较。<br>其中引用类型的比较可以使用“&#x3D;&#x3D;”或者“equals()”。<br>其中“&#x3D;&#x3D;”比较的是两个对象内存中的地址是否相同，而“equals”比较遵循以下规则：<br>(1) 对于字符串变量来说，equals()比较的两边对象的内容；<br>(2) 对于非字符串变量来说，equals()比较的内存的首地址；</p>
+<p>  String s1 &#x3D; “abc”;<br>  String s2 &#x3D; “abc”;<br>  String s3 &#x3D; new String(“abc”);<br>  String s4 &#x3D; new String(“abc”);<br>  System.out.println(s1 &#x3D;&#x3D; s2); &#x2F;&#x2F;true, 因为java常量池<br>  System.out.println(s1.equals(s2)); &#x2F;&#x2F;true<br>  System.out.println(s3.equals(s4)); &#x2F;&#x2F;true, equal比较的是内容<br>  System.out.println(s3 &#x3D;&#x3D; s4); &#x2F;&#x2F;false, &#x3D;&#x3D;比较的是首地址,所以是false<br>  Student stu1 &#x3D; new Student();<br>  Student stu2 &#x3D; new Student();<br>  System.out.println(stu1.equals(stu2)); &#x2F;&#x2F;false,因为不是同一对象<br>  System.out.println(stu1 &#x3D;&#x3D; stu2); &#x2F;&#x2F;false,因为不是同一对象</p>
+</li>
+<li><p>如果对定义类的java.lang.Object.equals()方法进行重写，<br>那么java.lang.Object.hashCode()这个方法也要同步重写，<br>或者两个方法都从基类继承，不允许单独重写其中一个。</p>
+</li>
+</ol>
+<h3 id="对象克隆"><a href="#对象克隆" class="headerlink" title="对象克隆"></a>对象克隆</h3><ol>
+<li><p>重写clone()方法，应调用super.clone()<br>重写clone()方法，必须实现Cloneable接口<br>Address类实现了Cloneable接口，并且重写clone()方法。<br>public class Address implements Cloneable {</p>
+<p>  private String add;</p>
+<p>  public String getAdd() {<br>  return add;<br>  }</p>
+<p>  public void setAdd(String add) {<br>  this.add &#x3D; add;<br>  }</p>
+<p>  @Override<br>  public Object clone() {<br>  Address address &#x3D; null;<br>  try {<br>      address &#x3D; (Address) super.clone();<br>  } catch (CloneNotSupportedExceptione e) {<br>      e.printStackTrace();<br>  }<br>  return address;<br>  }</p>
+</li>
+</ol>
+<p>}</p>
+<ol start="2">
+<li><p>Student类实现了Cloneable接口，并重写了clone()方法。<br>由于Student类定义了addr属性，所以要实现Student对象的克隆，<br>除了对象本身调用super.clone()方法，<br>还需要调用addr属性的clone()方法实现深度克隆。<br>public class Student implements Cloneable {<br>  private int number;</p>
+<p>  private Address addr;</p>
+<p>  public Address getAddr() {<br>  return addr;<br>  }</p>
+<p>  public void setAddr(Address addr) {<br>  this.addr &#x3D; addr;<br>  }<br>  @Override<br>  public Object clone() {<br>  Student student &#x3D; null;<br>  try {<br>      &#x2F;&#x2F;浅复制<br>      student &#x3D; (Student) super.clone();<br>  } catch (CloneNotSupportedException e) {<br>      e.printStackTrace();<br>  }<br>  &#x2F;&#x2F;深度复制<br>  student.addr &#x3D; (Address) addr.clone();<br>  return student;<br>  }</p>
+</li>
+</ol>
+<p>}</p>
+<ol start="3">
+<li>慎用Object的clone方法来拷贝对象。<br>由于对象的clone方法默认是浅拷贝，若想实现深拷贝需要重写clone方法实现属性对象的拷贝。<br>下面是对象深度克隆的一种实现方式。此方式需要类定义实现Serializable接口，<br>通过对象的序列化和反序列化实现克隆，调用此方法可以实现真正的深度克隆。<br>  public Object deepClone() {<br>  Object outer &#x3D; null;<br>  try {<br>      &#x2F;&#x2F; 将该对象序列化成流<br>      ByteArrayOutputStream baos &#x3D; new ByteArrayOutputStream();<br>      ObjectOutputStream oos &#x3D; new ObjectOutputStream(baos);<br>      oos.writeObject(this);<br><br>      &#x2F;&#x2F;将流序列化成对象<br>      ByteArrayInputStream bais &#x3D; new ByteArrayInputStream(baos.toByteArray());<br>      ObjectInputStream ois &#x3D; new ObjectInputStream(bais);<br>      outer &#x3D; ois.readObject();<br>  } catch (IOException e) {<br>      e.printStackTrace();<br>  } catch (ClassNotFoundException e) {<br>      e.printStackTrace();<br>  }<br>  return outer;<br>  }</li>
+<li>对象创建遵守“按需创建”的原则，将对象的创建成本降至最小。<br>public Student findStudent(List<Student> list) {<br>  &#x2F;&#x2F; 不能直接创建Student对象<br>  Student stu &#x3D; null;<br>  if(null !&#x3D; list &amp;&amp; !list.isEmpty()) {<br>  stu &#x3D; list.get(0);<br>  } else {<br>  stu &#x3D; new Student();<br>  }<br>  return stu;<br>}</li>
+</ol>
+<h2 id="主要任务"><a href="#主要任务" class="headerlink" title="主要任务"></a>主要任务</h2><ol>
+<li>在原有的发票暂估页面上加上结算成分列  <a target="_blank" rel="noopener" href="http://127.0.0.1:9080/grm/electricity.bs/gansu/gdzgcx/index.html">页面地址</a></li>
+<li>在冲销单上加上结算成分，推单映射</li>
+<li>导入发票时，增加是否重复或者已冲销的提示<br><img src="/images/2.png" alt="图片"></li>
+</ol>
+<h2 id="学习到了什么"><a href="#学习到了什么" class="headerlink" title="学习到了什么"></a>学习到了什么</h2><h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><ol>
+<li>因为结算成分有多种，所以原来的sql语句要改造，使用unpivot()函数进行列转行。<font  color=#FF0000>注意： unpivot() 与between and 不能一起使用</font><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line">原来的sql 查询发票号码202we17的预估数据:</span><br><span class="line">       SELECT ZGD.GID,TO_CHAR(ZGD.TTIME,&#x27;yyyy-mm&#x27;) DFNY,INVOICE.KPDW WLDW,SUBSTR(ZGD.ZBDX,6) JZ,INVOICE.DC,INVOICE.FPHM,ZGD.DWDH,</span><br><span class="line">         ZGD.ZD0020 JSDL,ZGD.ZD0026 GDCB,ZGD.ZD0111 SE,ZGD.ZD0021 DJ,ZGD.ZD0024 YFGDF </span><br><span class="line">       FROM T_RE_INVOICE_DETAIL INVOICE, </span><br><span class="line">            (SELECT A.GID,A.ZBDX,A.ZD0020,A.ZD0026,A.ZD0111,ZD0024,A.ZD0387,A.ZD5515, A.ZD0021,B.TTIME,A.DWDH</span><br><span class="line">               FROM XT186YWBILLFTZB A, XTYWBILL B</span><br><span class="line">           WHERE A.YWID = B.GID AND NVL(B.BZWC,0) = &#x27;1&#x27;) ZGD</span><br><span class="line">       WHERE &#x27;6019.&#x27; || INVOICE.DC=ZGD.ZD0387 </span><br><span class="line">       AND INVOICE.FPHM = &#x27;202we17&#x27; </span><br><span class="line">      AND NVL(INVOICE.CXYWID, 0) &gt; 0 </span><br><span class="line">  AND EXISTS (SELECT 1 FROM T_RE_ZGSJ_CX ZGCX</span><br><span class="line">     WHERE ZGCX.GID = ZGD.GID AND ZGCX.CXYWID = INVOICE.CXYWID) </span><br><span class="line">       ORDER BY ZGD.TTIME,ZGD.ZD0026 DESC;</span><br><span class="line"></span><br><span class="line">改造后的sql:</span><br><span class="line">      SELECT ZGD.GID,DL,DJS,DFS,JSCF,TO_CHAR(ZGD.TTIME,&#x27;yyyy-mm&#x27;) DFNY,INVOICE.KPDW WLDW,SUBSTR(ZGD.ZBDX,6) JZ,INVOICE.DC,INVOICE.FPHM,ZGD.DWDH,</span><br><span class="line">         ZGD.ZD0020 JSDL,ZGD.ZD0026 GDCB,ZGD.ZD0111 SE,ZGD.ZD0021 DJ,ZGD.ZD0024 YFGDF </span><br><span class="line">       FROM ( SELECT A.GID,A.ZBDX,A.ZD0020,A.ZD0026,A.ZD0111,ZD0024,A.ZD0387,A.ZD5515, A.ZD0021,A.DWDH,</span><br><span class="line">            NVL(A.ZD0027,0) ZD0027,NVL(A.ZD0390,0) ZD0390,NVL(A.ZD0029,0) ZD0029,</span><br><span class="line">            NVL(A.ZD0070,0) ZD0070,NVL(A.ZD0071,0) ZD0071,NVL(A.ZD0072,0) ZD0072,</span><br><span class="line">            NVL(A.ZD0042,0) ZD0042,NVL(A.ZD0391,0) ZD0391,NVL(A.ZD0044,0) ZD0044,</span><br><span class="line">            NVL(A.ZD0056,0) ZD0056,NVL(A.ZD0057,0) ZD0057,NVL(A.ZD0058,0) ZD0058,</span><br><span class="line">            NVL(A.ZD0094,0) ZD0094,NVL(A.ZD0095,0) ZD0095,NVL(A.ZD0096,0) ZD0096, </span><br><span class="line">            NVL(A.ZD5482,0) ZD5482,NVL(A.ZD0466,0) ZD0466,NVL(A.ZD5483,0) ZD5483,</span><br><span class="line">            NVL(A.ZD0082,0) ZD0082,NVL(A.ZD0093,0) ZD0083,NVL(A.ZD0084,0) ZD0084, </span><br><span class="line">            NVL(A.ZD0039,0) ZD0039,NVL(A.ZD0463,0) ZD0463,NVL(A.ZD0041,0) ZD0041,</span><br><span class="line">            NVL(A.ZD5517,0) ZD5517,NVL(A.ZD5518,0) ZD5518,NVL(A.ZD5516,0) ZD5516,</span><br><span class="line">            NVL(A.ZD5520,0) ZD5520,NVL(A.ZD5519,0) ZD5519,NVL(A.ZD5521,0) ZD5521,</span><br><span class="line">            B.TTIME </span><br><span class="line">              FROM XT186YWBILLFTZB A, XTYWBILL B</span><br><span class="line">           WHERE A.YWID = B.GID  AND NVL(B.BZWC,0) =&#x27;1&#x27; )</span><br><span class="line">            UnPivot((DL,DJS,DFS) for JSCF in (</span><br><span class="line">     (ZD0027,ZD0390,ZD0029) as 0,(ZD0070,ZD0071,ZD0072) as 1,</span><br><span class="line">       (ZD0042,ZD0391,ZD0044) as 2,(ZD0056,ZD0057,ZD0058) as 3,</span><br><span class="line">       (ZD0094,ZD0095,ZD0096) as 4,(ZD5482,ZD0466,ZD5483) as 5,(ZD0082,ZD0083,ZD0084) as 6,(ZD0039,ZD0463,ZD0041) as 7,</span><br><span class="line">       (ZD5517,ZD5518,ZD5516) as 8,(ZD5520,ZD5519,ZD5521) as 9))  ZGD,T_RE_INVOICE_DETAIL INVOICE</span><br><span class="line">       WHERE &#x27;6019.&#x27; || INVOICE.DC=ZGD.ZD0387 </span><br><span class="line">        AND INVOICE.FPHM = &#x27;20e0817&#x27; </span><br><span class="line">      AND NVL(INVOICE.CXYWID, 0) &gt; 0 </span><br><span class="line">  AND EXISTS (SELECT 1 FROM T_RE_ZGSJ_CX ZGCX</span><br><span class="line">     WHERE ZGCX.GID = ZGD.GID AND ZGCX.CXYWID = INVOICE.CXYWID) </span><br><span class="line">       ORDER BY ZGD.TTIME,ZGD.ZD0026 DESC;</span><br></pre></td></tr></table></figure></li>
+<li>推单映射 在Map&lt;String, String&gt; getFieldMap() 函数中增加推单映射，并在buildCxDataMap函数中构造冲销数据，把前端传来的数据放在map中。后续使用pushBill()函数进行推单生成冲销单据。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">//推单映射</span><br><span class="line">		fieldMap.put(&quot;ZBDX&quot;, &quot;ZBDX&quot;);</span><br><span class="line">		fieldMap.put(&quot;ZD8515&quot;, &quot;ZD8515&quot;);</span><br><span class="line">		fieldMap.put(&quot;ZD0387&quot;, &quot;ZD0387&quot;);</span><br><span class="line">		fieldMap.put(&quot;ZD0024&quot;, &quot;ZD0024&quot;);</span><br><span class="line">		fieldMap.put(&quot;ZD0026&quot;, &quot;ZD0026&quot;);</span><br><span class="line">		</span><br><span class="line">		fieldMap.put(&quot;ZD0027&quot;, &quot;ZD0027&quot;); //商运电量</span><br><span class="line">		fieldMap.put(&quot;ZD0390&quot;, &quot;ZD0390&quot;); //商运电价</span><br><span class="line">		fieldMap.put(&quot;ZD0029&quot;, &quot;ZD0029&quot;); //商运电费</span><br><span class="line">		fieldMap.put(&quot;ZD0070&quot;, &quot;ZD0070&quot;); //外送电量</span><br><span class="line">		fieldMap.put(&quot;ZD0071&quot;, &quot;ZD0071&quot;); //外送电价</span><br><span class="line">		fieldMap.put(&quot;ZD0072&quot;, &quot;ZD0072&quot;); //外送电费</span><br><span class="line">// 获取冲销数据</span><br><span class="line">		cxDataMap.put(&quot;ZD0024&quot;, yfgdf);</span><br><span class="line">		cxDataMap.put(&quot;ZD0026&quot;, gdcb);</span><br><span class="line">		cxDataMap.put(&quot;ZD0027&quot;, ygdatas.get(&quot;zd0027&quot;)); //商运电量</span><br><span class="line">		cxDataMap.put(&quot;ZD0390&quot;, ygdatas.get(&quot;zd0390&quot;)); //商运电价</span><br><span class="line">		cxDataMap.put(&quot;ZD0029&quot;, ygdatas.get(&quot;zd0029&quot;)); //商运电费</span><br><span class="line">		cxDataMap.put(&quot;ZD0070&quot;, ygdatas.get(&quot;zd0070&quot;)); //外送电量</span><br><span class="line">		cxDataMap.put(&quot;ZD0071&quot;, ygdatas.get(&quot;zd0071&quot;)); //外送电价</span><br></pre></td></tr></table></figure></li>
+<li>增加一个检查发票是否重复或者已冲销的接口<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">final Map&lt;String, Object&gt; results = new HashMap&lt;String, Object&gt;();</span><br><span class="line">int count = 0;</span><br><span class="line">for (DfInvoiceDetailVO vo : reInvoiceDetailVOList) &#123;</span><br><span class="line">	final List&lt;DfInvoiceDetailBO&gt; result = getReFpcxDao().queryImpDataByFphm(vo.getFphm());</span><br><span class="line">	if (result != null &amp;&amp; result.size() &gt; 0) &#123;</span><br><span class="line">		count++;	</span><br><span class="line">	&#125;	</span><br><span class="line">&#125;</span><br><span class="line">results.put(&quot;count&quot;, count);</span><br><span class="line">return results;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h3><ol>
+<li>使用’groups’属性对表格中相同的成分进行合并</li>
+<li>自己构造一个复选框ckbox列<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">	var colNames = [&#x27;&#x27;,&#x27;序号&#x27;,&#x27;gid&#x27;,&#x27;电费年月&#x27;,&#x27;机组&#x27;,&#x27;往来单位&#x27;,&#x27;电厂&#x27;,&#x27;结算电量&#x27;,&#x27;购电成本&#x27;,&#x27;税额&#x27;,&#x27;应付购电费&#x27;,&#x27;结算成分&#x27;,&#x27;电量&#x27;,&#x27;电价&#x27;,&#x27;电费&#x27;];</span><br><span class="line">	var colModels = [</span><br><span class="line">	 &#123;&#x27;name&#x27;:&#x27;ckbox&#x27;,&#x27;editType&#x27;:&#x27;checkBox&#x27;,&#x27;groups&#x27;:true,&#x27;align&#x27;:&#x27;center&#x27;,&#x27;filter&#x27;:false,&#x27;sort&#x27;:false,&#x27;selectAll&#x27;:true,&#x27;width&#x27;:60,&#x27;lockWidth&#x27;:true&#125;,</span><br><span class="line">	 ];</span><br><span class="line">	pageParam.ycxGrid = $(&quot;#ycxTable&quot;).qzzquerygrid(&#123;</span><br><span class="line">		&quot;primaryKey&quot;:[&quot;gid&quot;],</span><br><span class="line">		&quot;Align&quot;:&quot;alClient&quot;,//大小撑满父元素</span><br><span class="line">		&quot;footerrow&quot;:true,</span><br><span class="line">		&quot;shrinkToFit&quot;:true,//表格宽度填满</span><br><span class="line">		&quot;rownumbers&quot;:false,//显示序号列</span><br><span class="line">		&quot;multiselect&quot;:false,//是否复选</span><br><span class="line">		&quot;colNames&quot;: colNames,</span><br><span class="line">		&quot;colModels&quot;: colModels</span><br><span class="line">	&#125;);</span><br><span class="line">       //id名称转换</span><br><span class="line">       pageParam.ycxGrid.setTransIDName(&#x27;jscf&#x27;,&#123;&#x27;0&#x27;:&#x27;商运&#x27;,&#x27;1&#x27;:&#x27;外送&#x27;,&#x27;2&#x27;:&#x27;超基数&#x27;,&#x27;3&#x27;:&#x27;替代&#x27;,&#x27;4&#x27;:&#x27;协议&#x27;,&#x27;5&#x27;:&#x27;可再生能源&#x27;,&#x27;6&#x27;:&#x27;调试&#x27;,&#x27;7&#x27;:&#x27;脱硫加价&#x27;,&#x27;8&#x27;:&#x27;脱硝加价&#x27;,&#x27;9&#x27;:&#x27;除尘&#x27;,&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">       //合并单元格前事件，对所需要列进行合并</span><br><span class="line">	pageParam.ycxGrid.bind(&quot;onBeforeGroups&quot;, function (colModel, priorNode, curNode, ismerge) &#123;</span><br><span class="line">			var colName = colModel.name;</span><br><span class="line">			if(colName == &quot;ckbox&quot;||colName == &quot;gid&quot;  ||colName == &quot;index&quot;  || colName == &quot;dfny&quot; || colName == &quot;jz&quot; || colName == &quot;wldw&quot; || colName == &quot;dc&quot;|| colName == &quot;jsdl&quot;|| colName == &quot;gdcb&quot;|| colName == &quot;se&quot;|| colName == &quot;yfgdf&quot;) &#123;</span><br><span class="line">						if(this.getValue(&quot;gid&quot;, priorNode) == this.getValue(&quot;gid&quot;, curNode)) &#123;</span><br><span class="line">							 return true;</span><br><span class="line">						&#125; else &#123;</span><br><span class="line">							 return false;</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">      	//构建表格序号，对于重复的序号过滤掉</span><br><span class="line">   function setIndex(datas)&#123;</span><br><span class="line">	var index = 0;</span><br><span class="line">	var preGid;</span><br><span class="line">	for(var i=0;i&lt;datas.length;i++)&#123;</span><br><span class="line">		var data = datas[i];</span><br><span class="line">		if(data.gid != preGid)&#123;</span><br><span class="line">			preGid = data.gid;</span><br><span class="line">			index+=1;</span><br><span class="line">			data.index = index;</span><br><span class="line">		&#125;else&#123;</span><br><span class="line">			data.index = index;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return datas;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>refresh() 和 refreshTitle() 刷新表格和表头，程序控制取消掉ckbox勾选记号</li>
+<li>setTotalValue() 对某一列进行合计<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">//判断元素是否在数组中</span><br><span class="line">function isarr(arr,value)</span><br><span class="line">&#123;</span><br><span class="line">	if(arr.indexOf&amp;&amp;typeof(arr.indexOf)==&#x27;function&#x27;)</span><br><span class="line">	&#123;</span><br><span class="line">		var index=arr.indexOf(value);</span><br><span class="line">		if(index&gt;=0)</span><br><span class="line">		&#123;</span><br><span class="line">			return true;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	return false</span><br><span class="line">&#125;</span><br><span class="line">   // 对相关成分列进行合计</span><br><span class="line">	pageParam.ycxGrid.setTotalValue(&quot;jsdl&quot;,jsdl);</span><br><span class="line">pageParam.ycxGrid.setTotalValue(&quot;gdcb&quot;,gdcb);</span><br><span class="line">pageParam.ycxGrid.setTotalValue(&quot;se&quot;,se);</span><br><span class="line">pageParam.ycxGrid.setTotalValue(&quot;yfgdf&quot;,yfgdf);</span><br></pre></td></tr></table></figure></li>
+<li>数字格式化 解决出现科学计数法的问题<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">  function formatNum(value) &#123;</span><br><span class="line">var re = /(?=(?!(\b))(\d&#123;3&#125;)+$)/g;</span><br><span class="line">  	if (!$util.isNullOrEmpty(value)) &#123;</span><br><span class="line">	var m =value.toExponential().match(/\d(?:\.(\d*))?e([+-]\d+)/)	</span><br><span class="line">	if(parseInt(m[2])&lt;-2)</span><br><span class="line">	&#123;</span><br><span class="line">		return &quot;0.0&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	return value.toFixed(2).toString().replace(re,&quot;,&quot;);</span><br><span class="line">  	&#125; else &#123;</span><br><span class="line">  		return &quot;0.0&quot;;</span><br><span class="line">  	&#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2 id="反思与总结"><a href="#反思与总结" class="headerlink" title="反思与总结"></a>反思与总结</h2><ol>
+<li>沟通很重要，文字沟通&lt;电话沟通&lt;现场沟通</li>
+<li>理解好需求，考虑清楚，再开始动手，千万不能盲目下手。</li>
+<li>在原有的功能改代码，先把原来的代码复制一份。出现问题时，便于查找问题。</li>
+<li>有不清楚的地方尽快问，时间拖的越久效率越低。</li>
+<li>对于代码，尽可能让代码有健壮性，能不写死的地方尽量不要写死。</li>
+</ol>
+<h2 id="代码"><a href="#代码" class="headerlink" title="代码"></a>代码</h2><ol>
+<li><p>数字格式化 解决出现科学计数法的问题</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"> function formatNum(value) &#123;</span><br><span class="line">var re = /(?=(?!(\b))(\d&#123;3&#125;)+$)/g;</span><br><span class="line">  	if (!$util.isNullOrEmpty(value)) &#123;</span><br><span class="line">	var m =value.toExponential().match(/\d(?:\.(\d*))?e([+-]\d+)/)	</span><br><span class="line">	if(parseInt(m[2])&lt;-2)</span><br><span class="line">	&#123;</span><br><span class="line">		return &quot;0.0&quot;;</span><br><span class="line">	&#125;</span><br><span class="line">	return value.toFixed(2).toString().replace(re,&quot;,&quot;);</span><br><span class="line">  	&#125; else &#123;</span><br><span class="line">  		return &quot;0.0&quot;;</span><br><span class="line">  	&#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>变量不能带有小数点</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">var  s.56;  //这种写法会报错</span><br></pre></td></tr></table></figure></li>
+<li><p>子页面控制父页面的元素 通过window.parent.$可以控制父页面元素的</p>
+</li>
+<li><p>js中map和list互转</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">let showList =  [</span><br><span class="line">	&#123;name: &#x27;西游记&#x27;, id: 1, content: &quot;hhh&quot;&#125;,</span><br><span class="line">    &#123;name: &#x27;三国演义&#x27;, id: 2, content: &quot;hhh&quot;&#125;,</span><br><span class="line">    &#123;name: &#x27;水浒传&#x27;, id: 3, content: &quot;hhh&quot;&#125;,</span><br><span class="line">    &#123;name: &#x27;红楼梦&#x27;, id: 4, content: &quot;hhh&quot;&#125;</span><br><span class="line">];      </span><br><span class="line">let map = &#123;&#125;;</span><br><span class="line">this.showList.forEach(row =&gt; &#123;</span><br><span class="line">      map[row.id] = &#123;name: row.name, content: row.content&#125;;</span><br><span class="line">&#125;);</span><br><span class="line">console.log(map);</span><br><span class="line">let array = [];</span><br><span class="line">for(let key in map) &#123;</span><br><span class="line">      let obj = map[key];</span><br><span class="line">      obj.id = key;</span><br><span class="line">      array.push(obj);</span><br><span class="line">    &#125;</span><br><span class="line">    console.log(array);</span><br></pre></td></tr></table></figure></li>
+<li><p>对于查出来的list，在取数据时，一定要先做空判断</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">final List&lt;Map&gt; list = getSqlTemplate().findBySQLWithoutRowNumLimit(gdssql, inParamMap, Map.class);</span><br><span class="line">if (list.isEmpty() || list.size() == 0) &#123;</span><br><span class="line">	return list;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li><p>在sql中， null与任何数做运算和比较 其结果都是null。</p>
+</li>
+<li><p>用hibernate 自带的方法更新时，要注意映射的主键是否为空，因为 hibernate 更新方法是通过主键去更新的。</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF/" rel="tag"># 技术</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/03/02/mybatis-Generator%E7%9A%84%E4%BD%BF%E7%94%A8-1/" rel="prev" title="mybatis-Generator的使用">
+      <i class="fa fa-chevron-left"></i> mybatis-Generator的使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/03/%E9%9B%86%E5%90%88/" rel="next" title="集合">
+      集合 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#html-%E5%BC%95%E7%94%A8%E6%96%87%E4%BB%B6%E8%B7%AF%E5%BE%84"><span class="nav-number">1.</span> <span class="nav-text">html 引用文件路径</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#laydate%E6%8F%92%E4%BB%B6%E4%BD%BF%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">laydate插件使用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E7%BB%84%E6%AF%94%E8%BE%83"><span class="nav-number">3.</span> <span class="nav-text">数组比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E6%AF%94%E8%BE%83"><span class="nav-number">4.</span> <span class="nav-text">对象比较</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%B9%E8%B1%A1%E5%85%8B%E9%9A%86"><span class="nav-number">5.</span> <span class="nav-text">对象克隆</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E4%BB%BB%E5%8A%A1"><span class="nav-number"></span> <span class="nav-text">主要任务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0%E5%88%B0%E4%BA%86%E4%BB%80%E4%B9%88"><span class="nav-number"></span> <span class="nav-text">学习到了什么</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8E%E7%AB%AF"><span class="nav-number">1.</span> <span class="nav-text">后端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%8D%E7%AB%AF"><span class="nav-number">2.</span> <span class="nav-text">前端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E6%80%9D%E4%B8%8E%E6%80%BB%E7%BB%93"><span class="nav-number"></span> <span class="nav-text">反思与总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number"></span> <span class="nav-text">代码</span></a></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">夏远建</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夏远建</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">45k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'JM04yDYxfC7OBdEVFPgjYe82-gzGzoHsz',
+      appKey     : 'N0ThHHvSUDiGsV5vHwy9wavK',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

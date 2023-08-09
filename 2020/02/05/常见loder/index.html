@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
+  </script>
+
+  <meta name="description" content="常见的loader1.文件raw-loader 加载文件原始内容（utf-8） val-loader 将代码作为模块执行，并将 exports 转为 JS 代码 url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL file-loader 将文件发送到输出文件夹，并返回（相对）URL 2.JSONjson-loader 加载 JSON 文件（默">
+<meta property="og:type" content="article">
+<meta property="og:title" content="常见loder及插件">
+<meta property="og:url" content="http://example.com/2020/02/05/%E5%B8%B8%E8%A7%81loder/index.html">
+<meta property="og:site_name" content="夏远建的博客">
+<meta property="og:description" content="常见的loader1.文件raw-loader 加载文件原始内容（utf-8） val-loader 将代码作为模块执行，并将 exports 转为 JS 代码 url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL file-loader 将文件发送到输出文件夹，并返回（相对）URL 2.JSONjson-loader 加载 JSON 文件（默">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-02-05T04:09:04.000Z">
+<meta property="article:modified_time" content="2020-02-05T08:41:28.735Z">
+<meta property="article:author" content="夏远建">
+<meta property="article:tag" content="vue">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/02/05/%E5%B8%B8%E8%A7%81loder/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>常见loder及插件 | 夏远建的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">夏远建的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">码农一枚</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/05/%E5%B8%B8%E8%A7%81loder/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          常见loder及插件
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-02-05 12:09:04 / 修改时间：16:41:28" itemprop="dateCreated datePublished" datetime="2020-02-05T12:09:04+08:00">2020-02-05</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/02/05/%E5%B8%B8%E8%A7%81loder/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/05/%E5%B8%B8%E8%A7%81loder/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="常见的loader"><a href="#常见的loader" class="headerlink" title="常见的loader"></a>常见的loader</h2><h3 id="1-文件"><a href="#1-文件" class="headerlink" title="1.文件"></a>1.文件</h3><p>raw-loader 加载文件原始内容（utf-8）</p>
+<p>val-loader 将代码作为模块执行，并将 exports 转为 JS 代码</p>
+<p>url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL</p>
+<p>file-loader 将文件发送到输出文件夹，并返回（相对）URL</p>
+<h3 id="2-JSON"><a href="#2-JSON" class="headerlink" title="2.JSON"></a>2.JSON</h3><p>json-loader 加载 JSON 文件（默认包含）</p>
+<p>json5-loader 加载和转译 JSON 5 文件</p>
+<p>cson-loader 加载和转译 CSON 文件</p>
+<h3 id="3-转换编译-Transpiling"><a href="#3-转换编译-Transpiling" class="headerlink" title="3.转换编译(Transpiling)"></a>3.转换编译(Transpiling)</h3><p>script-loader 在全局上下文中执行一次 JavaScript 文件（如在 script 标签），不需要解析</p>
+<p>babel-loader 加载 ES2015+ 代码，然后使用 Babel 转译为 ES5</p>
+<p>buble-loader 使用 Bublé 加载 ES2015+ 代码，并且将代码转译为 ES5</p>
+<p>traceur-loader 加载 ES2015+ 代码，然后使用 Traceur 转译为 ES5</p>
+<p>ts-loader 或 awesome-typescript-loader 像 JavaScript 一样加载 TypeScript 2.0+</p>
+<p>coffee-loader 像 JavaScript 一样加载 CoffeeScript</p>
+<h3 id="4-模板-Templating"><a href="#4-模板-Templating" class="headerlink" title="4.模板(Templating)"></a>4.模板(Templating)</h3><p>html-loader 导出 HTML 为字符串，需要引用静态资源</p>
+<p>pug-loader 加载 Pug 模板并返回一个函数</p>
+<p>jade-loader 加载 Jade 模板并返回一个函数</p>
+<p>markdown-loader 将 Markdown 转译为 HTML</p>
+<p>react-markdown-loader 使用 markdown-parse parser(解析器) 将 Markdown 编译为 React 组件</p>
+<p>posthtml-loader 使用 PostHTML 加载并转换 HTML 文件</p>
+<p>handlebars-loader 将 Handlebars 转移为 HTML</p>
+<p>markup-inline-loader 将内联的 SVG&#x2F;MathML 文件转换为 HTML。在应用于图标字体，或将 CSS<br>动画应用于 SVG 时非常有用。</p>
+<h3 id="5-样式"><a href="#5-样式" class="headerlink" title="5.样式"></a>5.样式</h3><p>style-loader 将模块的导出作为样式添加到 DOM 中</p>
+<p>css-loader 解析 CSS 文件后，使用 import 加载，并且返回 CSS 代码</p>
+<p>less-loader 加载和转译 LESS 文件</p>
+<p>sass-loader 加载和转译 SASS&#x2F;SCSS 文件</p>
+<p>postcss-loader 使用 PostCSS 加载和转译 CSS&#x2F;SSS 文件</p>
+<p>stylus-loader 加载和转译 Stylus 文件</p>
+<h3 id="6-清理和测试-Linting-Testing"><a href="#6-清理和测试-Linting-Testing" class="headerlink" title="6.清理和测试(Linting &amp;&amp; Testing)"></a>6.清理和测试(Linting &amp;&amp; Testing)</h3><p>mocha-loader 使用 mocha 测试（浏览器&#x2F;NodeJS）</p>
+<p>eslint-loader PreLoader，使用 ESLint 清理代码</p>
+<p>jshint-loader PreLoader，使用 JSHint 清理代码</p>
+<p>jscs-loader PreLoader，使用 JSCS 检查代码样式</p>
+<p>coverjs-loader PreLoader，使用 CoverJS 确定测试覆盖率</p>
+<h3 id="7-框架-Frameworks"><a href="#7-框架-Frameworks" class="headerlink" title="7.框架(Frameworks)"></a>7.框架(Frameworks)</h3><p>vue-loader 加载和转译 Vue 组件</p>
+<p>polymer-loader 使用选择预处理器(preprocessor)处理，并且 require() 类似一等模块<br>(first-class)的 Web 组件</p>
+<p>angular2-template-loader 加载和转译 Angular 组件</p>
+<h2 id="常见插件"><a href="#常见插件" class="headerlink" title="常见插件"></a>常见插件</h2><p><a target="_blank" rel="noopener" href="http://tangjiusheng.com/vue/155.html">参考网站</a></p>
+<p>htmlWebpackPlugin </p>
+<p>创建一个在内存中生成html的插件。该插件把打包好的bundle.js追加到页面中去</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">htmlWebpackPlugin</span>(</span><br><span class="line">    &#123;</span><br><span class="line">        template:path.join(_dirname,<span class="string">&#x27;./src/index.html&#x27;</span>)</span><br><span class="line">        filename: <span class="string">&#x27;index2.html&#x27;</span> <span class="comment">//生成</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<p>extract-text-webpack-plugin</p>
+<p>该插件的主要是为了抽离css样式,防止将样式打包在js中引起页面样式加载错乱的现象。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">                test: /\.css$/,</span><br><span class="line">                use: ExtractTextPlugin.extract(&#123;</span><br><span class="line">                    fallback: <span class="string">&#x27;style-loader&#x27;</span>,</span><br><span class="line">                    use: [<span class="string">&#x27;css-loader?&#x27;</span> + JSON.stringify(&#123;</span><br><span class="line">                        discardComments: &#123; </span><br><span class="line">                            removeAll: <span class="literal">true</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)]</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
+<p>用法 ExtractTextPlugin.extract(options:loader|object)</p>
+<p>1.options.use:指需要什么样的loader去编译文件</p>
+<p>2.options.fallback:编译后用什么loader来提取css文件</p>
+<p>3.options.publicfile:用来覆盖项目路径,生成该css文件的文件路径</p>
+<p>CleanWebpackPlugin</p>
+<p>当我们修改带hash的文件并进行打包时，每打包一次就会生成一个新的文件，而旧的文件并没有删除。为了解决这种情况，我们可以使用clean-webpack-plugin在打包之前将文件先清除，之后再打包出最新的文件</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="variable">CleanWebpackPlugin</span> <span class="operator">=</span> require(<span class="string">&#x27;clean-webpack-plugin&#x27;</span>); <span class="comment">//使用前需要安装clean-webpack-plugin</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">CleanWebpackPlugin</span>(</span><br><span class="line">     [<span class="string">&#x27;dist/main.*.js&#x27;</span>,<span class="string">&#x27;dist/manifest.*.js&#x27;</span>],　 <span class="comment">//匹配删除的文件</span></span><br><span class="line">     &#123;</span><br><span class="line">         root: __dirname,  <span class="comment">//根目录</span></span><br><span class="line">         verbose:  <span class="literal">true</span>,  <span class="comment">//开启在控制台输出信息</span></span><br><span class="line">         dry: <span class="literal">false</span>    <span class="comment">//启用删除文件</span></span><br><span class="line">     &#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/vue/" rel="tag"># vue</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/02/02/text/" rel="prev" title="webpack">
+      <i class="fa fa-chevron-left"></i> webpack
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/02/19/springboot-SSH-SSM-%E6%A1%86%E6%9E%B6/" rel="next" title="springboot,SSH,SSM 框架">
+      springboot,SSH,SSM 框架 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84loader"><span class="nav-number">1.</span> <span class="nav-text">常见的loader</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%96%87%E4%BB%B6"><span class="nav-number">1.1.</span> <span class="nav-text">1.文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-JSON"><span class="nav-number">1.2.</span> <span class="nav-text">2.JSON</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BD%AC%E6%8D%A2%E7%BC%96%E8%AF%91-Transpiling"><span class="nav-number">1.3.</span> <span class="nav-text">3.转换编译(Transpiling)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%A8%A1%E6%9D%BF-Templating"><span class="nav-number">1.4.</span> <span class="nav-text">4.模板(Templating)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%A0%B7%E5%BC%8F"><span class="nav-number">1.5.</span> <span class="nav-text">5.样式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%B8%85%E7%90%86%E5%92%8C%E6%B5%8B%E8%AF%95-Linting-Testing"><span class="nav-number">1.6.</span> <span class="nav-text">6.清理和测试(Linting &amp;&amp; Testing)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%A1%86%E6%9E%B6-Frameworks"><span class="nav-number">1.7.</span> <span class="nav-text">7.框架(Frameworks)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%8F%92%E4%BB%B6"><span class="nav-number">2.</span> <span class="nav-text">常见插件</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">夏远建</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夏远建</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">45k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">1:21</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'JM04yDYxfC7OBdEVFPgjYe82-gzGzoHsz',
+      appKey     : 'N0ThHHvSUDiGsV5vHwy9wavK',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
