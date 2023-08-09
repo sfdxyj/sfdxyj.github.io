@@ -291,7 +291,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-08-09 13:13:06 / 修改时间：22:32:43" itemprop="dateCreated datePublished" datetime="2023-08-09T13:13:06+08:00">2023-08-09</time>
+              <time title="创建时间：2023-08-09 13:13:06 / 修改时间：23:29:13" itemprop="dateCreated datePublished" datetime="2023-08-09T13:13:06+08:00">2023-08-09</time>
             </span>
 
           
@@ -314,7 +314,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>382</span>
+              <span>547</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -333,11 +333,12 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="去除本地代理"><a href="#去除本地代理" class="headerlink" title="去除本地代理"></a>去除本地代理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
+          <h3 id="设置账号"><a href="#设置账号" class="headerlink" title="设置账号"></a>设置账号</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">git config --global user.name <span class="string">&quot;3465910352@qq.com&quot;</span></span><br><span class="line">git config --global user.email <span class="string">&quot;3465910352@qq.com&quot;</span></span><br><span class="line">ssh-keygen -t rsa -C </span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="去除本地代理"><a href="#去除本地代理" class="headerlink" title="去除本地代理"></a>去除本地代理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --global --<span class="built_in">unset</span> https.proxy</span><br></pre></td></tr></table></figure>
 <h3 id="重置账号密码"><a href="#重置账号密码" class="headerlink" title="重置账号密码"></a>重置账号密码</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">git config --system --<span class="built_in">unset</span> credential.helper</span><br></pre></td></tr></table></figure>
 <h3 id="查看和设置镜像源"><a href="#查看和设置镜像源" class="headerlink" title="查看和设置镜像源"></a>查看和设置镜像源</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm config get registry</span><br><span class="line">npm config <span class="built_in">set</span> registry https://registry.npm.taobao.org</span><br></pre></td></tr></table></figure>
 <h4 id="升级npm"><a href="#升级npm" class="headerlink" title="升级npm"></a>升级npm</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm install -g npm-check</span><br><span class="line">npm install -g npm-upgrade</span><br><span class="line">npm update -g</span><br></pre></td></tr></table></figure>
-<h3 id="搭建hexo"><a href="#搭建hexo" class="headerlink" title="搭建hexo"></a>搭建hexo</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo install</span><br><span class="line">npm i</span><br><span class="line">hexo s</span><br><span class="line">npm install hexo-generator-searchdb <span class="comment">#搜索插件</span></span><br><span class="line">npm install hexo-symbols-count-time <span class="comment"># 插件</span></span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
+<h3 id="搭建hexo"><a href="#搭建hexo" class="headerlink" title="搭建hexo"></a>搭建hexo</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">npm install hexo-cli -g</span><br><span class="line">hexo install</span><br><span class="line">npm i</span><br><span class="line">hexo s</span><br><span class="line">npm install hexo-generator-searchdb <span class="comment">#搜索插件</span></span><br><span class="line">npm install hexo-symbols-count-time <span class="comment"># 插件</span></span><br><span class="line">npm install hexo-deployer-git </span><br><span class="line">hexo clean</span><br><span class="line">hexo g</span><br><span class="line">hexo d</span><br></pre></td></tr></table></figure>
 
 
       
@@ -819,7 +820,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>971</span>
+              <span>972</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -873,7 +874,7 @@
 <li>hash 类型  键值对集合</li>
 <li>zset String类型元素的集合 每个元素会跟一个分数</li>
 </ol>
-<h2 id="redis-设置密码"><a href="#redis-设置密码" class="headerlink" title="redis 设置密码"></a>redis 设置密码</h2><p> config set requirepass <a href="mailto:&#101;&#x63;&#112;&#64;&#121;&#x67;&#115;&#111;&#102;&#116;&#46;&#99;&#x6f;&#109;">&#101;&#x63;&#112;&#64;&#121;&#x67;&#115;&#111;&#102;&#116;&#46;&#99;&#x6f;&#109;</a></p>
+<h2 id="redis-设置密码"><a href="#redis-设置密码" class="headerlink" title="redis 设置密码"></a>redis 设置密码</h2><p> config set requirepass <a href="mailto:&#x65;&#99;&#112;&#x40;&#121;&#x67;&#x73;&#111;&#x66;&#x74;&#46;&#x63;&#111;&#109;">&#x65;&#99;&#112;&#x40;&#121;&#x67;&#x73;&#111;&#x66;&#x74;&#46;&#x63;&#111;&#109;</a></p>
 
       
     </div>
