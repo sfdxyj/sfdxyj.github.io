@@ -161,6 +161,190 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">SQL 使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-27 11:39:10" itemprop="dateCreated datePublished" datetime="2021-01-27T11:39:10+08:00">2021-01-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-02-12 22:36:56" itemprop="dateModified" datetime="2023-02-12T22:36:56+08:00">2023-02-12</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>539</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="1-写完SQL先explain查看执行计划（SQL性能优化）"><a href="#1-写完SQL先explain查看执行计划（SQL性能优化）" class="headerlink" title="1. 写完SQL先explain查看执行计划（SQL性能优化）"></a>1. 写完SQL先explain查看执行计划（SQL性能优化）</h4><p>日常开发写SQL的时候，尽量养成这个好习惯呀：写完SQL后，用explain分析一下，尤其注意走不走索引。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">explain select userid,name,age from user </span><br><span class="line">where userid =10086 or age =18;</span><br></pre></td></tr></table></figure>
+<h4 id="2-操作delete或者update语句，加个limit"><a href="#2-操作delete或者update语句，加个limit" class="headerlink" title="2. 操作delete或者update语句，加个limit"></a>2. 操作delete或者update语句，加个limit</h4><h4 id="3-设计表的时候，所有表和字段都添加相应的注释"><a href="#3-设计表的时候，所有表和字段都添加相应的注释" class="headerlink" title="3. 设计表的时候，所有表和字段都添加相应的注释"></a>3. 设计表的时候，所有表和字段都添加相应的注释</h4><h4 id="4-SQL书写格式，关键字大小保持一致，使用缩进"><a href="#4-SQL书写格式，关键字大小保持一致，使用缩进" class="headerlink" title="4. SQL书写格式，关键字大小保持一致，使用缩进"></a>4. SQL书写格式，关键字大小保持一致，使用缩进</h4><h4 id="5-尽量使用varchar代替-char。"><a href="#5-尽量使用varchar代替-char。" class="headerlink" title="5. 尽量使用varchar代替 char。"></a>5. 尽量使用varchar代替 char。</h4><h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><h4 id="1-树查询"><a href="#1-树查询" class="headerlink" title="1.树查询"></a>1.树查询</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">WITH RECURSIVE CTE_CONNECT_BY AS (</span><br><span class="line">SELECT 1 AS LEVEL,S.* FROM ELEC_RE_APPRO_ORG_LV S</span><br><span class="line"> WHERE UNIT_CODE = &#x27;1501&#x27;</span><br><span class="line">UNION ALL</span><br><span class="line">SELECT LEVEL + 1 AS LEVEL, S.* FROM CTE_CONNECT_BY R INNER JOIN ELEC_RE_APPRO_ORG_LV S ON s.UNIT_CODE =  r.P_UNIT_NAME</span><br><span class="line">)</span><br><span class="line">SELECT UNIT_CODE FROM CTE_CONNECT_BY  WHERE UNIT_LEVEL = &#x27;1&#x27; </span><br></pre></td></tr></table></figure>
+<h4 id="2-行转列"><a href="#2-行转列" class="headerlink" title="2. 行转列"></a>2. 行转列</h4>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/09/09/%E8%BD%AF%E8%80%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/09/09/%E8%BD%AF%E8%80%83/" class="post-title-link" itemprop="url">计算机基本工作原理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-09-09 09:51:36 / 修改时间：19:52:18" itemprop="dateCreated datePublished" datetime="2020-09-09T09:51:36+08:00">2020-09-09</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2020/09/09/%E8%BD%AF%E8%80%83/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/09/09/%E8%BD%AF%E8%80%83/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>356</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="cpu指令"><a href="#cpu指令" class="headerlink" title="cpu指令"></a>cpu指令</h2><p>CPU中的程序计数器PC用于保存要执行的指令的地址，访问内存时，需先将内存地址送入存储器地址寄存器MAR中，向内存写入数据时，待写入的数据要先放入数据寄存器MUR。程序中的指令一般放在内存中，要执行时，首先要访问内存取得指令并保存在指令寄存器IR中。<br>计算机中指令的执行过程一般分为取指令、分析指令并获取操作数、运算和传送结果等阶段，每条指令被执行时都要经过这几个阶段。若CPU要执行的指令为:MOV&nbsp; RO，# I00（即将数值100传送到寄存器R0中），则CPU首先要完成的操作是将要执行的指令的地址送入程序计数器PC，访问内存以获取指令。</p>
+<h2 id="软件过程框架"><a href="#软件过程框架" class="headerlink" title="软件过程框架"></a>软件过程框架</h2><p>UP是用例驱动的、以架构为核心、迭代和增量的软件过程框架，它提供了一种演进的特性。敏捷、测试驱动、持续集成是XP（极限编程）的特性。</p>
+<h2 id="指令流水线"><a href="#指令流水线" class="headerlink" title="指令流水线"></a>指令流水线</h2><p><img src="/../images/3.JPG" alt="img"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -192,7 +376,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-08-11 11:43:47" itemprop="dateModified" datetime="2023-08-11T11:43:47+08:00">2023-08-11</time>
+                <time title="修改时间：2023-10-10 10:30:15" itemprop="dateModified" datetime="2023-10-10T10:30:15+08:00">2023-10-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -243,13 +427,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>大家下午好！我是5组的夏远建，很荣幸能够代表5组来演讲，从我和远光签署第三方协议到目前为止，已经有197天了。&nbsp;&nbsp;&nbsp;&nbsp;在这期间，随着与公司的接触，我也对远光越来越了解。下面我就和大家来分享我眼中的远光是什么样子的。</p>
-<p>初遇远光时，在我的眼里，远光和我是有缘的。为什么这么说呢？大家可以从我的名字可以看出来。&nbsp;&nbsp;&nbsp;&nbsp;我叫夏远建，远建和软件有点谐音。在大学的时候，就有同学叫我下软件，另外远光和远建就仅差一个字，所以当我一听到远光软件时，我就觉得格外亲切，觉得很有缘分。&nbsp;&nbsp;&nbsp;&nbsp;签约的那个时段,我还在外面实习，当我被告知面试通过的时候，当天我就请假回学校准备签约了。记得签约的时候，HR还问我说：为什么你这么快就决定签约，我只回答了一句：因为缘分！</p>
-<p>在和远光接触的过程中，在我的眼里，远光的活动丰富多彩。在这几个月，我们就举办了好多活动。最让我映像深刻的就是吉祥年春节任务活动和自我介绍的活动。虽然在以往春节的时候，我也会和父母说一些祝福的话，但感觉有点随便。而今年却不同，我觉得多了一种仪式感和隆重感，通过那个拍照和送祝福的任务，我可以很清晰的感觉到我的父母很开心！因为我一直在外面读书，平时和父母的交流和互动真的不多！所以那个活动对我来说很有意义！ 然后就是自我介绍的活动了，通过那个活动，我对大家有了初步的了解，各位小伙伴都好棒啊！多才多艺，能歌善舞！不过说实话，我还是对女同学的自我介绍比较感兴趣，你们的声音都很好听，有句话不知当不当讲，我觉得要是你们能在自我介绍中加一句是否单身那就更好了。我觉得现在找对象太难了，比写代码还难。。。咳咳 开个玩笑，我觉得这个活动也很有意思，反正我是几乎把所有的小伙伴的自我介绍都听了一遍，准确来说 应该是把所有女同学的自我介绍都听了一遍。。。</p>
-<p>然后就是在这几天的培训过程中，在我的眼里，远光的技术底蕴雄厚。作为一名开发人员，最关注的当然是公司的技术。我曾经也在别的公司实习过，实事求是的说，在技术底蕴这一方面，我所实习的公司是远远不如远光的。但实习半年，我觉得我还是学到了很多，在实习过程中，学习了vue,jwt身份认证,权限认证，springboot框架等在学校很少接触过的技术，还了解并亲身接触了saas系统是什么样子的。就觉得收获颇丰。在这几天的学习课程中，当我听到我们公司有这么多产品时，比如天鹿，天象，天雀等一系列产品时，我的内心是激动和兴奋的，我觉得在远光这个更大的平台上，我一定能学习到更多的技术和知识。</p>
-<p>最后，总结一下，在我的眼中，远光是一个与我有缘的，活动丰富多彩，技术底蕴雄厚的公司。其实，远光在我眼中远远不止这些，以上只是我感触最为深刻的。我相信在我入职以后，随着时间的流逝，远光在我心目的形象会越来越丰富和饱满起来。   最近，习近平总书记有提到过人类命运共同体，在这里，我借用一下这个概念。我愿意把我自身的命运和远光的命运联系起来，在我自身成长的同时，也希望远光能够发展得更好。当公司为社会创造价值的同时，我自身也能实现自我的价值！</p>
-<p>— 2023年8月3号更新<br>我离职了。。。。 </p>
-
+          Welcome to my blog, enter password to read.
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1231,198 +1417,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/02/text/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/02/text/" class="post-title-link" itemprop="url">webpack</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-02 12:19:26" itemprop="dateCreated datePublished" datetime="2020-02-02T12:19:26+08:00">2020-02-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-03-02 16:05:20" itemprop="dateModified" datetime="2020-03-02T16:05:20+08:00">2020-03-02</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/02/text/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/02/text/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1"><a href="#1" class="headerlink" title="1"></a>1</h2>
-
-<h2 id="2"><a href="#2" class="headerlink" title="2"></a>2</h2>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/02/webpack%E4%BB%8B%E7%BB%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/02/webpack%E4%BB%8B%E7%BB%8D/" class="post-title-link" itemprop="url">webpack介绍</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-02 10:58:07" itemprop="dateCreated datePublished" datetime="2020-02-02T10:58:07+08:00">2020-02-02</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-08-24 17:07:45" itemprop="dateModified" datetime="2022-08-24T17:07:45+08:00">2022-08-24</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/02/webpack%E4%BB%8B%E7%BB%8D/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/02/webpack%E4%BB%8B%E7%BB%8D/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>521</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><p>webpack 是一个现代 JavaScript 应用程序的静态模块打包器(module bundler)。当 webpack 处理应用程序时，它会递归地构建一个依赖关系图(dependency graph)，其中包含应用程序需要的每个模块，然后将所有这些模块打包成一个或多个 bundle. 就是把各种各样的静态资源打包压缩<br><a target="_blank" rel="noopener" href="https://www.webpackjnos.com/concepts/">官网文档</a><br>手动运行webpack命令<br>&#96;&#96;<br>webpack \src\xxx\main.js  .\dist\bundle.js</p>
-<p>—常用命令<br>npm run build<br>babel src&#x2F;index.js -o dist&#x2F;index.js  —— ES6 转成 ES5<br>npm uninstall vue-loader –save-dev     &#x2F;&#x2F; 卸载<br>&#96;&#96;<br>原来的js文件使用了ES6等高级语法，浏览器直接运行不了,webpack把它转换成浏览器能直接运行的js,它能处理js文件互相依赖的关系，处理js兼容问题把高级语法转换为低级语法。</p>
-<h2 id="webpack配置文件"><a href="#webpack配置文件" class="headerlink" title="webpack配置文件"></a>webpack配置文件</h2><p>可以引入webpack配置文件 webpack.config.js 有四个核心概念<br>入口(entry)</p>
-<p>输出(output)</p>
-<p>loader</p>
-<p>插件(plugins)</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1491,7 +1485,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">23</span>
+          <span class="site-state-item-count">25</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1538,12 +1532,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">45k</span>
+    <span title="站点总字数">50k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:21</span>
+    <span title="站点阅读时长">1:31</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
