@@ -95,7 +95,7 @@
       <h1 class="site-title">夏远建的博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">码农一枚</p>
+      <p class="site-subtitle" itemprop="description">不积硅步，无以至千里；不积小流，无以成江海</p>
   </div>
 
   <div class="site-nav-right">
@@ -161,6 +161,800 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/22/2024-01-22-ftp%E4%B8%8B%E8%BD%BD%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/22/2024-01-22-ftp%E4%B8%8B%E8%BD%BD%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">2024-01-22 ftp下载性能优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-22 10:07:52" itemprop="dateCreated datePublished" datetime="2024-01-22T10:07:52+08:00">2024-01-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-31 10:20:59" itemprop="dateModified" datetime="2024-01-31T10:20:59+08:00">2024-01-31</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/22/2024-01-22-ftp%E4%B8%8B%E8%BD%BD%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/22/2024-01-22-ftp%E4%B8%8B%E8%BD%BD%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>维保合同下载实现ftp下载功能。支持自定义配置。做完发现下载速度缓慢 30s 下载完成</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>以下为下载代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"> /**</span><br><span class="line"> * 下载FTP下指定文件</span><br><span class="line"> * @param ftp FTPClient对象</span><br><span class="line"> * @param path FTP文件路径</span><br><span class="line"> * @return</span><br><span class="line"> */</span><br><span class="line">public static InputStream downLoadFTP(FTPClient ftp, String path) &#123;</span><br><span class="line">    InputStream in = null;</span><br><span class="line">    try &#123;</span><br><span class="line">        ftp.setControlEncoding(&quot;UTF-8&quot;);</span><br><span class="line">        ftp.setFileType(FTP.BINARY_FILE_TYPE);</span><br><span class="line">        in = ftp.retrieveFileStream(path);</span><br><span class="line">        ftp.changeWorkingDirectory(&quot;/&quot;);</span><br><span class="line">    &#125; catch (Exception var5) &#123;</span><br><span class="line">        log.error(&quot;ftp下载文件失败&quot;, var5);</span><br><span class="line">    &#125;</span><br><span class="line">    return in;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>in &#x3D; ftp.retrieveFileStream(path); 查看源码可以得出返回是个缓存流。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">protected InputStream _retrieveFileStream(String command, String remote) throws IOException &#123;</span><br><span class="line">    Socket socket = this._openDataConnection_(command, remote);</span><br><span class="line">    if (socket == null) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">        Object input;</span><br><span class="line">        if (this.__fileType == 0) &#123;</span><br><span class="line">            input = new FromNetASCIIInputStream(this.getBufferedInputStream(socket.getInputStream()));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            input = socket.getInputStream();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return new SocketInputStream(socket, (InputStream)input);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>ftp.changeWorkingDirectory(“&#x2F;“); 改变目录，跳转到根目录。 根目录有权限限制，查看日志发现这行代码抛错。</li>
+</ol>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><ol>
+<li>增大缓存区域 ftp.setBufferSize(1024 * 1024 * 10);。</li>
+<li>删除ftp.changeWorkingDirectory(“&#x2F;“)。</li>
+</ol>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>下载速度优化到 3 秒 以内</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/11/%E5%B8%B8%E7%94%A8linux-%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/11/%E5%B8%B8%E7%94%A8linux-%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">常用linux 命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-11 15:02:29" itemprop="dateCreated datePublished" datetime="2024-01-11T15:02:29+08:00">2024-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-19 17:45:00" itemprop="dateModified" datetime="2024-01-19T17:45:00+08:00">2024-01-19</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/11/%E5%B8%B8%E7%94%A8linux-%E5%91%BD%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/11/%E5%B8%B8%E7%94%A8linux-%E5%91%BD%E4%BB%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="常用linux命令"><a href="#常用linux命令" class="headerlink" title="常用linux命令"></a>常用linux命令</h3><ol>
+<li>提前了解<br>1.1 终端命令格式<br>1.2 help<br>1.3 man command 查询使用手册<br>1.4 小技巧<br> ctrl shift &#x3D; 放大终端窗口的字体显示（注意不要使用小键盘）<br> ctrl - 缩小终端窗口的字体显示（注意不要使用小键盘）<br> tab 可以补全或列出可能出现的命令<br>1.5 在linux中命令终止方式<br> ctrl c ：强制中断程序的执行。进程已经终止<br> ctrl d ：表示EOF<br> ctrl z ：任务暂停，但是任务并为结束。在进程中呈现挂起状态。<br>2.最常用的6个终端命令<br>命令汇总<br>2.1 ls 查看当前文件夹下的内容<br>2.2 pwd 查看当前所在的文件夹<br>2.3 cd [目录名] 进入文件夹<br>2.4 touch [文件名] 如果文件不存在，新建文件<br>2.5 mkdir [目录名] 创建目录<br>2.6 rm [文件名] 删除指定的文件名</li>
+<li>文件和目录常用命令及其详解<br>命令汇总<br>3.1 ls 查看目录内容<br>3.2 cd [目录名]，进入目录<br>3.3 touch [文件名] 创建文件<br>3.4 mkdir [目录名] 创建目录<br>3.5 rm [文件名]，删除文件或目录<br>3.6 tree [目录名]， 以树状图列出文件目录结构<br>3.7 cp [源文件] [目标文件]，复制文件<br>3.8 mv [源文件] [目标文件]，移动文件<br>3.9 cat [文件名]，查看文件内容、创建文件、追加文件内容等功能<br>3.10 more [文件名] ，分屏显示文件内容<br>3.11 grep [word] [文件名]，搜索文本文件内容<br>3.12 重定向&gt;，&gt;&gt;<br>3.13 管道，A|B<br>3.14 tail -n [行数] [文件名]  查看倒数n行日志<br>tail -100f catalina.out </li>
+<li>远程管理常用命令<br>命令汇总<br>4.1 shutdown [选项] [时间]，在某个时间点关机&#x2F;重启<br>4.2 ifconfig，查看计算机当前的网卡配置信息<br>4.3 ping ip地址， 检测到目标 ip地址 的连接是否正常<br>4.4 ssh的安装和使用，远程控制<br>4.5 scp，远程拷贝文件</li>
+<li>用户、权限相关命令<br>命令汇总<br>5.1 chmod [+&#x2F;-rwx] [文件名|目录名]， 修改文件权限<br>5.2 sudo，获取超级用户权限<br>5.3 groupadd [组名]，groupdel [组名]， 添加删除组<br>5.4 chgrp -R [组名] [文件&#x2F;目录名]， 递归修改文件&#x2F;目录的所属组<br>5.5 useradd -m -g [组] [新建用户名]， 新建用户<br>5.6 passwd [用户名]，修改用户密码<br>5.7 userdel -r [用户名]， 删除用户<br>5.8 查看用户信息，修改用户组<br>5.9 su [用户名]<br>5.10 chown [用户名] [文件名|目录名]，修改文件拥有者</li>
+<li>系统信息相关命令<br>命令汇总<br>6.1 date，查看系统时间<br>6.2 cal，查看日历<br>6.3 df，显示磁盘剩余空间<br>6.4 ps ，查看进程的详细状况<br>6.5 top，动态显示运行中的进程并且排序<br>6.6 kill [进程代号]，终止指定代号的进程</li>
+<li>查找、打包、软件安装等命令<br>命令汇总<br>7.1 find [路径] -name “[查找内容]”，在该路径下查找文件<br>7.2 tar和gzip，打包&#x2F;解包。压缩&#x2F;解压<br>7.3 apt，安装软件</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/11/ftp%E4%B8%8Esftp%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/11/ftp%E4%B8%8Esftp%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">ftp与sftp的区别及其相关命令</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-11 10:49:31" itemprop="dateCreated datePublished" datetime="2024-01-11T10:49:31+08:00">2024-01-11</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-12 15:06:58" itemprop="dateModified" datetime="2024-01-12T15:06:58+08:00">2024-01-12</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/11/ftp%E4%B8%8Esftp%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/11/ftp%E4%B8%8Esftp%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="ftp与sftp的区别"><a href="#ftp与sftp的区别" class="headerlink" title="ftp与sftp的区别"></a>ftp与sftp的区别</h3><p>ftp是一个文件传输服务,使用20，21两个端口，20是数据链路的端口，21是控制链路的端口。<br>sftp也是用来传输文件的，但它的传输是加密的，是ssh服务的一部分，没有单独的守护进程，是ssh服务的一部分，可以看做是ssh服务文件传输方案。和ssh一样，使用22端口。</p>
+<h3 id="实现sftp-文件操作的一些类"><a href="#实现sftp-文件操作的一些类" class="headerlink" title="实现sftp 文件操作的一些类"></a>实现sftp 文件操作的一些类</h3><ol>
+<li>GenericObjectPool GenericObjectPool 是 Apache Commons Pool 提供的对象池，使用的时候需要调用 borrowObject 获取一个对象，使用完以后需要调用 returnObject 归还对象，或者调用 invalidateObject 将这个对象标记为不可再用。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud.gateway.util.sftp;</span><br><span class="line">import com.jcraft.jsch.ChannelSftp;</span><br><span class="line">import java.util.concurrent.locks.Lock;</span><br><span class="line">import java.util.concurrent.locks.ReentrantLock;</span><br><span class="line">import org.apache.commons.pool2.impl.GenericObjectPool;</span><br><span class="line">import org.slf4j.Logger;</span><br><span class="line">import org.slf4j.LoggerFactory;</span><br><span class="line"></span><br><span class="line">public class SftpPool &#123;</span><br><span class="line">    private static final Logger log = LoggerFactory.getLogger(SftpPool.class);</span><br><span class="line">    private GenericObjectPool&lt;ChannelSftp&gt; pool;</span><br><span class="line">    private static final Lock getConnectelock = new ReentrantLock();</span><br><span class="line">    private static final Lock retrunConnectelock = new ReentrantLock();</span><br><span class="line"></span><br><span class="line">    public SftpPool(SftpFactory factory) &#123;</span><br><span class="line">        this.pool = new GenericObjectPool(factory, factory.getSftpProperties().getPool());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public ChannelSftp borrowObject() throws Exception &#123;</span><br><span class="line">        ChannelSftp channelSftp = null;</span><br><span class="line">        getConnectelock.lock();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            channelSftp = (ChannelSftp)this.pool.borrowObject(5000L);</span><br><span class="line">            boolean connected = channelSftp.isConnected();</span><br><span class="line">            if (!connected) &#123;</span><br><span class="line">                log.error(&quot;sftp_pool----channelSftp 不可用&quot;);</span><br><span class="line">                Object var3 = null;</span><br><span class="line">                return (ChannelSftp)var3;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception var7) &#123;</span><br><span class="line">            log.error(&quot;获取连接失败 &quot;, var7);</span><br><span class="line">            throw var7;</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            getConnectelock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        return channelSftp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public GenericObjectPool&lt;ChannelSftp&gt; getPool() &#123;</span><br><span class="line">        return this.pool;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setPool(GenericObjectPool&lt;ChannelSftp&gt; pool) &#123;</span><br><span class="line">        this.pool = pool;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void returnObject(ChannelSftp channelSftp) &#123;</span><br><span class="line">        retrunConnectelock.lock();</span><br><span class="line"></span><br><span class="line">        try &#123;</span><br><span class="line">            if (channelSftp != null) &#123;</span><br><span class="line">                this.pool.returnObject(channelSftp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception var6) &#123;</span><br><span class="line">            log.error(&quot;归还连接失败 &quot;, var6);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            retrunConnectelock.unlock();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-01-09-sql优化处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-09 14:25:07 / 修改时间：15:18:40" itemprop="dateCreated datePublished" datetime="2024-01-09T14:25:07+08:00">2024-01-09</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>功能优化。菜单路径：维护作业-维护作业执行工单<br>优化需求说明：<br>当前页面在点击列表中“门禁匹配情况”为“异常”时，需要弹出页面展现门禁出入详细数据，但是页面响应很慢，需要优化。</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>定位到以下sql </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"> select * from (</span><br><span class="line">    select a.MOBILE_TEL as phone,</span><br><span class="line">    zdr.city,</span><br><span class="line">    zdr.id,</span><br><span class="line">    zdr.roomid,</span><br><span class="line">    zdr.dept,</span><br><span class="line">    zdr.park,</span><br><span class="line">    zdr.door,</span><br><span class="line">    zdr.type,</span><br><span class="line">    zdr.account_date,</span><br><span class="line">    zjpfei.room_name as room,</span><br><span class="line">    zdr.action,</span><br><span class="line">    a.staff_name as name,</span><br><span class="line">    zjpfei.item_id as productId,</span><br><span class="line">    zjpfei.execute_time as executeTime,</span><br><span class="line">    zjpfei.item_name as productName,</span><br><span class="line">    zjpfei.device_name as deviceName,</span><br><span class="line">    zjpfei.device_id as deviceId,</span><br><span class="line">    orderInformationId,</span><br><span class="line">    DATE_FORMAT(zdr.account_date, &#x27;%Y-%m-%d&#x27;) as paymentDay,</span><br><span class="line">    case when zdr.phone is not null</span><br><span class="line">    and &lt;![CDATA[ zdr.account_date &gt;= DATE_SUB(execute_time, INTERVAL 8 HOUR) ]]&gt;</span><br><span class="line">    and &lt;![CDATA[ zdr.account_date &lt;= DATE_ADD(execute_time, INTERVAL 8 HOUR) ]]&gt;</span><br><span class="line">    then 1 else 0 end as normalStatu</span><br><span class="line">    from</span><br><span class="line">    (select DISTINCT us.staff_name,us.MOBILE_TEL,bu.USER_ID,us.staff_id,zjoi.id as orderInformationId</span><br><span class="line">    from uos_staff us</span><br><span class="line">    left join bfm_user bu on bu.PHONE = us.MOBILE_TEL</span><br><span class="line">    INNER JOIN zj_works_order_information zjoi on FIND_IN_SET(MOBILE_TEL,executor_id)) a</span><br><span class="line">    left join zj_job_plan_formulate_eq_item zjpfei on FIND_IN_SET(MOBILE_TEL,executor_id) and zjpfei.order_information_id = #&#123;orderInformationId&#125;</span><br><span class="line">    left join zmkm_door_record zdr on zdr.phone = a.MOBILE_TEL and zdr.roomid is not null</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        orderInformationId = #&#123;orderInformationId&#125;</span><br><span class="line">        &lt;if test=&quot;userIds != null and !userIds.isEmpty()&quot;&gt;</span><br><span class="line">            and STAFF_ID in</span><br><span class="line">            &lt;foreach collection=&quot;userIds&quot; item=&quot;userId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;userId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;roomIds != null and !roomIds.isEmpty()&quot;&gt;</span><br><span class="line">            and roomid in</span><br><span class="line">            &lt;foreach collection=&quot;roomIds&quot; item=&quot;roomId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;roomId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;deviceIds != null and !deviceIds.isEmpty()&quot;&gt;</span><br><span class="line">            and zjpfei.device_id in</span><br><span class="line">            &lt;foreach collection=&quot;deviceIds&quot; item=&quot;deviceId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;deviceId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;productIds != null and !productIds.isEmpty()&quot;&gt;</span><br><span class="line">            and zjpfei.item_id in</span><br><span class="line">            &lt;foreach collection=&quot;productIds&quot; item=&quot;productId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;productId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;choose&gt;</span><br><span class="line">            &lt;when test=&quot;action != null and action != &#x27;&#x27;&quot;&gt;</span><br><span class="line">                AND zdr.action = #&#123;action&#125;</span><br><span class="line">            &lt;/when&gt;</span><br><span class="line">            &lt;otherwise&gt;</span><br><span class="line">                AND zdr.action is null</span><br><span class="line">            &lt;/otherwise&gt;</span><br><span class="line">        &lt;/choose&gt;</span><br><span class="line">    &lt;/where&gt;</span><br><span class="line">    group by a.MOBILE_TEL,zdr.action,zjpfei.item_id, DATE_FORMAT(zdr.account_date, &#x27;%Y-%m-%d&#x27;)</span><br><span class="line">    order by zdr.account_date desc ) a</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        &lt;if test=&quot;normalStatu!=null and normalStatu!= &#x27;&#x27;&quot;&gt;</span><br><span class="line">            and normalStatu = #&#123;normalStatu&#125;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">    &lt;/where&gt;</span><br><span class="line">    group by phone, productId</span><br><span class="line">&lt;/select&gt;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>发现左关联了这张表bfm_user。但是查询结果 根本没有这个表的字段信息。判断这张表是无用的。</li>
+<li>发现 zmkm_door_record，uos_staff 字符集编码不一样，导致索引失效<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SHOW FULL COLUMNS FROM zmkm_door_record</span><br><span class="line">SHOW FULL COLUMNS FROM   uos_staff</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><ol>
+<li>去掉bfm_user 这张表。</li>
+<li>建立索引。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create INDEX  index_order_information_id on zj_job_plan_formulate_eq_item(order_information_id);</span><br><span class="line">create INDEX  index_roomid on zmkm_door_record(roomid);</span><br></pre></td></tr></table></figure></li>
+<li>把uos_staff字符集编码变成和uos_staff 一样。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE uos_staff CONVERT TO CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询不出来 优化到 3 秒 以内</p>
+<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><p>该sql 进行了大量的分组计算。可以改成在程序实现</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">npm 问题处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-04 09:48:53 / 修改时间：09:53:05" itemprop="dateCreated datePublished" datetime="2024-01-04T09:48:53+08:00">2024-01-04</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>113</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="npm-遇到问题处理"><a href="#npm-遇到问题处理" class="headerlink" title="npm 遇到问题处理"></a>npm 遇到问题处理</h4><p>1. </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm ERR! code ERR_SOCKET_TIMEOUT</span><br><span class="line">npm ERR! network Socket timeout</span><br></pre></td></tr></table></figure>
+<p>解决办法</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm config set proxy false</span><br><span class="line">npm cache verify</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">常见功能代码实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-01-04 09:14:59" itemprop="dateCreated datePublished" datetime="2024-01-04T09:14:59+08:00">2024-01-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-15 13:58:45" itemprop="dateModified" datetime="2024-01-15T13:58:45+08:00">2024-01-15</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BD%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="Map-遍历"><a href="#Map-遍历" class="headerlink" title="Map 遍历"></a>Map 遍历</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for (Integer key : map.keySet()) &#123;</span><br><span class="line">    System.out.println(&quot;key = &quot; + key + &quot;, value = &quot; + map.get(key));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  for (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    System.out.println(&quot;key = &quot; + entry.getKey() + &quot;, value = &quot; + entry.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">list = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">list = list.stream().sorted(Comparator.comparing(Student::getAge).reversed()).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">list = list.sorted(Comparator.comparing(Student::getName).thenComparing(Student::getAge)).collect(Collectors.toList());</span><br></pre></td></tr></table></figure>
+<h4 id="前端List转成Map"><a href="#前端List转成Map" class="headerlink" title="前端List转成Map"></a>前端List转成Map</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">const list = [</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;attrValueId&quot;: 216543,</span><br><span class="line">        &quot;attrSpecCode&quot;: &quot;air_condition_report_use_profession&quot;,</span><br><span class="line">        &quot;attrValueCode&quot;: &quot;1&quot;,</span><br><span class="line">        &quot;attrValueName&quot;: &quot;CDN&quot;,</span><br><span class="line">        &quot;attrValueNameEn&quot;: null,</span><br><span class="line">        &quot;attrValueDesc&quot;: &quot;空调系统报表-使用专业&quot;,</span><br><span class="line">        &quot;attrValueOrder&quot;: null,</span><br><span class="line">        &quot;parentAttrSpecCode&quot;: null,</span><br><span class="line">        &quot;parentAttrValueCode&quot;: null</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;attrValueId&quot;: 216544,</span><br><span class="line">        &quot;attrSpecCode&quot;: &quot;air_condition_report_use_profession&quot;,</span><br><span class="line">        &quot;attrValueCode&quot;: &quot;2&quot;,</span><br><span class="line">        &quot;attrValueName&quot;: &quot;DC&quot;,</span><br><span class="line">        &quot;attrValueNameEn&quot;: null,</span><br><span class="line">        &quot;attrValueDesc&quot;: &quot;空调系统报表-使用专业&quot;,</span><br><span class="line">        &quot;attrValueOrder&quot;: null,</span><br><span class="line">        &quot;parentAttrSpecCode&quot;: null,</span><br><span class="line">        &quot;parentAttrValueCode&quot;: null</span><br><span class="line">    &#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">const useProfessionMap = list.reduce((acc, curr) =&gt; &#123;</span><br><span class="line">  acc[curr.attrValueCode] = curr.attrValueName;</span><br><span class="line">  return acc;</span><br><span class="line">&#125;, &#123;&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="复制对象"><a href="#复制对象" class="headerlink" title="复制对象"></a>复制对象</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ObjRedisResponse response = new ObjRedisResponse();</span><br><span class="line">BeanUtils.copyProperties(confDO, response);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/01/2024-01-01-%E5%AF%BC%E5%87%BA%E7%BB%84%E4%BB%B6%E4%BC%98%E5%8C%96-hutool/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/01/2024-01-01-%E5%AF%BC%E5%87%BA%E7%BB%84%E4%BB%B6%E4%BC%98%E5%8C%96-hutool/" class="post-title-link" itemprop="url">2024-01-01-导出组件优化 hutool</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-01 22:45:23 / 修改时间：23:49:20" itemprop="dateCreated datePublished" datetime="2024-01-01T22:45:23+08:00">2024-01-01</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/01/2024-01-01-%E5%AF%BC%E5%87%BA%E7%BB%84%E4%BB%B6%E4%BC%98%E5%8C%96-hutool/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/01/2024-01-01-%E5%AF%BC%E5%87%BA%E7%BB%84%E4%BB%B6%E4%BC%98%E5%8C%96-hutool/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>16k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>28 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>最近做需求，有个功能需要导出。技术用的是 hutool 工具的导出。发现大家导出都是后端根据前端页面写死了。这种写法太不灵活了，太蠢了。于是想着写个封装导出功能的工具类。由前端给出需要导出的字段。后端动态实现导出功能。</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>以下是导出代码  后端写死了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">String filename = &quot;报表验收.xlsx&quot;;</span><br><span class="line">       ByteArrayOutputStream os = new ByteArrayOutputStream();</span><br><span class="line">       InputStream inputStream = null;</span><br><span class="line">       try (ExcelWriter writer = ExcelUtil.getWriter(true)) &#123;</span><br><span class="line">           response.setContentType(&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;);</span><br><span class="line">           response.setCharacterEncoding(&quot;utf-8&quot;);</span><br><span class="line">           response.setHeader(&quot;Content-disposition&quot;, &quot;attachment;filename=&quot; + URLEncoder.encode(filename, &quot;UTF-8&quot;) + &quot;;attachment;filename*=utf-8&#x27;zh_cn&#x27;&quot; +</span><br><span class="line">                   URLEncoder.encode(filename, &quot;UTF-8&quot;));</span><br><span class="line">           writer.addHeaderAlias(&quot;accountDate&quot;, &quot;账期&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;cityName&quot;, &quot;地市&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;buildingName&quot;, &quot;机楼&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;roomName&quot;, &quot;机房&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;deviceLoad&quot;, &quot;设备负荷(kW)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;buildingLoad&quot;, &quot;建筑负荷(kW)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;totalLoad&quot;, &quot;总热负荷(kW)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;mainCoolLoad&quot;, &quot;主用空调总显冷量(kW)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;loadPercent&quot;, &quot;负载容量比(%)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;warnLevel&quot;, &quot;预警级别&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;buildingSpace&quot;, &quot;建筑面积(㎡)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;useProfession&quot;, &quot;使用专业&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;roomLevelNum&quot;, &quot;房间级总台数量&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;stationLevelNum&quot;, &quot;列间总台数量&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;totalNum&quot;, &quot;总台数&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;totalCoolLoad&quot;, &quot;总显冷量(kW)&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;conditionForm&quot;, &quot;空调形式&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;supplyForm&quot;, &quot;送风形式&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;acceptStatus&quot;, &quot;验收状态&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;acceptName&quot;, &quot;验收人&quot;);</span><br><span class="line">           writer.addHeaderAlias(&quot;acceptTime&quot;, &quot;验收时间&quot;);</span><br><span class="line"></span><br><span class="line">           writer.setOnlyAlias(true);</span><br><span class="line">           writer.write(dataList, true);</span><br><span class="line">           writer.flush(os);</span><br><span class="line">           String waterMarkContent = SystemConfCacheUtil.getDcValue(SystemConfConstants.EXCEL_EXPORT_WATER_MARK);</span><br><span class="line">           BufferedImage buff = ExcelWaterMarkUtil.createWaterMarkImage(waterMarkContent);</span><br><span class="line">           inputStream = new ByteArrayInputStream(os.toByteArray());</span><br><span class="line">           ExcelWaterMarkUtil.putWaterMarkToExcel2(inputStream, buff, response.getOutputStream());</span><br><span class="line">       &#125;</span><br><span class="line">       catch (IOException e) &#123;</span><br><span class="line">           log.error(&quot;下载文件失败:&#123;&#125;&quot;, e.getMessage());</span><br><span class="line">       &#125;</span><br><span class="line">       finally &#123;</span><br><span class="line">           IoUtil.close(os);</span><br><span class="line">           IoUtil.close(inputStream);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><ol>
+<li>先分析hutool 导出的api。重要的api多表头合并 ExcelWriter.merge(int firstRow, int lastRow, int firstColumn, int lastColumn, Object content, org.apache.poi.ss.usermodel.CellStyle cellStyle).<br>前端用的是react。 表头数据是一个树。 所以，我们需要知道一个树的深度。 这个深度就是表头的宽度。也就是合并的行数。 我们也需要知道树叶子节点的宽度。这个是确定多表头的列数。 由以上思想 先建一个column 类</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud.sas.Test;</span><br><span class="line">import lombok.Data;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line">@Data</span><br><span class="line">public class Column &#123;</span><br><span class="line">    //字段名称</span><br><span class="line">    private String fieldName;</span><br><span class="line">    private List&lt;Column&gt; children = new ArrayList&lt;Column&gt;();</span><br><span class="line">    int totalRow;  // 总行数</span><br><span class="line">    int totalCol; // 总列数</span><br><span class="line">    int row; //excel第几行</span><br><span class="line">    int col; //excel第几列</span><br><span class="line">    int rLen;  //excel 跨多少行</span><br><span class="line">    int cLen; //excel跨多少列</span><br><span class="line">    private boolean HasChilren; //是否有子节点</span><br><span class="line">    private int tree_step; //树的级别 从0开始</span><br><span class="line">    private String key;   //  id</span><br><span class="line">    private String parentKey;  //  父亲id</span><br><span class="line">    public Column() &#123;</span><br><span class="line"></span><br><span class="line">    &#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>再建一个操作树的工具类</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud.roomck.common.util.hutoolExcel;</span><br><span class="line"></span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.Collections;</span><br><span class="line">import java.util.Iterator;</span><br><span class="line">import java.util.LinkedList;</span><br><span class="line">import java.util.List;</span><br><span class="line">import java.util.Queue;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public class TreeTool &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 传入的id 必须存在list集合里</span><br><span class="line">     * 获取某节点的深度</span><br><span class="line">     *</span><br><span class="line">     * @param list</span><br><span class="line">     * @param id   根节点</span><br><span class="line">     * @param step</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static int getTreeStep(List&lt;Column&gt; list, String id, int step) &#123;</span><br><span class="line">        if (&quot;&quot;.equals(id) || null == id) &#123;</span><br><span class="line">            return step;</span><br><span class="line">        &#125;</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            if (id.equals(cc.getKey())) &#123;</span><br><span class="line">                int temp = step + 1;</span><br><span class="line">                return getTreeStep(list, cc.getParentKey(), temp);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return step;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 遍历所有数据 获取树最大的深度</span><br><span class="line">     *</span><br><span class="line">     * @param list</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static int getMaxStep(List&lt;Column&gt; list) &#123;</span><br><span class="line">        List&lt;Integer&gt; nums = new ArrayList&lt;Integer&gt;();</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            nums.add(getTreeStep(list, cc.getKey(), 0));</span><br><span class="line">        &#125;</span><br><span class="line">        return Collections.max(nums);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取最底部子节点的个数 所有叶子节点个数</span><br><span class="line">     *</span><br><span class="line">     * @param list</span><br><span class="line">     * @param did</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static int getDownChilren(List&lt;Column&gt; list, String did) &#123;</span><br><span class="line">        int sum = 0;</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            if (did.equals(cc.getParentKey())) &#123;</span><br><span class="line">                sum++;</span><br><span class="line">                if (hasChild(list, cc)) &#123;</span><br><span class="line">                    sum += getDownChilren(list, cc.getKey()) - 1;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return sum;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取父节点</span><br><span class="line">     *</span><br><span class="line">     * @param list 所有的list数据，一条一条</span><br><span class="line">     * @param did  当前节点id</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Column getFCol(List&lt;Column&gt; list, String did) &#123;</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            if (did != null &amp;&amp; did.equals(cc.getKey())) &#123;</span><br><span class="line">                return cc;</span><br><span class="line">            &#125;</span><br><span class="line">            if (did == null &amp;&amp; did == cc.getKey()) &#123;</span><br><span class="line">                return cc;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return new Column() &#123;&#123;</span><br><span class="line">            setCol(0);</span><br><span class="line">            setRow(0);</span><br><span class="line">        &#125;&#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 获取兄弟节点个数 这个必须是有排序的</span><br><span class="line">     *</span><br><span class="line">     * @param list   所有的list数据，一条一条</span><br><span class="line">     * @param column 当前节点信息</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static int getBrotherChilNum(List&lt;Column&gt; list, Column column) &#123;</span><br><span class="line">        int sum = 0;</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            if (column.getKey().equals(cc.getKey()))</span><br><span class="line">            &#123;</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">            if (column.getParentKey() == null || !column.getParentKey().equals(cc.getParentKey()))</span><br><span class="line">            &#123;</span><br><span class="line">                continue;</span><br><span class="line">            &#125;</span><br><span class="line">            int temp = getDownChilren(list, cc.getKey());</span><br><span class="line">            if (temp == 0 || temp == 1)</span><br><span class="line">            &#123;</span><br><span class="line">                sum++;</span><br><span class="line">            &#125;</span><br><span class="line">            else</span><br><span class="line">            &#123;</span><br><span class="line">                sum += temp;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return sum;</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 根据某节点的第几层的父节点id</span><br><span class="line">     *</span><br><span class="line">     * @param list 所有的list数据，一条一条</span><br><span class="line">     * @param id   当前节点id</span><br><span class="line">     * @param step 第几层(深度 从零开始)</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static String getStepFid(List&lt;Column&gt; list, String id, int step) &#123;</span><br><span class="line">        String f_id = null;</span><br><span class="line">        for (Column cc : list) &#123;</span><br><span class="line">            if (id.equals(cc.getKey())) &#123;</span><br><span class="line">                int cstep = getTreeStep(list, cc.getKey(), 0);</span><br><span class="line">                if (step == cstep) &#123;</span><br><span class="line">                    return id;</span><br><span class="line">                &#125;</span><br><span class="line">                int fstep = getTreeStep(list, cc.getParentKey(), 0);</span><br><span class="line">                if (step == fstep) &#123;</span><br><span class="line">                    f_id = cc.getParentKey();</span><br><span class="line">                    break;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    getStepFid(list, cc.getParentKey(), step);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return f_id;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 判断是否有子节点</span><br><span class="line">     *</span><br><span class="line">     * @param list 遍历的数据</span><br><span class="line">     * @param node 某个节点</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static boolean hasChild(List&lt;Column&gt; list, Column node) &#123;</span><br><span class="line">        return getChildList(list, node).size() &gt; 0 ? true : false;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 得到子节点列表</span><br><span class="line">     *</span><br><span class="line">     * @param list 遍历的数据</span><br><span class="line">     * @param node 某个节点</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static List&lt;Column&gt; getChildList(List&lt;Column&gt; list, Column node) &#123;</span><br><span class="line">        List&lt;Column&gt; nodeList = new ArrayList&lt;Column&gt;();</span><br><span class="line">        Iterator&lt;Column&gt; it = list.iterator();</span><br><span class="line">        while (it.hasNext()) &#123;</span><br><span class="line">            Column n = (Column) it.next();</span><br><span class="line">            if (n.getParentKey() != null &amp;&amp; n.getParentKey().equals(node.getKey())) &#123;</span><br><span class="line">                nodeList.add(n);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return nodeList;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * description 广度遍历，将多棵树转换成List</span><br><span class="line">     * @param rootList</span><br><span class="line">     **/</span><br><span class="line">    public static List&lt;Column&gt; breadthTreeList(List&lt;Column&gt; rootList) &#123;</span><br><span class="line">        List&lt;Column&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">        for (Column column : rootList) &#123;</span><br><span class="line">            List&lt;Column&gt; temp = new ArrayList&lt;&gt;();</span><br><span class="line">            if (column.getChildren() == null || column.getChildren().isEmpty()) &#123;</span><br><span class="line">                temp.add(column);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                temp = breadthFirstTree2List(column);</span><br><span class="line">            &#125;</span><br><span class="line">            list.addAll(temp);</span><br><span class="line">        &#125;</span><br><span class="line">        return  list;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * description 广度遍历，将一棵树转换成List</span><br><span class="line">     * @param root</span><br><span class="line">     **/</span><br><span class="line">    public static List&lt;Column&gt; breadthFirstTree2List(Column root) &#123;</span><br><span class="line">        List&lt;Column&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">        Queue&lt;Column&gt; queue = new LinkedList&lt;&gt;();</span><br><span class="line">        if (root == null) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        queue.offer(root);</span><br><span class="line">        while (!queue.isEmpty()) &#123;</span><br><span class="line">            Column tree = queue.poll();</span><br><span class="line">            List&lt;Column&gt; children = tree.getChildren();</span><br><span class="line">            if (children != null &amp;&amp; !children.isEmpty()) &#123;</span><br><span class="line">                for (Column child : children) &#123;</span><br><span class="line">                    queue.offer(child);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            list.add(tree);</span><br><span class="line">        &#125;</span><br><span class="line">        return list;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 递归查找子节点</span><br><span class="line">     *</span><br><span class="line">     * @param treeNodes</span><br><span class="line">     * @return</span><br><span class="line">     */</span><br><span class="line">    public static Column findChildren(Column treeNode, List&lt;Column&gt; treeNodes) &#123;</span><br><span class="line">        for (Column it : treeNodes) &#123;</span><br><span class="line">            if (treeNode.getKey().equals(it.getParentKey())) &#123;</span><br><span class="line">                if (treeNode.getChildren() == null) &#123;</span><br><span class="line">                    treeNode.setChildren(new ArrayList&lt;Column&gt;());</span><br><span class="line">                &#125;</span><br><span class="line">                treeNode.getChildren().add(findChildren(it, treeNodes));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return treeNode;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>导出工具类</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud.sas.Test;</span><br><span class="line">import cn.hutool.core.io.IoUtil;</span><br><span class="line">import cn.hutool.poi.excel.ExcelUtil;</span><br><span class="line">import cn.hutool.poi.excel.ExcelWriter;</span><br><span class="line">import lombok.extern.slf4j.Slf4j;</span><br><span class="line">import javax.servlet.http.HttpServletResponse;</span><br><span class="line">import java.io.ByteArrayOutputStream;</span><br><span class="line">import java.io.IOException;</span><br><span class="line">import java.io.InputStream;</span><br><span class="line">import java.net.URLEncoder;</span><br><span class="line">import java.util.ArrayList;</span><br><span class="line">import java.util.List;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * excel处理工具</span><br><span class="line"> * 功能:动态生成单级，多级Excel表头</span><br><span class="line"> * 备注：tree型结构数据的root节点的id必须为零（0）</span><br><span class="line"> */</span><br><span class="line">@Slf4j</span><br><span class="line">public class ExcelTool&lt;T&gt; &#123;</span><br><span class="line">    /**</span><br><span class="line">     * 转换成column对象 返回tree数据结构</span><br><span class="line">     * @throws Exception</span><br><span class="line">     */</span><br><span class="line">    public List&lt;Column&gt; columnTransformer(List&lt;Column&gt; list)</span><br><span class="line">    &#123;</span><br><span class="line">        List&lt;Column&gt; lc = TreeTool.breadthTreeList(list); // 将多树结构转换成 List</span><br><span class="line">        setParm(lc);  // setTotalRow</span><br><span class="line">        setColNum(lc, list);</span><br><span class="line">        return lc;</span><br><span class="line">    &#125;</span><br><span class="line">    public void exportExcel(HutoolExportRequest hutoolExportRequest, List&lt;T&gt; dataList, HttpServletResponse response) &#123;</span><br><span class="line">        long start = System.currentTimeMillis();</span><br><span class="line">        if (log.isInfoEnabled()) &#123;</span><br><span class="line">            log.info(&quot;开始导出：&quot; + System.currentTimeMillis());</span><br><span class="line">        &#125;</span><br><span class="line">        String fieldName =  hutoolExportRequest.getFileName();</span><br><span class="line">        if (fieldName == null) &#123;</span><br><span class="line">            fieldName = &quot;导出&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        String filename = fieldName + &quot;.xlsx&quot;;</span><br><span class="line">        List&lt;Column&gt; handelHead = columnTransformer(hutoolExportRequest.getHeaderData());</span><br><span class="line">        ByteArrayOutputStream os = new ByteArrayOutputStream();</span><br><span class="line">        InputStream inputStream = null;</span><br><span class="line">        try (ExcelWriter writer = ExcelUtil.getWriter(true)) &#123;</span><br><span class="line">//            writer.merge(0, 1,  0, 0, &quot;ID&quot;,  false);</span><br><span class="line">//            writer.merge(0, 1,  1, 1, &quot;姓名&quot;, false);</span><br><span class="line">//            writer.merge(0, 1,  2, 2, &quot;年龄&quot;, false);</span><br><span class="line">//            writer.merge(0, 1,  3, 3, &quot;性别&quot;, false);</span><br><span class="line">//            writer.merge(0, 0,  4, 7, &quot;成绩&quot;, false);</span><br><span class="line">//            writer.writeCellValue(4, 1, &quot;英语&quot;);</span><br><span class="line">//            writer.writeCellValue(5, 1, &quot;数学&quot;);</span><br><span class="line">//            writer.writeCellValue(6, 1, &quot;物理&quot;);</span><br><span class="line">//            writer.merge(0, 1,  7, 7, &quot;物理&quot;, false);</span><br><span class="line">            // 动态导出逻辑</span><br><span class="line">            int rowIndex = 0; // 当前在第几列</span><br><span class="line">            for (int i = 0; i &lt; handelHead.size(); i++) &#123;</span><br><span class="line">                int firstRow = handelHead.get(i).getRow();</span><br><span class="line">                int lastRow = (handelHead.get(i).getRow() + handelHead.get(i).getRLen() - 1) &lt; 0 ? 0 : (handelHead.get(i).getRow() + handelHead.get(i).getRLen() - 1);</span><br><span class="line">                int fistColum = rowIndex;</span><br><span class="line">                int lastColum = rowIndex + (handelHead.get(i).getCLen() &gt; 0 ? handelHead.get(i).getCLen() - 1 : handelHead.get(i).getCLen());</span><br><span class="line">                String columName = handelHead.get(i).getFieldName();</span><br><span class="line">                if (firstRow == lastRow &amp;&amp; fistColum == lastColum) &#123;</span><br><span class="line">                    writer.writeCellValue(fistColum, firstRow, columName);</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    writer.merge(firstRow, lastRow, fistColum, lastColum, columName, false);</span><br><span class="line">                &#125;</span><br><span class="line">                if (!handelHead.get(i).isHasChilren()) &#123;</span><br><span class="line">                    rowIndex++;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            response.setContentType(&quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot;);</span><br><span class="line">            response.setCharacterEncoding(&quot;utf-8&quot;);</span><br><span class="line">            response.setHeader(&quot;Content-disposition&quot;, &quot;attachment;filename=&quot; + URLEncoder.encode(filename, &quot;UTF-8&quot;) + &quot;;attachment;filename*=utf-8&#x27;zh_cn&#x27;&quot; +</span><br><span class="line">                    URLEncoder.encode(filename, &quot;UTF-8&quot;));</span><br><span class="line">            writer.setOnlyAlias(true);</span><br><span class="line">            writer.write(dataList, true);</span><br><span class="line">//            writer.flush(os);</span><br><span class="line">            writer.flush(response.getOutputStream(), true);</span><br><span class="line">//            String waterMarkContent = SystemConfCacheUtil.getDcValue(SystemConfConstants.EXCEL_EXPORT_WATER_MARK);</span><br><span class="line">//            BufferedImage buff = ExcelWaterMarkUtil.createWaterMarkImage(waterMarkContent);</span><br><span class="line">//            inputStream = new ByteArrayInputStream(os.toByteArray());</span><br><span class="line">//            ExcelWaterMarkUtil.putWaterMarkToExcel2(inputStream, buff, response.getOutputStream());</span><br><span class="line">        &#125;</span><br><span class="line">        catch (IOException e) &#123;</span><br><span class="line">            log.error(&quot;下载文件失败:&#123;&#125;&quot;, e.getMessage());</span><br><span class="line">        &#125;</span><br><span class="line">        finally &#123;</span><br><span class="line">            IoUtil.close(os);</span><br><span class="line">            IoUtil.close(inputStream);</span><br><span class="line">            if (log.isInfoEnabled()) &#123;</span><br><span class="line">                log.info(&quot;结束导出， 花费时间：&quot; + (System.currentTimeMillis() - start));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 设置idmc 转换   时间紧 后面有空再实现</span><br><span class="line">     */</span><br><span class="line">//    private void setTransferIdName(HutoolExportRequest hutoolExportRequest, List&lt;T&gt; dataList) throws Exception &#123;</span><br><span class="line">//        if (!hutoolExportRequest.getTransferIdName().isEmpty()) &#123;</span><br><span class="line">//            hutoolExportRequest.getTransferIdName().keySet();</span><br><span class="line">//            T  obj  = dataList.get(0);</span><br><span class="line">//            Field[] fields = obj.getClass().getDeclaredFields();</span><br><span class="line">//            for (Field field : fields) &#123;</span><br><span class="line">//                String name = field.getName();  // 属性名</span><br><span class="line">//                if (hutoolExportRequest.getTransferIdName().containsKey(name)) &#123;</span><br><span class="line">//                    name = name.replaceFirst(name.substring(0, 1), name.substring(0, 1).toUpperCase());</span><br><span class="line">//                    Method  get = obj.getClass().getMethod(&quot;get&quot; + name);</span><br><span class="line">//</span><br><span class="line">//                &#125;</span><br><span class="line">//            &#125;</span><br><span class="line">//            for (T item : dataList) &#123;</span><br><span class="line">//</span><br><span class="line">//            &#125;</span><br><span class="line">//        &#125;</span><br><span class="line">//    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 设置基础的参数</span><br><span class="line">     *</span><br><span class="line">     * @param list</span><br><span class="line">     */</span><br><span class="line">    public static void setParm(List&lt;Column&gt; list) &#123;</span><br><span class="line">        int row = 0; //excel第几行</span><br><span class="line">        int rLen = 0;  //excel 跨多少行</span><br><span class="line">        int totalRow = TreeTool.getMaxStep(list);</span><br><span class="line">        int totalCol = TreeTool.getDownChilren(list, &quot;0&quot;);</span><br><span class="line">        for (int i = 0; i &lt; list.size(); i++) &#123;</span><br><span class="line">            Column poit = list.get(i);</span><br><span class="line">            int tree_step = TreeTool.getTreeStep(list, poit.getParentKey(), 0); //往上遍历tree</span><br><span class="line">            poit.setTree_step(tree_step);</span><br><span class="line">            poit.setRow(tree_step); //设置第几行</span><br><span class="line">            //判断是否有节点</span><br><span class="line">            boolean hasCh = TreeTool.hasChild(list, poit);</span><br><span class="line">            poit.setHasChilren(hasCh);</span><br><span class="line">            if (hasCh) &#123;</span><br><span class="line">                poit.setRLen(0); //设置跨多少行</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                if (tree_step &lt; totalRow) &#123;</span><br><span class="line">                    rLen = totalRow - tree_step;</span><br><span class="line">                &#125;</span><br><span class="line">                poit.setRLen(rLen);</span><br><span class="line">            &#125;</span><br><span class="line">            poit.setTotalRow(totalRow);</span><br><span class="line">            poit.setTotalCol(totalCol);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 设置基础的参数</span><br><span class="line">     *</span><br><span class="line">     * @param list     所有list数据，一条一条</span><br><span class="line">     * @param treeList 转成tree结构的list</span><br><span class="line">     */</span><br><span class="line">    public static void setColNum(List&lt;Column&gt; list, List&lt;Column&gt; treeList) &#123;</span><br><span class="line">        List&lt;Column&gt; new_list = new ArrayList&lt;&gt;(); //新的遍历list</span><br><span class="line">        for (int i = 0; i &lt; treeList.size(); i++) &#123;</span><br><span class="line">            Column poit = treeList.get(i);</span><br><span class="line">            int col = TreeTool.getFCol(list, poit.getParentKey()).getCol();</span><br><span class="line">            int brotherCol = TreeTool.getBrotherChilNum(list, poit);</span><br><span class="line">            poit.setCol(col + brotherCol);</span><br><span class="line">            int cLen = TreeTool.getDownChilren(list, poit.getKey());</span><br><span class="line">            if (cLen &lt;= 1) &#123;</span><br><span class="line">                cLen = 0;</span><br><span class="line">            &#125;</span><br><span class="line">            poit.setCLen(cLen);  //设置跨多少列</span><br><span class="line">            if (poit.getChildren().size() &gt; 0) &#123;</span><br><span class="line">                new_list.addAll(poit.getChildren());</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (new_list.size() &gt; 0) &#123;</span><br><span class="line">            setColNum(list, new_list);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="4">
+<li>前端请求类</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud.roomck.common.util.hutoolExcel;</span><br><span class="line"></span><br><span class="line">import lombok.Data;</span><br><span class="line"></span><br><span class="line">import java.util.List;</span><br><span class="line">import java.util.Map;</span><br><span class="line"></span><br><span class="line">@Data</span><br><span class="line">public class HutoolExportRequest &#123;</span><br><span class="line">    private String fileName;</span><br><span class="line">    private String exportType;</span><br><span class="line">    private List&lt;Column&gt; headerData;</span><br><span class="line">    // ID 名称转换</span><br><span class="line">    private Map&lt;String, Map&lt;String, String&gt;&gt; transferIdName;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="5">
+<li>hutool 导出APi 文档地址</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://apidoc.gitee.com/dromara/hutool/cn/hutool/poi/excel/ExcelWriter.html#setHeaderAlias-java.util.Map-</span><br></pre></td></tr></table></figure>
+
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p> 后端不需要在写死导出表格的数据, 几行代码就解决导出。<br> <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">@PostMapping(&quot;/exportExcel&quot;)</span><br><span class="line">public void exportExcel(@RequestBody BaseRequest&lt;ConditionDTO&lt;ZjAirConditionSysconf&gt;&gt; request, HttpServletResponse response) &#123;</span><br><span class="line">    ExcelTool excelTool = new ExcelTool();</span><br><span class="line">    List datalist = (List) zjAirConditionSysconfService.queryByPage(request.getSvcCont().getEntity(), request.getSvcCont().getPageInfo()).data();</span><br><span class="line">    excelTool.exportExcel(request.getSvcCont().getExportRequest(), datalist, response);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><ol>
+<li>idmc 转换，运用反射技术实现。 后端不再需要去库里查询字典。</li>
+<li>算法优化。 树的广度遍历与深度遍历都是用的递归。 还有进一步优化空间。</li>
+<li>性能优化。 可以根据导出数据的大小。使用多线程去导出。或换成 BigExcelWriter 去导出。<br> 以上是我觉得还可以优化的地方。因为业务繁忙，以后有时间再去优化。</li>
+</ol>
+<h3 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h3><p>以上实现 参考了<a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_28430851/article/details/80496125%E3%80%82">https://blog.csdn.net/qq_28430851/article/details/80496125。</a> </p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/01/2024-01-01-bug%E4%BF%AE%E5%A4%8D-mybatis/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/01/01/2024-01-01-bug%E4%BF%AE%E5%A4%8D-mybatis/" class="post-title-link" itemprop="url">2024-01-01 bug修复 mybatis</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-01 10:57:36 / 修改时间：11:14:07" itemprop="dateCreated datePublished" datetime="2024-01-01T10:57:36+08:00">2024-01-01</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/01/2024-01-01-bug%E4%BF%AE%E5%A4%8D-mybatis/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/01/2024-01-01-bug%E4%BF%AE%E5%A4%8D-mybatis/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>451</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>报错代码 14 行查询报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Long&gt; roomList = zjAirConditionSysconfMapper.queryAllRoomId(zjAirConditionSysconf);</span><br><span class="line">if (roomList.isEmpty()) &#123;</span><br><span class="line">    return BaseResult.success(new ArrayList&lt;&gt;());</span><br><span class="line">&#125;</span><br><span class="line">// 本系统</span><br><span class="line">List&lt;ZjAirConditionSysconf&gt; curSys = zjAirConditionSysconfMapper.queryCursys(roomList);</span><br></pre></td></tr></table></figure>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;select id=&quot;queryAllRoomId&quot; resultType=&quot;java.lang.Long&quot;&gt;</span><br></pre></td></tr></table></figure>
+<p>传参是List<Long> roomList 所以resultType 必须是Long类型。否则查询报错</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
+<li>将resultType 改成 java.lang.Long</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/21/2023-12-21-bug-%E5%A4%84%E7%90%86-react/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -184,10 +978,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-12-21 18:20:30 / 修改时间：18:34:44" itemprop="dateCreated datePublished" datetime="2023-12-21T18:20:30+08:00">2023-12-21</time>
+              <time title="创建时间：2023-12-21 18:20:30" itemprop="dateCreated datePublished" datetime="2023-12-21T18:20:30+08:00">2023-12-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-03 14:52:59" itemprop="dateModified" datetime="2024-01-03T14:52:59+08:00">2024-01-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -218,7 +1018,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>425</span>
+              <span>462</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -237,11 +1037,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>异步调用时，造成了内存泄漏</p>
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>功能正常，但点击组件出现警告信息。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Can&#x27;t perform a React state update on an unmounted component</span><br></pre></td></tr></table></figure>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。<br>分析代码发现是滥用 hooks 的useUpdateEffect. 导致的。如果组件更新就会去异常发起请求。<br>代码里有这样一段代码. </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const handleOnResize = () =&gt; &#123;</span><br><span class="line">   setPageInfo(&#123;</span><br><span class="line">     pageNum: pageInfo.pageNum,</span><br><span class="line">     pageSize: pageInfo.pageSize,</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-<p>这段代码导致只要窗口变化，组件就更新，然后就触发异步调用。导致发起大量的异步请求。当点击其他组件时，该组件卸载。导致内存泄漏。</p>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>异步调用时，造成了内存泄漏。卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。<br>分析代码发现是以下代码导致的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> useUpdateEffect(() =&gt; &#123;</span><br><span class="line"> &#125;, [pageInfo]);</span><br><span class="line"></span><br><span class="line">const handleOnResize = () =&gt; &#123;</span><br><span class="line">   setPageInfo(&#123;</span><br><span class="line">     pageNum: pageInfo.pageNum,</span><br><span class="line">     pageSize: pageInfo.pageSize,</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+<p>这段代码导致只要窗口变化，pageInfo 状态变化导致组件随之更新，然后就触发异步调用。导致发起大量的异步请求。当点击其他组件时，该组件卸载。导致内存泄漏。</p>
 <h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
 <li>useUpdateEffect 改成 useEffect </li>
 <li>handleOnResize 里 更改状态的代码去掉</li>
@@ -363,835 +1163,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/" class="post-title-link" itemprop="url">2023-12-19 bug分析 CompletableFuture</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-19 09:50:44" itemprop="dateCreated datePublished" datetime="2023-12-19T09:50:44+08:00">2023-12-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-21 18:21:36" itemprop="dateModified" datetime="2023-12-21T18:21:36+08:00">2023-12-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>工业能耗平台定时任务调用水冷调优算法返回数据。采用CompletableFuture + 自定义线程池 技术调用算法。有两个任务需要调用算法，生产环境发现远程调用算法超时时。第一个任务调用写入日志表成功，第二个任务调用没有写入日志。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">List&lt;CiEneSystemInfo&gt; systems =  ciEneSystemInfoMapper.selectByExample(example);</span><br><span class="line">for (CiEneSystemInfo ciEneSytemInfo : systems) &#123;</span><br><span class="line">    CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    waterColdStrategy(ciEneSytemInfo);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Exception e) &#123;</span><br><span class="line">                    log.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ThreadUtils.pool);</span><br><span class="line">        futureList.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">log.info(&quot;结束水冷算法调用...&quot;);</span><br></pre></td></tr></table></figure>
-<p>调用算法代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">     String result = HttpUtil.post(url, JsonUtil.mapToJsonStr(params), 10000);</span><br><span class="line">     //解析返回报文</span><br><span class="line">     Map&lt;String, Object&gt; response = JsonUtil.jsonStrToMap(result);</span><br><span class="line">     log.info(&quot;请求算法返回：&quot; + response);</span><br><span class="line">     ciEneAlgorithmLog.setReturnParam(JSONObject.toJSONString(response));</span><br><span class="line">     ciEneSystemControlStrategy.setStrategyTime(new Date());</span><br><span class="line">     ciEneSystemControlStrategyMapper.insert(ciEneSystemControlStrategy);</span><br><span class="line">     long strategyId = ciEneSystemControlStrategy.getId();</span><br><span class="line">     insertDetail(strategyId, response);</span><br><span class="line">     ciEneAlgorithmLog.setStrategyId(strategyId);</span><br><span class="line">     ciEneAlgorithmLog.setEndTime(new Date());</span><br><span class="line"> &#125;</span><br><span class="line"> catch (Exception e) &#123;</span><br><span class="line">     log.error(&quot;系统id：&quot; + ciEneSytemInfo.getId() + &quot;异常&quot;  + e.getMessage(), e);</span><br><span class="line">     ciEneAlgorithmLog.setReturnParam(e.getMessage());</span><br><span class="line"> &#125;</span><br><span class="line"> ciEneAlgorithmLogMapper.insert(ciEneAlgorithmLog);  // 写入日志</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><ol>
-<li>一开始以为是CompletableFuture 的问题。超时导致第二个任务阻塞了。 但是写测试类模拟超时的情况。发现没问题。</li>
-<li>之后觉得是CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();的问题。这句代码是等待所有任务执行完成。经过测试。也不是因为这个导致的</li>
-<li>仔细分析日志。发现第一次调用超时之后。 之后调用算法 算法那边报错 Traceback (most recent call last)。但是这边没有捕捉到异常。有返回。写入策略表成功。但是不知道为啥日志表没有写入。排除任务丢失的问题。</li>
-</ol>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
-<li>还没找到真正的原因，但我觉得应该是ciEneAlgorithmLogMapper.insert(ciEneAlgorithmLog); 报错了。<br>先在关键代码处加入日志。以后再出现这个问题时便于分析。</li>
-</ol>
-<h3 id="了解CompletableFuture"><a href="#了解CompletableFuture" class="headerlink" title="了解CompletableFuture"></a>了解CompletableFuture</h3><p>CompletableFuture是jdk8的新特性。CompletableFuture实现了CompletionStage接口和Future接口，前者是对后者的一个扩展，增加了异步会点、流式处理、多个Future组合处理的能力，使Java在处理多任务的协同工作时更加顺畅便利</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/08/%E5%88%9D%E8%AF%86React/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/08/%E5%88%9D%E8%AF%86React/" class="post-title-link" itemprop="url">初识React</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-12-08 14:59:43 / 修改时间：16:32:28" itemprop="dateCreated datePublished" datetime="2023-12-08T14:59:43+08:00">2023-12-08</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/12/08/%E5%88%9D%E8%AF%86React/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/12/08/%E5%88%9D%E8%AF%86React/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>646</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="什么是React"><a href="#什么是React" class="headerlink" title="什么是React"></a>什么是React</h3><ol>
-<li>用于构建用户界面的JavaScript框架. React是用于渲染UI的JS库，衍生的React Native是跨屏App解决方案</li>
-<li>声明式设计：声明范式</li>
-<li>高效：使用VDOM，减少DOM的交互</li>
-<li>灵活：与已知的库或框架完好配合</li>
-<li>JSX：一种独立的语言，试图解决很多JS的缺陷，ES6包含了几乎所有JSX的特性</li>
-<li>组件：代码复用</li>
-<li>单向响应数据流：比双向绑定更简单，更快。<br>以上来自于百度。后续慢慢理解。</li>
-</ol>
-<h3 id="开始搭建React项目"><a href="#开始搭建React项目" class="headerlink" title="开始搭建React项目"></a>开始搭建React项目</h3><h4 id="使用脚手架搭建项目"><a href="#使用脚手架搭建项目" class="headerlink" title="使用脚手架搭建项目"></a>使用脚手架搭建项目</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx create-react-app</span><br></pre></td></tr></table></figure>
-<h4 id="启动，编译命令"><a href="#启动，编译命令" class="headerlink" title="启动，编译命令"></a>启动，编译命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;start&quot;: &quot;react-scripts start&quot;,</span><br><span class="line">&quot;build&quot;: &quot;react-scripts build&quot;,</span><br><span class="line">&quot;test&quot;: &quot;react-scripts test&quot;,</span><br><span class="line">&quot;eject&quot;: &quot;react-scripts eject&quot;</span><br></pre></td></tr></table></figure>
-<h4 id="入口函数默认是src-index-js。入口函数是如何设置的？"><a href="#入口函数默认是src-index-js。入口函数是如何设置的？" class="headerlink" title="入口函数默认是src&#x2F;index.js。入口函数是如何设置的？"></a>入口函数默认是src&#x2F;index.js。入口函数是如何设置的？</h4><p>react-scripts&#x2F;config&#x2F;path.js 下配置</p>
-<h3 id="umi-是什么"><a href="#umi-是什么" class="headerlink" title="umi 是什么"></a>umi 是什么</h3><p>Umi，中文可发音为乌米，是可扩展的企业级前端应用框架。Umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。然后配以生命周期完善的插件体系，覆盖从源码到构建产物的每个生命周期，支持各种功能扩展和业务需求。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">springboot 环境访问数据库失败原因分析</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-11-22 16:42:54 / 修改时间：16:55:33" itemprop="dateCreated datePublished" datetime="2023-11-22T16:42:54+08:00">2023-11-22</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>场景 本地环境正常启动，一访问数据库就报数据库异常。 一直报以下错误。反复检查SQL 写的没问题。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;&#x27; at line 1</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)</span><br><span class="line">	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)</span><br></pre></td></tr></table></figure>
-<p>于是写了测试类进行测试，发现还是报那个错误。这里开始感觉应该是配置文件的问题。反复检查之后，终于发现问题所在。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud;</span><br><span class="line">import com.iwhalecloud.sas.OperationWebApplication;</span><br><span class="line">import org.junit.Test;</span><br><span class="line">import org.junit.runner.RunWith;</span><br><span class="line">import org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line">import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;</span><br><span class="line">import org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line">import org.springframework.test.context.junit4.SpringRunner;</span><br><span class="line">import org.springframework.test.context.web.WebAppConfiguration;</span><br><span class="line">import javax.sql.DataSource;</span><br><span class="line">import java.sql.Connection;</span><br><span class="line">import java.sql.ResultSet;</span><br><span class="line">import java.sql.SQLException;</span><br><span class="line">import java.sql.Statement;</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest(classes = OperationWebApplication.class)</span><br><span class="line">@WebAppConfiguration</span><br><span class="line">public class WebTest &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    DataSourceProperties dataSourceProperties;</span><br><span class="line">    @Autowired</span><br><span class="line">     DataSource dataSource;</span><br><span class="line">    @Test</span><br><span class="line">    public void query() &#123;</span><br><span class="line">        // 获取配置的数据源</span><br><span class="line">        java.util.Date date = new java.util.Date();</span><br><span class="line">        java.sql.Date date2 = new java.sql.Date(date.getTime());</span><br><span class="line">        try &#123;</span><br><span class="line">            Connection conn = dataSource.getConnection();</span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            String sql;</span><br><span class="line">            sql = &quot;SELECT * FROM cc_organization&quot;;</span><br><span class="line">            ResultSet rs = stmt.executeQuery(sql);</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(date2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>问题在于这个配置属性的语句有问题,不小心删除了一个 1。 导致本地环境访问数据库一直访问不了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.hikari.connection-test-query=SELECT  </span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" class="post-title-link" itemprop="url">RTMP协议了解</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2023-11-20 17:14:10 / 修改时间：17:27:31" itemprop="dateCreated datePublished" datetime="2023-11-20T17:14:10+08:00">2023-11-20</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>105</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ol>
-<li>Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。</li>
-<li>具有稳定、兼容性强、高穿透的特点。</li>
-<li>用于流媒体直播、点播等场景。常用于推推流方（主播）的稳定传输需求。</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-10 bug 处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-10 17:32:06" itemprop="dateCreated datePublished" datetime="2023-11-10T17:32:06+08:00">2023-11-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-19 09:53:21" itemprop="dateModified" datetime="2023-12-19T09:53:21+08:00">2023-12-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>746</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>后端返回前端，分页页码总数信息丢失，导致前端不能分页。</p>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>使用的pagehelper分页插件进行分页。在进行性能优化时，把排序放到代码里排序，导致分页信息丢失。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize(), true);</span><br><span class="line">List&lt;EneRmAlarmDetails&gt; eneRmAlarmDetails = eneRmAlarmDetailsMapper.qryEneZjRmAlarmDetailsPageListNew(request);</span><br></pre></td></tr></table></figure>
-<p>使用PageHelper 插件后 eneRmAlarmDetails 返回的其实是page 对象，里面存有分页的信息，如果直接对其排序，会导致分页信息丢失。</p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>知道其原理后，只要在new 一个对象存储分页对象，排序后在把数据塞进去。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PageInfo&lt;EneRmAlarmDetails&gt; pageInfoVO = new PageInfo&lt;&gt;(eneRmAlarmDetails);</span><br><span class="line">// sql 语句order by 排序导致索引失效，程序进行排序</span><br><span class="line">eneRmAlarmDetails = eneRmAlarmDetails.parallelStream().sorted(</span><br><span class="line">        Comparator.comparing(EneRmAlarmDetails::getAlarmTime).reversed().thenComparing(EneRmAlarmDetails::getRoomName)</span><br><span class="line">).collect(Collectors.toList());</span><br><span class="line">pageInfoVO.setList(eneRmAlarmDetails);</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-07 sql优化处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-08 09:26:39" itemprop="dateCreated datePublished" datetime="2023-11-08T09:26:39+08:00">2023-11-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-19 09:53:01" itemprop="dateModified" datetime="2023-12-19T09:53:01+08:00">2023-12-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">性能优化</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>能耗告警模块查询详请很慢</p>
-<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>定位到以下sql </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">select a.id,a.city_id,a.city_name,a.building_id,a.building_name,a.room_id,a.room_name,a.equipment_type_code,a.equipment_type_name,</span><br><span class="line">       a.equipment_id,a.equipment_name,a.average_energy,a.default_power,a.level,a.fluctuation_range,a.average_max,a.average_min,</span><br><span class="line">       ROUND(a.alarm_outliers,2) alarm_outliers,a.create_time,a.alarm_time,a.ishandle,a.default_max,a.default_min,a.absolute_max,a.absolute_min,</span><br><span class="line">       a.repair_loaded,a.account_day,a.standard_deviation,a.absolute_value,</span><br><span class="line">       (select b.calculating_priority_first from ene_cfg_energycost_device b where a.equipment_id = b.csc_device_id and b.state = &#x27;101002&#x27; limit 1) as calculating_priority_first</span><br><span class="line">from ene_rm_alarm_details a</span><br><span class="line">    left join roomck_building_rel c on a.building_id = c.other_building_id and c.other_org_source = &#x27;3&#x27;</span><br><span class="line">    left join roomck_building d on c.building_id = d.id</span><br><span class="line">    left join roomck_room_rel t3 on a.room_id = t3.other_room_id and a.building_id = t3.other_build_id and t3.other_org_source = &#x27;3&#x27;</span><br><span class="line">    inner join roomck_organization ro on t3.room_id = ro.org_id and ro.org_level = 12</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;beginTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;gt;= #&#123;beginTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;endTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;lt;= #&#123;endTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentTypeCode != null and equipmentTypeCode != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_type_code = #&#123;equipmentTypeCode&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentName != null and equipmentName != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_name like concat(&#x27;%&#x27;, #&#123;equipmentName&#125;, &#x27;%&#x27;)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;level != null and level != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.level = #&#123;level&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">order by a.alarm_time,a.room_name</span><br></pre></td></tr></table></figure>
-<p>发现该sql进行多表关联，且查询的字段用了函数计算。 ene_rm_alarm_details 是大表300多万数据。进行explain分析。进行了全表扫描</p>
-<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><p>1.拆分sql 语句, 先查出ene_rm_alarm_details的主键 id，然后在通过id去查详情数据。<br>2.ene_rm_alarm_details 的room_id字段上建立索引。<br>3.去掉order by a.alarm_time,a.room_name，改为程序进行排序。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">a.id</span><br><span class="line">FROM ene_rm_alarm_details a</span><br><span class="line">INNER JOIN (</span><br><span class="line">    SELECT DISTINCT t3.other_room_id FROM  roomck_room_rel t3</span><br><span class="line">    LEFT JOIN roomck_building_rel c ON t3.other_build_id = c.other_building_id  and c.other_org_source = &#x27;2&#x27;</span><br><span class="line">    INNER JOIN roomck_organization ro  ON ro.org_id = t3.room_id  and t3.other_org_source = &#x27;2&#x27;</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">) tb on a.room_id = tb.other_room_id</span><br></pre></td></tr></table></figure>
-<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询耗时1分多钟优化到 5~8 秒</p>
-<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><p>业务上进行优化 ene_rm_alarm_details是大表，不应该检索所有数据。业务上应该默认查询最近一年的数据或者给一个时间范围。通过在告警时间上建立索引。把大表变成小表，然后在跟其他表进行关联时。性能会提升一大截。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-02 bug处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-11-03 15:05:40" itemprop="dateCreated datePublished" datetime="2023-11-03T15:05:40+08:00">2023-11-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-19 09:52:30" itemprop="dateModified" datetime="2023-12-19T09:52:30+08:00">2023-12-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>752</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>前端展示组织树，一直点下一级，点到最后一级时，选择一个组织，同级组织全部被选中。</p>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>发现返回的组织树的id是长整型。而前端用的是number类型接收。number类型最大范围为9007199254740992。 导致精度丢失，同一级别节点的id变成一样。导致都被选中</p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>将long型数字替换成字符串。<br>后端处理在字段上加 @JsonSerialize(using &#x3D; ToStringSerializer.class)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import com.fasterxml.jackson.databind.annotation.JsonSerialize;</span><br><span class="line">import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;</span><br><span class="line">    @JsonSerialize(using = ToStringSerializer.class)</span><br><span class="line">    private Long orgId;</span><br></pre></td></tr></table></figure>
-<h4 id="引发的思考-前端传String类型可以自动转化成long类型的原理。"><a href="#引发的思考-前端传String类型可以自动转化成long类型的原理。" class="headerlink" title="引发的思考 前端传String类型可以自动转化成long类型的原理。"></a>引发的思考 前端传String类型可以自动转化成long类型的原理。</h4><p>DispatcherServlet -》AbstractHandlerMethodAdapter -》<br>RequestMappingHandlerAdapter &#x3D;》ServletInvocableHandlerMethod &#x3D;》<br>HandlerMethodArgumentResolver &#x3D;》InvocableHandlerMethod &#x3D;》<br>HandlerMethodArgumentResolverComposite &#x3D;》 RequestResponseBodyMethodProcessor<br>&#x3D;》AbstractJackson2HttpMessageConverter</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/" class="post-title-link" itemprop="url">面试感悟</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-10-09 11:56:02" itemprop="dateCreated datePublished" datetime="2023-10-09T11:56:02+08:00">2023-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-10 10:33:21" itemprop="dateModified" datetime="2023-10-10T10:33:21+08:00">2023-10-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BA%BA%E7%94%9F%E6%84%9F%E6%82%9F/" itemprop="url" rel="index"><span itemprop="name">人生感悟</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>643</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          Welcome to my blog, enter password to read.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1256,7 +1231,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1267,7 +1242,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1294,7 +1269,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1303,12 +1278,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">61k</span>
+    <span title="站点总字数">85k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:51</span>
+    <span title="站点阅读时长">2:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

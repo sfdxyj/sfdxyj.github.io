@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
   </script>
 
-  <meta name="description" content="bug描述异步调用时，造成了内存泄漏 1Can&amp;#x27;t perform a React state update on an unmounted component bug分析卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。分析代码发现是滥用 hooks 的useUpdateEffect. 导致的。如果组件更新就会去异常发起请求。代码里有这样一段代码.">
+  <meta name="description" content="bug描述功能正常，但点击组件出现警告信息。 1Can&amp;#x27;t perform a React state update on an unmounted component bug分析异步调用时，造成了内存泄漏。卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。分析代码发现是以下代码导致的。 123456789 useUpdateEffect(() &#x3D;&amp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2023-12-21 bug 处理 react">
 <meta property="og:url" content="http://example.com/2023/12/21/2023-12-21-bug-%E5%A4%84%E7%90%86-react/index.html">
 <meta property="og:site_name" content="夏远建的博客">
-<meta property="og:description" content="bug描述异步调用时，造成了内存泄漏 1Can&amp;#x27;t perform a React state update on an unmounted component bug分析卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。分析代码发现是滥用 hooks 的useUpdateEffect. 导致的。如果组件更新就会去异常发起请求。代码里有这样一段代码.">
+<meta property="og:description" content="bug描述功能正常，但点击组件出现警告信息。 1Can&amp;#x27;t perform a React state update on an unmounted component bug分析异步调用时，造成了内存泄漏。卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。分析代码发现是以下代码导致的。 123456789 useUpdateEffect(() &#x3D;&amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-12-21T10:20:30.000Z">
-<meta property="article:modified_time" content="2023-12-21T10:34:44.674Z">
+<meta property="article:modified_time" content="2024-01-03T06:52:59.722Z">
 <meta property="article:author" content="夏远建">
 <meta property="article:tag" content="react">
 <meta name="twitter:card" content="summary">
@@ -100,7 +100,7 @@
       <h1 class="site-title">夏远建的博客</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
-      <p class="site-subtitle" itemprop="description">码农一枚</p>
+      <p class="site-subtitle" itemprop="description">不积硅步，无以至千里；不积小流，无以成江海</p>
   </div>
 
   <div class="site-nav-right">
@@ -189,10 +189,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2023-12-21 18:20:30 / 修改时间：18:34:44" itemprop="dateCreated datePublished" datetime="2023-12-21T18:20:30+08:00">2023-12-21</time>
+              <time title="创建时间：2023-12-21 18:20:30" itemprop="dateCreated datePublished" datetime="2023-12-21T18:20:30+08:00">2023-12-21</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-03 14:52:59" itemprop="dateModified" datetime="2024-01-03T14:52:59+08:00">2024-01-03</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -223,7 +229,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>425</span>
+              <span>462</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -242,11 +248,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>异步调用时，造成了内存泄漏</p>
+        <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>功能正常，但点击组件出现警告信息。</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Can&#x27;t perform a React state update on an unmounted component</span><br></pre></td></tr></table></figure>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。<br>分析代码发现是滥用 hooks 的useUpdateEffect. 导致的。如果组件更新就会去异常发起请求。<br>代码里有这样一段代码. </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const handleOnResize = () =&gt; &#123;</span><br><span class="line">   setPageInfo(&#123;</span><br><span class="line">     pageNum: pageInfo.pageNum,</span><br><span class="line">     pageSize: pageInfo.pageSize,</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
-<p>这段代码导致只要窗口变化，组件就更新，然后就触发异步调用。导致发起大量的异步请求。当点击其他组件时，该组件卸载。导致内存泄漏。</p>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>异步调用时，造成了内存泄漏。卸载组件后更新状态，执行状态更新和运行异步操作的 React 组件就会导致内存泄漏问题。<br>分析代码发现是以下代码导致的。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> useUpdateEffect(() =&gt; &#123;</span><br><span class="line"> &#125;, [pageInfo]);</span><br><span class="line"></span><br><span class="line">const handleOnResize = () =&gt; &#123;</span><br><span class="line">   setPageInfo(&#123;</span><br><span class="line">     pageNum: pageInfo.pageNum,</span><br><span class="line">     pageSize: pageInfo.pageSize,</span><br><span class="line">   &#125;);</span><br><span class="line"> &#125;;</span><br></pre></td></tr></table></figure>
+<p>这段代码导致只要窗口变化，pageInfo 状态变化导致组件随之更新，然后就触发异步调用。导致发起大量的异步请求。当点击其他组件时，该组件卸载。导致内存泄漏。</p>
 <h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
 <li>useUpdateEffect 改成 useEffect </li>
 <li>handleOnResize 里 更改状态的代码去掉</li>
@@ -272,7 +278,10 @@
     <a href="/2023/12/21/2023-12-21-bug%E5%A4%84%E7%90%86-Map-forEach/" rel="prev" title="2023-12-21 bug处理- Map.forEach">
       <i class="fa fa-chevron-left"></i> 2023-12-21 bug处理- Map.forEach
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/01/2024-01-01-bug%E4%BF%AE%E5%A4%8D-mybatis/" rel="next" title="2024-01-01 bug修复 mybatis">
+      2024-01-01 bug修复 mybatis <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -345,7 +354,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">34</span>
+          <span class="site-state-item-count">42</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -356,7 +365,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-count">24</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -383,7 +392,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2024</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -392,12 +401,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">61k</span>
+    <span title="站点总字数">85k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">1:51</span>
+    <span title="站点阅读时长">2:35</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

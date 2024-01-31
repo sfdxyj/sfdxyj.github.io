@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
+  </script>
+
+  <meta name="description" content="问题描述功能优化。菜单路径：维护作业-维护作业执行工单优化需求说明：当前页面在点击列表中“门禁匹配情况”为“异常”时，需要弹出页面展现门禁出入详细数据，但是页面响应很慢，需要优化。 问题分析定位到以下sql  12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024-01-09-sql优化处理">
+<meta property="og:url" content="http://example.com/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="夏远建的博客">
+<meta property="og:description" content="问题描述功能优化。菜单路径：维护作业-维护作业执行工单优化需求说明：当前页面在点击列表中“门禁匹配情况”为“异常”时，需要弹出页面展现门禁出入详细数据，但是页面响应很慢，需要优化。 问题分析定位到以下sql  12345678910111213141516171819202122232425262728293031323334353637383940414243444546474849505152">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-01-09T06:25:07.000Z">
+<meta property="article:modified_time" content="2024-01-09T07:18:40.469Z">
+<meta property="article:author" content="夏远建">
+<meta property="article:tag" content="sql 优化索引失效">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2024-01-09-sql优化处理 | 夏远建的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">夏远建的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">不积硅步，无以至千里；不积小流，无以成江海</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2024-01-09-sql优化处理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-01-09 14:25:07 / 修改时间：15:18:40" itemprop="dateCreated datePublished" datetime="2024-01-09T14:25:07+08:00">2024-01-09</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/09/2024-01-09-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>功能优化。菜单路径：维护作业-维护作业执行工单<br>优化需求说明：<br>当前页面在点击列表中“门禁匹配情况”为“异常”时，需要弹出页面展现门禁出入详细数据，但是页面响应很慢，需要优化。</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>定位到以下sql </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"> select * from (</span><br><span class="line">    select a.MOBILE_TEL as phone,</span><br><span class="line">    zdr.city,</span><br><span class="line">    zdr.id,</span><br><span class="line">    zdr.roomid,</span><br><span class="line">    zdr.dept,</span><br><span class="line">    zdr.park,</span><br><span class="line">    zdr.door,</span><br><span class="line">    zdr.type,</span><br><span class="line">    zdr.account_date,</span><br><span class="line">    zjpfei.room_name as room,</span><br><span class="line">    zdr.action,</span><br><span class="line">    a.staff_name as name,</span><br><span class="line">    zjpfei.item_id as productId,</span><br><span class="line">    zjpfei.execute_time as executeTime,</span><br><span class="line">    zjpfei.item_name as productName,</span><br><span class="line">    zjpfei.device_name as deviceName,</span><br><span class="line">    zjpfei.device_id as deviceId,</span><br><span class="line">    orderInformationId,</span><br><span class="line">    DATE_FORMAT(zdr.account_date, &#x27;%Y-%m-%d&#x27;) as paymentDay,</span><br><span class="line">    case when zdr.phone is not null</span><br><span class="line">    and &lt;![CDATA[ zdr.account_date &gt;= DATE_SUB(execute_time, INTERVAL 8 HOUR) ]]&gt;</span><br><span class="line">    and &lt;![CDATA[ zdr.account_date &lt;= DATE_ADD(execute_time, INTERVAL 8 HOUR) ]]&gt;</span><br><span class="line">    then 1 else 0 end as normalStatu</span><br><span class="line">    from</span><br><span class="line">    (select DISTINCT us.staff_name,us.MOBILE_TEL,bu.USER_ID,us.staff_id,zjoi.id as orderInformationId</span><br><span class="line">    from uos_staff us</span><br><span class="line">    left join bfm_user bu on bu.PHONE = us.MOBILE_TEL</span><br><span class="line">    INNER JOIN zj_works_order_information zjoi on FIND_IN_SET(MOBILE_TEL,executor_id)) a</span><br><span class="line">    left join zj_job_plan_formulate_eq_item zjpfei on FIND_IN_SET(MOBILE_TEL,executor_id) and zjpfei.order_information_id = #&#123;orderInformationId&#125;</span><br><span class="line">    left join zmkm_door_record zdr on zdr.phone = a.MOBILE_TEL and zdr.roomid is not null</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        orderInformationId = #&#123;orderInformationId&#125;</span><br><span class="line">        &lt;if test=&quot;userIds != null and !userIds.isEmpty()&quot;&gt;</span><br><span class="line">            and STAFF_ID in</span><br><span class="line">            &lt;foreach collection=&quot;userIds&quot; item=&quot;userId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;userId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;roomIds != null and !roomIds.isEmpty()&quot;&gt;</span><br><span class="line">            and roomid in</span><br><span class="line">            &lt;foreach collection=&quot;roomIds&quot; item=&quot;roomId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;roomId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;deviceIds != null and !deviceIds.isEmpty()&quot;&gt;</span><br><span class="line">            and zjpfei.device_id in</span><br><span class="line">            &lt;foreach collection=&quot;deviceIds&quot; item=&quot;deviceId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;deviceId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;productIds != null and !productIds.isEmpty()&quot;&gt;</span><br><span class="line">            and zjpfei.item_id in</span><br><span class="line">            &lt;foreach collection=&quot;productIds&quot; item=&quot;productId&quot; open=&quot;(&quot; separator=&quot;,&quot; close=&quot;)&quot;&gt;</span><br><span class="line">                #&#123;productId&#125;</span><br><span class="line">            &lt;/foreach&gt;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;choose&gt;</span><br><span class="line">            &lt;when test=&quot;action != null and action != &#x27;&#x27;&quot;&gt;</span><br><span class="line">                AND zdr.action = #&#123;action&#125;</span><br><span class="line">            &lt;/when&gt;</span><br><span class="line">            &lt;otherwise&gt;</span><br><span class="line">                AND zdr.action is null</span><br><span class="line">            &lt;/otherwise&gt;</span><br><span class="line">        &lt;/choose&gt;</span><br><span class="line">    &lt;/where&gt;</span><br><span class="line">    group by a.MOBILE_TEL,zdr.action,zjpfei.item_id, DATE_FORMAT(zdr.account_date, &#x27;%Y-%m-%d&#x27;)</span><br><span class="line">    order by zdr.account_date desc ) a</span><br><span class="line">    &lt;where&gt;</span><br><span class="line">        &lt;if test=&quot;normalStatu!=null and normalStatu!= &#x27;&#x27;&quot;&gt;</span><br><span class="line">            and normalStatu = #&#123;normalStatu&#125;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">    &lt;/where&gt;</span><br><span class="line">    group by phone, productId</span><br><span class="line">&lt;/select&gt;</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>发现左关联了这张表bfm_user。但是查询结果 根本没有这个表的字段信息。判断这张表是无用的。</li>
+<li>发现 zmkm_door_record，uos_staff 字符集编码不一样，导致索引失效<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SHOW FULL COLUMNS FROM zmkm_door_record</span><br><span class="line">SHOW FULL COLUMNS FROM   uos_staff</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><ol>
+<li>去掉bfm_user 这张表。</li>
+<li>建立索引。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">create INDEX  index_order_information_id on zj_job_plan_formulate_eq_item(order_information_id);</span><br><span class="line">create INDEX  index_roomid on zmkm_door_record(roomid);</span><br></pre></td></tr></table></figure></li>
+<li>把uos_staff字符集编码变成和uos_staff 一样。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE uos_staff CONVERT TO CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询不出来 优化到 3 秒 以内</p>
+<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><p>该sql 进行了大量的分组计算。可以改成在程序实现</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/sql-%E4%BC%98%E5%8C%96%E7%B4%A2%E5%BC%95%E5%A4%B1%E6%95%88/" rel="tag"># sql 优化索引失效</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" rel="prev" title="npm 问题处理">
+      <i class="fa fa-chevron-left"></i> npm 问题处理
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/01/11/ftp%E4%B8%8Esftp%E7%9A%84%E5%8C%BA%E5%88%AB%E5%8F%8A%E5%85%B6%E7%9B%B8%E5%85%B3%E5%91%BD%E4%BB%A4/" rel="next" title="ftp与sftp的区别及其相关命令">
+      ftp与sftp的区别及其相关命令 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E6%80%9D%E8%B7%AF"><span class="nav-number">4.</span> <span class="nav-text">优化思路</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E7%BB%93%E6%9E%9C"><span class="nav-number">5.</span> <span class="nav-text">优化结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E4%B8%80%E6%AD%A5%E4%BC%98%E5%8C%96%E7%A9%BA%E9%97%B4"><span class="nav-number">6.</span> <span class="nav-text">进一步优化空间</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">夏远建</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夏远建</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">85k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:35</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'JM04yDYxfC7OBdEVFPgjYe82-gzGzoHsz',
+      appKey     : 'N0ThHHvSUDiGsV5vHwy9wavK',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
