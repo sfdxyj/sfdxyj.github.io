@@ -28,7 +28,7 @@
 <meta property="og:description" content="常用linux命令 提前了解1.1 终端命令格式1.2 help1.3 man command 查询使用手册1.4 小技巧 ctrl shift &#x3D; 放大终端窗口的字体显示（注意不要使用小键盘） ctrl - 缩小终端窗口的字体显示（注意不要使用小键盘） tab 可以补全或列出可能出现的命令1.5 在linux中命令终止方式 ctrl c ：强制中断程序的执行。进程已经终止 ctrl d">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2024-01-11T07:02:29.000Z">
-<meta property="article:modified_time" content="2024-01-19T09:45:00.707Z">
+<meta property="article:modified_time" content="2024-07-08T01:44:44.136Z">
 <meta property="article:author" content="夏远建">
 <meta name="twitter:card" content="summary">
 
@@ -196,7 +196,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-19 17:45:00" itemprop="dateModified" datetime="2024-01-19T17:45:00+08:00">2024-01-19</time>
+                <time title="修改时间：2024-07-08 09:44:44" itemprop="dateModified" datetime="2024-07-08T09:44:44+08:00">2024-07-08</time>
               </span>
 
           
@@ -219,14 +219,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.5k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -239,13 +239,14 @@
 
       
         <h3 id="常用linux命令"><a href="#常用linux命令" class="headerlink" title="常用linux命令"></a>常用linux命令</h3><ol>
-<li>提前了解<br>1.1 终端命令格式<br>1.2 help<br>1.3 man command 查询使用手册<br>1.4 小技巧<br> ctrl shift &#x3D; 放大终端窗口的字体显示（注意不要使用小键盘）<br> ctrl - 缩小终端窗口的字体显示（注意不要使用小键盘）<br> tab 可以补全或列出可能出现的命令<br>1.5 在linux中命令终止方式<br> ctrl c ：强制中断程序的执行。进程已经终止<br> ctrl d ：表示EOF<br> ctrl z ：任务暂停，但是任务并为结束。在进程中呈现挂起状态。<br>2.最常用的6个终端命令<br>命令汇总<br>2.1 ls 查看当前文件夹下的内容<br>2.2 pwd 查看当前所在的文件夹<br>2.3 cd [目录名] 进入文件夹<br>2.4 touch [文件名] 如果文件不存在，新建文件<br>2.5 mkdir [目录名] 创建目录<br>2.6 rm [文件名] 删除指定的文件名</li>
+<li>提前了解<br>1.1 终端命令格式<br>1.2 help<br>1.3 man command 查询使用手册<br>1.4 小技巧<br> ctrl shift &#x3D; 放大终端窗口的字体显示（注意不要使用小键盘）<br> ctrl - 缩小终端窗口的字体显示（注意不要使用小键盘）<br> tab 可以补全或列出可能出现的命令<br>1.5 在linux中命令终止方式<br> ctrl c ：强制中断程序的执行。进程已经终止<br> ctrl d ：表示EOF<br> ctrl z ：任务暂停，但是任务并为结束。在进程中呈现挂起状态。<br> bg 使用 bg 命令将进程在后台继续运行：<br> disown 使用 disown 命令脱离终端：<br>2.最常用的6个终端命令<br>命令汇总<br>2.1 ls 查看当前文件夹下的内容<br>2.2 pwd 查看当前所在的文件夹<br>2.3 cd [目录名] 进入文件夹<br>2.4 touch [文件名] 如果文件不存在，新建文件<br>2.5 mkdir [目录名] 创建目录<br>2.6 rm [文件名] 删除指定的文件名</li>
 <li>文件和目录常用命令及其详解<br>命令汇总<br>3.1 ls 查看目录内容<br>3.2 cd [目录名]，进入目录<br>3.3 touch [文件名] 创建文件<br>3.4 mkdir [目录名] 创建目录<br>3.5 rm [文件名]，删除文件或目录<br>3.6 tree [目录名]， 以树状图列出文件目录结构<br>3.7 cp [源文件] [目标文件]，复制文件<br>3.8 mv [源文件] [目标文件]，移动文件<br>3.9 cat [文件名]，查看文件内容、创建文件、追加文件内容等功能<br>3.10 more [文件名] ，分屏显示文件内容<br>3.11 grep [word] [文件名]，搜索文本文件内容<br>3.12 重定向&gt;，&gt;&gt;<br>3.13 管道，A|B<br>3.14 tail -n [行数] [文件名]  查看倒数n行日志<br>tail -100f catalina.out </li>
 <li>远程管理常用命令<br>命令汇总<br>4.1 shutdown [选项] [时间]，在某个时间点关机&#x2F;重启<br>4.2 ifconfig，查看计算机当前的网卡配置信息<br>4.3 ping ip地址， 检测到目标 ip地址 的连接是否正常<br>4.4 ssh的安装和使用，远程控制<br>4.5 scp，远程拷贝文件</li>
 <li>用户、权限相关命令<br>命令汇总<br>5.1 chmod [+&#x2F;-rwx] [文件名|目录名]， 修改文件权限<br>5.2 sudo，获取超级用户权限<br>5.3 groupadd [组名]，groupdel [组名]， 添加删除组<br>5.4 chgrp -R [组名] [文件&#x2F;目录名]， 递归修改文件&#x2F;目录的所属组<br>5.5 useradd -m -g [组] [新建用户名]， 新建用户<br>5.6 passwd [用户名]，修改用户密码<br>5.7 userdel -r [用户名]， 删除用户<br>5.8 查看用户信息，修改用户组<br>5.9 su [用户名]<br>5.10 chown [用户名] [文件名|目录名]，修改文件拥有者</li>
-<li>系统信息相关命令<br>命令汇总<br>6.1 date，查看系统时间<br>6.2 cal，查看日历<br>6.3 df，显示磁盘剩余空间<br>6.4 ps ，查看进程的详细状况<br>6.5 top，动态显示运行中的进程并且排序<br>6.6 kill [进程代号]，终止指定代号的进程</li>
-<li>查找、打包、软件安装等命令<br>命令汇总<br>7.1 find [路径] -name “[查找内容]”，在该路径下查找文件<br>7.2 tar和gzip，打包&#x2F;解包。压缩&#x2F;解压<br>7.3 apt，安装软件</li>
+<li>系统信息相关命令<br>命令汇总<br>6.1 date，查看系统时间<br>6.2 cal，查看日历<br>6.3 df，显示磁盘剩余空间<br>6.4 ps ，查看进程的详细状况<br>6.5 top，动态显示运行中的进程并且排序<br>6.6 kill [进程代号]，终止指定代号的进程<br>6.7 fuser -k catalina.out 终止catalina.out 有关的所有进程</li>
+<li>查找、打包、软件安装等命令<br>命令汇总<br>7.1 find [路径] -name “[查找内容]”，在该路径下查找文件<br>7.2 tar和gzip，打包&#x2F;解包。压缩&#x2F;解压<br>7.3 apt，安装软件<br>7.4 sz file.name 下载文件</li>
 </ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd application/roomck-cloud-ct/logs/</span><br><span class="line">fuser -k catalina.out</span><br><span class="line">cd ..</span><br><span class="line">cd webapps</span><br><span class="line">rm -rf roomck-cloud-ct</span><br><span class="line">rz </span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -340,7 +341,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -351,7 +352,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -387,12 +388,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">85k</span>
+    <span title="站点总字数">146k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:35</span>
+    <span title="站点阅读时长">4:26</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

@@ -161,7 +161,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/08/26/2024-08-26-%E5%AF%BC%E5%87%BA%E5%A4%9Asheet%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -175,227 +175,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/" class="post-title-link" itemprop="url">2023-12-19 bug分析 CompletableFuture</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-19 09:50:44" itemprop="dateCreated datePublished" datetime="2023-12-19T09:50:44+08:00">2023-12-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-21 18:21:36" itemprop="dateModified" datetime="2023-12-21T18:21:36+08:00">2023-12-21</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/12/19/2023-12-19-bug%E5%88%86%E6%9E%90-CompletableFuture/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>工业能耗平台定时任务调用水冷调优算法返回数据。采用CompletableFuture + 自定义线程池 技术调用算法。有两个任务需要调用算法，生产环境发现远程调用算法超时时。第一个任务调用写入日志表成功，第二个任务调用没有写入日志。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">List&lt;CiEneSystemInfo&gt; systems =  ciEneSystemInfoMapper.selectByExample(example);</span><br><span class="line">for (CiEneSystemInfo ciEneSytemInfo : systems) &#123;</span><br><span class="line">    CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    waterColdStrategy(ciEneSytemInfo);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Exception e) &#123;</span><br><span class="line">                    log.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ThreadUtils.pool);</span><br><span class="line">        futureList.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">log.info(&quot;结束水冷算法调用...&quot;);</span><br></pre></td></tr></table></figure>
-<p>调用算法代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">try &#123;</span><br><span class="line">     String result = HttpUtil.post(url, JsonUtil.mapToJsonStr(params), 10000);</span><br><span class="line">     //解析返回报文</span><br><span class="line">     Map&lt;String, Object&gt; response = JsonUtil.jsonStrToMap(result);</span><br><span class="line">     log.info(&quot;请求算法返回：&quot; + response);</span><br><span class="line">     ciEneAlgorithmLog.setReturnParam(JSONObject.toJSONString(response));</span><br><span class="line">     ciEneSystemControlStrategy.setStrategyTime(new Date());</span><br><span class="line">     ciEneSystemControlStrategyMapper.insert(ciEneSystemControlStrategy);</span><br><span class="line">     long strategyId = ciEneSystemControlStrategy.getId();</span><br><span class="line">     insertDetail(strategyId, response);</span><br><span class="line">     ciEneAlgorithmLog.setStrategyId(strategyId);</span><br><span class="line">     ciEneAlgorithmLog.setEndTime(new Date());</span><br><span class="line"> &#125;</span><br><span class="line"> catch (Exception e) &#123;</span><br><span class="line">     log.error(&quot;系统id：&quot; + ciEneSytemInfo.getId() + &quot;异常&quot;  + e.getMessage(), e);</span><br><span class="line">     ciEneAlgorithmLog.setReturnParam(e.getMessage());</span><br><span class="line"> &#125;</span><br><span class="line"> ciEneAlgorithmLogMapper.insert(ciEneAlgorithmLog);  // 写入日志</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><ol>
-<li>一开始以为是CompletableFuture 的问题。超时导致第二个任务阻塞了。 但是写测试类模拟超时的情况。发现没问题。</li>
-<li>之后觉得是CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();的问题。这句代码是等待所有任务执行完成。经过测试。也不是因为这个导致的</li>
-<li>仔细分析日志。发现第一次调用超时之后。 之后调用算法 算法那边报错 Traceback (most recent call last)。但是这边没有捕捉到异常。有返回。写入策略表成功。但是不知道为啥日志表没有写入。排除任务丢失的问题。</li>
-</ol>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
-<li>还没找到真正的原因，但我觉得应该是ciEneAlgorithmLogMapper.insert(ciEneAlgorithmLog); 报错了。<br>先在关键代码处加入日志。以后再出现这个问题时便于分析。</li>
-</ol>
-<h3 id="了解CompletableFuture"><a href="#了解CompletableFuture" class="headerlink" title="了解CompletableFuture"></a>了解CompletableFuture</h3><p>CompletableFuture是jdk8的新特性。CompletableFuture实现了CompletionStage接口和Future接口，前者是对后者的一个扩展，增加了异步会点、流式处理、多个Future组合处理的能力，使Java在处理多任务的协同工作时更加顺畅便利</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/08/%E5%88%9D%E8%AF%86React/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/12/08/%E5%88%9D%E8%AF%86React/" class="post-title-link" itemprop="url">初识React</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-12-08 14:59:43" itemprop="dateCreated datePublished" datetime="2023-12-08T14:59:43+08:00">2023-12-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-22 11:28:43" itemprop="dateModified" datetime="2023-12-22T11:28:43+08:00">2023-12-22</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/12/08/%E5%88%9D%E8%AF%86React/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/12/08/%E5%88%9D%E8%AF%86React/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>681</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="什么是React"><a href="#什么是React" class="headerlink" title="什么是React"></a>什么是React</h3><ol>
-<li>用于构建用户界面的JavaScript框架. React是用于渲染UI的JS库，衍生的React Native是跨屏App解决方案</li>
-<li>声明式设计：声明范式</li>
-<li>高效：使用VDOM，减少DOM的交互</li>
-<li>灵活：与已知的库或框架完好配合</li>
-<li>JSX：一种独立的语言，试图解决很多JS的缺陷，ES6包含了几乎所有JSX的特性</li>
-<li>组件：代码复用</li>
-<li>单向响应数据流：比双向绑定更简单，更快。<br>以上来自于百度。后续慢慢理解。</li>
-</ol>
-<h3 id="开始搭建React项目"><a href="#开始搭建React项目" class="headerlink" title="开始搭建React项目"></a>开始搭建React项目</h3><h4 id="使用脚手架搭建项目"><a href="#使用脚手架搭建项目" class="headerlink" title="使用脚手架搭建项目"></a>使用脚手架搭建项目</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npx create-react-app</span><br></pre></td></tr></table></figure>
-<h4 id="启动，编译命令"><a href="#启动，编译命令" class="headerlink" title="启动，编译命令"></a>启动，编译命令</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;start&quot;: &quot;react-scripts start&quot;,</span><br><span class="line">&quot;build&quot;: &quot;react-scripts build&quot;,</span><br><span class="line">&quot;test&quot;: &quot;react-scripts test&quot;,</span><br><span class="line">&quot;eject&quot;: &quot;react-scripts eject&quot;</span><br></pre></td></tr></table></figure>
-<h4 id="入口函数默认是src-index-js。入口函数是如何设置的？"><a href="#入口函数默认是src-index-js。入口函数是如何设置的？" class="headerlink" title="入口函数默认是src&#x2F;index.js。入口函数是如何设置的？"></a>入口函数默认是src&#x2F;index.js。入口函数是如何设置的？</h4><p>react-scripts&#x2F;config&#x2F;path.js 下配置</p>
-<h3 id="umi-是什么"><a href="#umi-是什么" class="headerlink" title="umi 是什么"></a>umi 是什么</h3><p>Umi，中文可发音为乌米，是可扩展的企业级前端应用框架。Umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。然后配以生命周期完善的插件体系，覆盖从源码到构建产物的每个生命周期，支持各种功能扩展和业务需求。</p>
-<h3 id="函数组件-class组件"><a href="#函数组件-class组件" class="headerlink" title="函数组件 class组件"></a>函数组件 class组件</h3><p>react 官方建议使用函数式组件，而不是类式组件</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">springboot 环境访问数据库失败原因分析</a>
+            <a href="/2024/08/26/2024-08-26-%E5%AF%BC%E5%87%BA%E5%A4%9Asheet%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-08-26-导出多sheet处理</a>
         </h2>
 
         <div class="post-meta">
@@ -406,7 +186,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-11-22 16:42:54 / 修改时间：16:55:33" itemprop="dateCreated datePublished" datetime="2023-11-22T16:42:54+08:00">2023-11-22</time>
+              <time title="创建时间：2024-08-26 20:11:31 / 修改时间：21:13:22" itemprop="dateCreated datePublished" datetime="2024-08-26T20:11:31+08:00">2024-08-26</time>
             </span>
 
           
@@ -418,8 +198,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    <a title="valine" href="/2024/08/26/2024-08-26-%E5%AF%BC%E5%87%BA%E5%A4%9Asheet%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/08/26/2024-08-26-%E5%AF%BC%E5%87%BA%E5%A4%9Asheet%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -429,14 +209,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
+              <span>233</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -448,12 +228,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>场景 本地环境正常启动，一访问数据库就报数据库异常。 一直报以下错误。反复检查SQL 写的没问题。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;&#x27; at line 1</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)</span><br><span class="line">	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)</span><br></pre></td></tr></table></figure>
-<p>于是写了测试类进行测试，发现还是报那个错误。这里开始感觉应该是配置文件的问题。反复检查之后，终于发现问题所在。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud;</span><br><span class="line">import com.iwhalecloud.sas.OperationWebApplication;</span><br><span class="line">import org.junit.Test;</span><br><span class="line">import org.junit.runner.RunWith;</span><br><span class="line">import org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line">import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;</span><br><span class="line">import org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line">import org.springframework.test.context.junit4.SpringRunner;</span><br><span class="line">import org.springframework.test.context.web.WebAppConfiguration;</span><br><span class="line">import javax.sql.DataSource;</span><br><span class="line">import java.sql.Connection;</span><br><span class="line">import java.sql.ResultSet;</span><br><span class="line">import java.sql.SQLException;</span><br><span class="line">import java.sql.Statement;</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest(classes = OperationWebApplication.class)</span><br><span class="line">@WebAppConfiguration</span><br><span class="line">public class WebTest &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    DataSourceProperties dataSourceProperties;</span><br><span class="line">    @Autowired</span><br><span class="line">     DataSource dataSource;</span><br><span class="line">    @Test</span><br><span class="line">    public void query() &#123;</span><br><span class="line">        // 获取配置的数据源</span><br><span class="line">        java.util.Date date = new java.util.Date();</span><br><span class="line">        java.sql.Date date2 = new java.sql.Date(date.getTime());</span><br><span class="line">        try &#123;</span><br><span class="line">            Connection conn = dataSource.getConnection();</span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            String sql;</span><br><span class="line">            sql = &quot;SELECT * FROM cc_organization&quot;;</span><br><span class="line">            ResultSet rs = stmt.executeQuery(sql);</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(date2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>问题在于这个配置属性的语句有问题,不小心删除了一个 1。 导致本地环境访问数据库一直访问不了</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.hikari.connection-test-query=SELECT  </span><br></pre></td></tr></table></figure>
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>使用hutool   writer.setSheet(sheetName);<br>导出文件多sheet文件时，多出现一个空白sheet页。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>当执行 ExcelWriter writer &#x3D; ExcelUtil.getWriter(true) 时会自动创建一个sheet页，所以如何不需要自动创建的，需要先把<br>自动生成的sheet删除。增加以下一行代码.之后在创建自己自定义的sheet页。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">writer.getWorkbook().removeSheetAt(0);</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -472,7 +249,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/29/2024-07-29-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -486,7 +263,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" class="post-title-link" itemprop="url">RTMP协议了解</a>
+            <a href="/2024/07/29/2024-07-29-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-07-29-安全问题处理</a>
         </h2>
 
         <div class="post-meta">
@@ -497,7 +274,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2023-11-20 17:14:10 / 修改时间：17:27:31" itemprop="dateCreated datePublished" datetime="2023-11-20T17:14:10+08:00">2023-11-20</time>
+              <time title="创建时间：2024-07-29 14:07:47 / 修改时间：14:45:12" itemprop="dateCreated datePublished" datetime="2024-07-29T14:07:47+08:00">2024-07-29</time>
             </span>
 
           
@@ -509,8 +286,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" itemprop="commentCount"></span>
+    <a title="valine" href="/2024/07/29/2024-07-29-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/07/29/2024-07-29-%E5%AE%89%E5%85%A8%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -520,14 +297,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>105</span>
+              <span>1.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -539,12 +316,9 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ol>
-<li>Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。</li>
-<li>具有稳定、兼容性强、高穿透的特点。</li>
-<li>用于流媒体直播、点播等场景。常用于推推流方（主播）的稳定传输需求。</li>
-</ol>
-
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>内审稽核上传功能点处存在仟意文件上传漏洞，通过抓取数据包修改内容的方式，可绕过前端上传文件类型检测。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>增加后台文件类型校验，采用白名单方式校验。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">public final class FileTypeWhitelist &#123;</span><br><span class="line">    private  FileTypeWhitelist() &#123;</span><br><span class="line">    &#125;</span><br><span class="line">    // 允许的 MIME 类型</span><br><span class="line">    private static final List&lt;String&gt; ALLOWED_MIME_TYPES = Arrays.asList(</span><br><span class="line">            &quot;image/jpeg&quot;, // jpg, jpeg</span><br><span class="line">            &quot;image/png&quot;, // png</span><br><span class="line">            &quot;application/pdf&quot;, // pdf</span><br><span class="line">            &quot;application/msword&quot;, // doc</span><br><span class="line">            &quot;application/vnd.openxmlformats-officedocument.wordprocessingml.document&quot;, // docx</span><br><span class="line">            &quot;application/vnd.ms-excel&quot;, // xls</span><br><span class="line">            &quot;application/vnd.openxmlformats-officedocument.spreadsheetml.sheet&quot; // xlsx</span><br><span class="line">    );</span><br><span class="line">    // 允许的文件扩展名</span><br><span class="line">    private static final Set&lt;String&gt; ALLOWED_EXTENSIONS = new HashSet&lt;&gt;(Arrays.asList(</span><br><span class="line">            &quot;jpg&quot;,</span><br><span class="line">            &quot;jpeg&quot;,</span><br><span class="line">            &quot;png&quot;,</span><br><span class="line">            &quot;pdf&quot;,</span><br><span class="line">            &quot;doc&quot;,</span><br><span class="line">            &quot;docx&quot;,</span><br><span class="line">            &quot;xls&quot;,</span><br><span class="line">            &quot;xlsx&quot;</span><br><span class="line">    ));</span><br><span class="line">    /**</span><br><span class="line">     * 检查 MIME 类型是否在白名单中</span><br><span class="line">     * @param mimeType MIME 类型</span><br><span class="line">     * @return 如果在白名单中返回 true，否则返回 false</span><br><span class="line">     */</span><br><span class="line">    public static boolean isAllowedMimeType(String mimeType) &#123;</span><br><span class="line">        return ALLOWED_MIME_TYPES.contains(mimeType);</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 检查文件扩展名是否在白名单中</span><br><span class="line">     * @param fileName 文件名</span><br><span class="line">     * @return 如果在白名单中返回 true，否则返回 false</span><br><span class="line">     */</span><br><span class="line">    public static boolean isAllowedExtension(String fileName) &#123;</span><br><span class="line">        String extension = getFileExtension(fileName);</span><br><span class="line">        return ALLOWED_EXTENSIONS.contains(extension.toLowerCase());</span><br><span class="line">    &#125;</span><br><span class="line">    /**</span><br><span class="line">     * 获取文件的扩展名</span><br><span class="line">     * @param fileName 文件名</span><br><span class="line">     * @return 文件扩展名</span><br><span class="line">     */</span><br><span class="line">    private static String getFileExtension(String fileName) &#123;</span><br><span class="line">        if (fileName == null || fileName.lastIndexOf(&#x27;.&#x27;) == -1) &#123;</span><br><span class="line">            return &quot;&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        return fileName.substring(fileName.lastIndexOf(&#x27;.&#x27;) + 1);</span><br><span class="line">    &#125;</span><br><span class="line">    public static boolean checkFiles(MultipartFile[] files) &#123;</span><br><span class="line">        for (MultipartFile file : files) &#123;</span><br><span class="line">            String mimeType = file.getContentType();</span><br><span class="line">            String fileName = file.getOriginalFilename();</span><br><span class="line">            if (!isAllowedMimeType(mimeType) || !isAllowedExtension(fileName)) &#123;</span><br><span class="line">                return false;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -563,7 +337,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/07/29/2024-07-29-bug%E4%BF%AE%E5%A4%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -577,7 +351,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-10 bug 处理</a>
+            <a href="/2024/07/29/2024-07-29-bug%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">2024-07-29-bug修复</a>
         </h2>
 
         <div class="post-meta">
@@ -586,24 +360,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-11-10 17:32:06" itemprop="dateCreated datePublished" datetime="2023-11-10T17:32:06+08:00">2023-11-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-19 09:53:21" itemprop="dateModified" datetime="2023-12-19T09:53:21+08:00">2023-12-19</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
-                </span>
+              <time title="创建时间：2024-07-29 11:07:40 / 修改时间：11:13:45" itemprop="dateCreated datePublished" datetime="2024-07-29T11:07:40+08:00">2024-07-29</time>
             </span>
 
           
@@ -615,8 +374,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    <a title="valine" href="/2024/07/29/2024-07-29-bug%E4%BF%AE%E5%A4%8D/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/07/29/2024-07-29-bug%E4%BF%AE%E5%A4%8D/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -626,14 +385,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>746</span>
+              <span>1.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -645,12 +404,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>后端返回前端，分页页码总数信息丢失，导致前端不能分页。</p>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>使用的pagehelper分页插件进行分页。在进行性能优化时，把排序放到代码里排序，导致分页信息丢失。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize(), true);</span><br><span class="line">List&lt;EneRmAlarmDetails&gt; eneRmAlarmDetails = eneRmAlarmDetailsMapper.qryEneZjRmAlarmDetailsPageListNew(request);</span><br></pre></td></tr></table></figure>
-<p>使用PageHelper 插件后 eneRmAlarmDetails 返回的其实是page 对象，里面存有分页的信息，如果直接对其排序，会导致分页信息丢失。</p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>知道其原理后，只要在new 一个对象存储分页对象，排序后在把数据塞进去。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PageInfo&lt;EneRmAlarmDetails&gt; pageInfoVO = new PageInfo&lt;&gt;(eneRmAlarmDetails);</span><br><span class="line">// sql 语句order by 排序导致索引失效，程序进行排序</span><br><span class="line">eneRmAlarmDetails = eneRmAlarmDetails.parallelStream().sorted(</span><br><span class="line">        Comparator.comparing(EneRmAlarmDetails::getAlarmTime).reversed().thenComparing(EneRmAlarmDetails::getRoomName)</span><br><span class="line">).collect(Collectors.toList());</span><br><span class="line">pageInfoVO.setList(eneRmAlarmDetails);</span><br></pre></td></tr></table></figure>
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>山西出入申请单调用门户接口获取审批人信息，获取不全。<br>问题代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">private List&lt;UserInfoDto&gt; filterManagerOrg(List&lt;UserInfoDto&gt; userInfoDtos, UniformRequest param) &#123;</span><br><span class="line">    if (CollUtil.isNotEmpty(param.getManageOrgIds())) &#123;</span><br><span class="line">        List&lt;Long&gt; orgIdList = param.getManageOrgIds();</span><br><span class="line">        userInfoDtos = userInfoDtos.stream().filter(a -&gt; &#123;</span><br><span class="line">            String manageOrgIds = a.getOrgIdsStr();</span><br><span class="line">            if (StrUtil.isNotBlank(manageOrgIds)) &#123;</span><br><span class="line">                List&lt;Long&gt; orgIds = Arrays.stream(manageOrgIds.split(&quot;,&quot;)).map(Long::parseLong).collect(Collectors.toList());</span><br><span class="line">                for (Long mgorgId : orgIdList) &#123;</span><br><span class="line">                    Organization organization = organizationService.qryOrganizationByOrgId(mgorgId);</span><br><span class="line">                    if (StringUtil.isNotEmpty(organization.getPathCode())) &#123;</span><br><span class="line">                        List&lt;Long&gt; mgorgIds = Arrays.stream(organization.getPathCode().split(&quot;,&quot;)).map(Long::parseLong).collect(Collectors.toList());</span><br><span class="line">                        orgIds.retainAll(mgorgIds);</span><br><span class="line">                        if (CollUtil.isNotEmpty(orgIds)) &#123;</span><br><span class="line">                            return true;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            return false;</span><br><span class="line">        &#125;).collect(Collectors.toList());</span><br><span class="line">    &#125;</span><br><span class="line">    return userInfoDtos;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>orgIds.retainAll(mgorgIds); 会修改原始orgIds。导致影响for循环后面的过滤逻辑。从而使得部分数据被过滤掉。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>在每次需要使用 retainAll 方法时创建一个新的 orgIds 列表的副本。<br>改成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">List&lt;Long&gt; originalOrgIds = Arrays.stream(manageOrgIds.split(&quot;,&quot;))</span><br><span class="line">                                             .map(Long::parseLong)</span><br><span class="line">                                             .collect(Collectors.toList());</span><br><span class="line">           for (Long mgorgId : orgIdList) &#123;</span><br><span class="line">               Organization organization = organizationService.qryOrganizationByOrgId(mgorgId);</span><br><span class="line">               if (StringUtil.isNotEmpty(organization.getPathCode())) &#123;</span><br><span class="line">                   List&lt;Long&gt; mgorgIds = Arrays.stream(organization.getPathCode().split(&quot;,&quot;))</span><br><span class="line">                                               .map(Long::parseLong)</span><br><span class="line">                                               .collect(Collectors.toList());</span><br><span class="line">                   // 创建 orgIds 的副本</span><br><span class="line">                   List&lt;Long&gt; orgIds = new ArrayList&lt;&gt;(originalOrgIds);</span><br><span class="line">                   // 保留 orgIds 和 mgorgIds 中的公共元素</span><br><span class="line">                   orgIds.retainAll(mgorgIds);</span><br><span class="line">                   if (CollUtil.isNotEmpty(orgIds)) &#123;</span><br><span class="line">                       return true;</span><br><span class="line">                   &#125;</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br></pre></td></tr></table></figure>
       
     </div>
 
@@ -669,7 +427,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/27/2024-06-27-bug%E4%BF%AE%E5%A4%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -683,7 +441,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-07 sql优化处理</a>
+            <a href="/2024/06/27/2024-06-27-bug%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">2024-06-27-bug修复</a>
         </h2>
 
         <div class="post-meta">
@@ -692,24 +450,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2023-11-08 09:26:39" itemprop="dateCreated datePublished" datetime="2023-11-08T09:26:39+08:00">2023-11-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-09 14:58:58" itemprop="dateModified" datetime="2024-01-09T14:58:58+08:00">2024-01-09</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">性能优化</span></a>
-                </span>
+              <time title="创建时间：2024-06-27 14:31:31 / 修改时间：14:40:22" itemprop="dateCreated datePublished" datetime="2024-06-27T14:31:31+08:00">2024-06-27</time>
             </span>
 
           
@@ -721,8 +464,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    <a title="valine" href="/2024/06/27/2024-06-27-bug%E4%BF%AE%E5%A4%8D/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/06/27/2024-06-27-bug%E4%BF%AE%E5%A4%8D/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -732,14 +475,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
+              <span>708</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
+              <span>1 分钟</span>
             </span>
 
         </div>
@@ -751,14 +494,108 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>能耗告警模块查询详请很慢</p>
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>mybatis 里判断等于条件，if条件始终不生效。<br>问题代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&lt;if test=&quot;compType != null and (compType == &#x27;3&#x27; or compType == &#x27;4&#x27;)&quot;&gt;</span><br><span class="line">            AND comp_type = #&#123;compType&#125;</span><br><span class="line">        &lt;/if&gt;</span><br><span class="line">        &lt;if test=&quot;compType == &#x27;2&#x27; &quot;&gt;</span><br><span class="line">            AND comp_type is null</span><br><span class="line"> &lt;/if&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>mybtis 判定不等于test使用双引号，里面参数使用单引号；但是<br>当使用&#x3D;&#x3D;的时候，需要test外层使用 ‘’单引号，里面的参数使用 “”双引号<br>改成</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;if test=&quot;beginDate != null and endDate != null&quot;&gt;</span><br><span class="line">           AND update_time BETWEEN #&#123;beginDate&#125; AND #&#123;endDate&#125;</span><br><span class="line">       &lt;/if&gt;</span><br><span class="line">       &lt;if test=&#x27;compType != null and (compType == &quot;3&quot; or compType == &quot;4&quot;)&#x27;&gt;</span><br><span class="line">           AND comp_type = #&#123;compType&#125;</span><br><span class="line">       &lt;/if&gt;</span><br><span class="line">       &lt;if test=&#x27;compType == &quot;2&quot;&#x27;&gt;</span><br><span class="line">           AND comp_type is null</span><br><span class="line">       &lt;/if&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/06/27/2024-06-27-sql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/06/27/2024-06-27-sql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" class="post-title-link" itemprop="url">2024-06-27-sql性能优化</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-06-27 10:38:34 / 修改时间：14:33:48" itemprop="dateCreated datePublished" datetime="2024-06-27T10:38:34+08:00">2024-06-27</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/06/27/2024-06-27-sql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/06/27/2024-06-27-sql%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>功能优化。菜单路径：巡检任务查询</p>
 <h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>定位到以下sql </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">select a.id,a.city_id,a.city_name,a.building_id,a.building_name,a.room_id,a.room_name,a.equipment_type_code,a.equipment_type_name,</span><br><span class="line">       a.equipment_id,a.equipment_name,a.average_energy,a.default_power,a.level,a.fluctuation_range,a.average_max,a.average_min,</span><br><span class="line">       ROUND(a.alarm_outliers,2) alarm_outliers,a.create_time,a.alarm_time,a.ishandle,a.default_max,a.default_min,a.absolute_max,a.absolute_min,</span><br><span class="line">       a.repair_loaded,a.account_day,a.standard_deviation,a.absolute_value,</span><br><span class="line">       (select b.calculating_priority_first from ene_cfg_energycost_device b where a.equipment_id = b.csc_device_id and b.state = &#x27;101002&#x27; limit 1) as calculating_priority_first</span><br><span class="line">from ene_rm_alarm_details a</span><br><span class="line">    left join roomck_building_rel c on a.building_id = c.other_building_id and c.other_org_source = &#x27;3&#x27;</span><br><span class="line">    left join roomck_building d on c.building_id = d.id</span><br><span class="line">    left join roomck_room_rel t3 on a.room_id = t3.other_room_id and a.building_id = t3.other_build_id and t3.other_org_source = &#x27;3&#x27;</span><br><span class="line">    inner join roomck_organization ro on t3.room_id = ro.org_id and ro.org_level = 12</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;beginTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;gt;= #&#123;beginTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;endTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;lt;= #&#123;endTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentTypeCode != null and equipmentTypeCode != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_type_code = #&#123;equipmentTypeCode&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentName != null and equipmentName != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_name like concat(&#x27;%&#x27;, #&#123;equipmentName&#125;, &#x27;%&#x27;)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;level != null and level != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.level = #&#123;level&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">order by a.alarm_time,a.room_name</span><br></pre></td></tr></table></figure>
-<p>发现该sql进行多表关联，且查询的字段用了函数计算。 ene_rm_alarm_details 是大表300多万数据。进行explain分析。<br>进行了全表扫描。 另外order by 字段没建立索引，导致索引失效</p>
-<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><p>1.拆分sql 语句, 先查出ene_rm_alarm_details的主键 id，然后在通过id去查详情数据。<br>2.ene_rm_alarm_details 的room_id字段上建立索引。<br>3.去掉order by a.alarm_time,a.room_name，改为程序进行排序。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">a.id</span><br><span class="line">FROM ene_rm_alarm_details a</span><br><span class="line">INNER JOIN (</span><br><span class="line">    SELECT DISTINCT t3.other_room_id FROM  roomck_room_rel t3</span><br><span class="line">    LEFT JOIN roomck_building_rel c ON t3.other_build_id = c.other_building_id  and c.other_org_source = &#x27;2&#x27;</span><br><span class="line">    INNER JOIN roomck_organization ro  ON ro.org_id = t3.room_id  and t3.other_org_source = &#x27;2&#x27;</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">) tb on a.room_id = tb.other_room_id</span><br></pre></td></tr></table></figure>
-<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询耗时1分多钟优化到 5~8 秒</p>
-<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><p>业务上进行优化 ene_rm_alarm_details是大表，不应该检索所有数据。业务上应该默认查询最近一年的数据或者给一个时间范围。通过在告警时间上建立索引。把大表变成小表，然后在跟其他表进行关联时。性能会提升一大截。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">        select</span><br><span class="line">	rct.id,</span><br><span class="line">	rct.task_num as taskNum,</span><br><span class="line">	rct.plan_id as planId,</span><br><span class="line">	rct.plan_name as planName,</span><br><span class="line">	rct.exec_hour as execHour,</span><br><span class="line">	rct.task_start_time as taskStartTime,</span><br><span class="line">	rct.task_end_time as taskEndTime,</span><br><span class="line">	rct.task_s_start_time as taskSStartTime,</span><br><span class="line">	rct.task_s_end_time as taskSEndTime,</span><br><span class="line">	rct.task_desc as taskDesc,</span><br><span class="line">	rct.is_trun as isTrun,</span><br><span class="line">	rct.create_time as createTime,</span><br><span class="line">	rct.task_state as taskState,</span><br><span class="line">	rcm.org_id as orgId,</span><br><span class="line">	(case</span><br><span class="line">		when rct.task_state = 1003</span><br><span class="line">		and rct.task_s_end_time &gt; rct.task_end_time then 1</span><br><span class="line">		when rct.task_state in(1001, 1002)</span><br><span class="line">		and now() &gt; rct.task_end_time then 1</span><br><span class="line">		else 0</span><br><span class="line">	end ) as isOverTime,</span><br><span class="line">	GROUP_CONCAT(distinct rctu.execution_user_name) as planUserName,</span><br><span class="line">	GROUP_CONCAT(distinct rcti.submit_user) as executionUserName,</span><br><span class="line">	GROUP_CONCAT(rctu.execution_user) as executionUserId,</span><br><span class="line">	rcm.mould_typle as mouldTyple,</span><br><span class="line">	rct.approve_user as approveUser,</span><br><span class="line">	rct.approve_user_name as approveUserName ,</span><br><span class="line">	rct.comments,</span><br><span class="line">	rct.approve_time as approveTime,</span><br><span class="line">	rct.is_incident as isIncident ,</span><br><span class="line">	rcp.group_id as groupId</span><br><span class="line">from</span><br><span class="line">	roomck_ck_task rct</span><br><span class="line">inner join roomck_ck_plan rcp on</span><br><span class="line">	rct.plan_id = rcp.id</span><br><span class="line">inner join roomck_ck_mould rcm on</span><br><span class="line">	rct.mould_id = rcm.id</span><br><span class="line">left join roomck_ck_task_user rctu on</span><br><span class="line">	rct.id = rctu.task_id</span><br><span class="line">	and rctu.data_state = &#x27;00A&#x27;</span><br><span class="line">inner join roomck_ck_task_item rcti on</span><br><span class="line">	rct.id = rcti.task_id</span><br><span class="line">inner join roomck_organization ro on</span><br><span class="line">	ro.org_id = rcm.org_id</span><br><span class="line">where</span><br><span class="line">	rct.ck_type = &#x27;1&#x27;</span><br><span class="line">group by</span><br><span class="line">	rct.id</span><br><span class="line">order by</span><br><span class="line">	taskStartTime desc</span><br><span class="line">limit 100</span><br><span class="line">     </span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><ol>
+<li>发现roomck_ck_task_item 的task_id是字符串类型，rct.id 是bigint 类型。索引失效。</li>
+<li>发现GROUP_CONCAT连接后的字符串长度超过限制后，会被截断</li>
+</ol>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><ol>
+<li>把roomck_ck_task_item的task_id改成bigint类型。</li>
+<li>GROUP_CONCAT 的实现逻辑转成在程序里实现<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ALTER TABLE roomck_ck_task_item MODIFY COLUMN task_id BIGINT NULL COMMENT &#x27;任务ID&#x27;;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询优化到 3 秒 以内</p>
 
       
     </div>
@@ -778,7 +615,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -792,7 +629,217 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-02 bug处理</a>
+            <a href="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/" class="post-title-link" itemprop="url">2024-05-29-运用策略模式与范型编程实现功能</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-29 19:31:26 / 修改时间：20:03:34" itemprop="dateCreated datePublished" datetime="2024-05-29T19:31:26+08:00">2024-05-29</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="需求描述"><a href="#需求描述" class="headerlink" title="需求描述"></a>需求描述</h3><p>需要实现根据不同部门发送不同的消息模板。每个消息模板内取数方式都不一样。另外需要根据不同模板下载不同的文件。<br>实现不同的下载方法。</p>
+<h3 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h3><ol>
+<li>对于不同的消息模板，使用FreeMaker模板引擎编写不同的消息模板。</li>
+<li>运用策略模式，实现不同的消息发送服务。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 注入实现StrategyMethodService接口的实现类</span><br><span class="line"> @Autowired</span><br><span class="line"> Map&lt;String, StrategyMethodService&gt; stringStrategyMethodServiceMap = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"> public StrategyMethodService getStrategyService(String serviceCode) &#123;</span><br><span class="line">     StrategyMethodService strategyService = stringStrategyMethodServiceMap.get(serviceCode);</span><br><span class="line">     if (strategyService == null) &#123;</span><br><span class="line">         throw new BusinessRuntimeException(&quot;13000003&quot;);</span><br><span class="line">     &#125;</span><br><span class="line">     return strategyService;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></li>
+<li>使用范型编程编写通用的下载方法，提升代码灵活性与复用性。T extends excelData 不仅仅可以限定参数的范围。方法内部还可以使用父类的属性和方法。十分灵活和方便。</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 不同消息实现类调用该方法</span><br><span class="line">private &lt;T extends excelData&gt; List&lt;T&gt; getExcelData(Condition data, Class&lt;T&gt; tClass)  &#123;</span><br><span class="line">    // 在这个方法内部，可以使用excelData的一些属性和方法，</span><br><span class="line">&#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
+<h3 id="范型限制类型"><a href="#范型限制类型" class="headerlink" title="范型限制类型"></a>范型限制类型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">T extends SomeClass: 这种限制要求范型参数必须是某个类（或其子类）的类型。例如，T extends Number 要求范型参数必须是 Number 类（或其子类）的类型。</span><br><span class="line"></span><br><span class="line">T super SomeClass: 这种限制要求范型参数必须是某个类（或其父类）的类型。例如，T super Integer 要求范型参数必须是 Integer 类（或其父类）的类型。</span><br><span class="line"></span><br><span class="line">T extends Interface: 这种限制要求范型参数必须实现某个接口。例如，T extends Comparable 要求范型参数必须实现 Comparable 接口。</span><br><span class="line"></span><br><span class="line">T extends SomeClass &amp; Interface: 这种限制要求范型参数必须是某个类（或其子类）的类型，并且实现了指定的接口。例如，T extends Number &amp; Comparable 要求范型参数必须是 Number 类（或其子类）的类型，并且实现了 Comparable 接口。</span><br><span class="line"></span><br><span class="line">T extends Enum: 这种限制要求范型参数必须是枚举类型。</span><br></pre></td></tr></table></figure>
+
+<h3 id="业务代码实现逻辑"><a href="#业务代码实现逻辑" class="headerlink" title="业务代码实现逻辑"></a>业务代码实现逻辑</h3><p>预警通知逻辑<br>1.扫描应急预警通知单 预警状态为已发布（5），预警性质为初次发布（1）的数据，关联应急事件表，返回所有需要发送的实体信息。<br>2.遍历所有需要发布的实体信息。<br>3.调用防御部署算法入库预估数据，根据事件id过滤，重复的事件只调用一次算法。<br>4.发送预警发布信息。发送信息枚举为0。已经发送过的不在发送。<br>5.遍历需要发送信息的不同部门模版信息服务。根据不同的信息枚举调用不同的消息服务。<br>6.对应消息实现类实现不同模版的取数。实现逻辑， 一进入实现类，首先判定该消息是否已经发送过（查询预警行动分析表）。如果已经发送过。返回消息null; 外部根据返回的信息是否为空，判定是否继续往下执行。如果第一次发送。则走下面逻辑。不同模版取不同的数据。取数完成之后。调用转换业务分析-清单数据的实体类方法。 入库清单数据，注意如果一个部门有多个清单，需要入库多个清单数据。（主要逻辑是取对应业务表的主键id入库。实现下载方法时根据该id关联对应的业务表取数）。主要作用是为了之后下载清单用。取到数据后，把对应的数据塞到模版对应的变量当中，使用的技术是freeMarker. 对应的模版文件在资源文件的templates下。<br>7.实现清单下载。大概框架写好了，只要补充不同的清单数据实现逻辑即可</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">2024-05-28-智能体相关功能技术实现</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-05-28 15:11:59 / 修改时间：17:28:53" itemprop="dateCreated datePublished" datetime="2024-05-28T15:11:59+08:00">2024-05-28</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="判断器组件功能"><a href="#判断器组件功能" class="headerlink" title="判断器组件功能"></a>判断器组件功能</h3><h4 id="功能描述："><a href="#功能描述：" class="headerlink" title="功能描述："></a>功能描述：</h4><p>  在智能体编排界面，选择判断器组件。输入表达式。表达式为真走一个流程；为假走另一个流程。<br>表达式是规则表达式； 例如 a &gt; b; a 与 b 分别为编排界面输入的变量名。可能是上游的引用，也可能是赋值。</p>
+<h4 id="技术实现："><a href="#技术实现：" class="headerlink" title="技术实现："></a>技术实现：</h4><p>功能实现简单引入com.googlecode.aviator 对表达式进行预处理。由AviatorEvaluator去判断表达器真假</p>
+<pre><code>            Expression compiledExp = AviatorEvaluator.compile(exp, true);
+            Map&lt;String, Object&gt; env = new HashMap&lt;&gt;(inputs);
+            Boolean result = (Boolean) compiledExp.execute(env);
+</code></pre>
+<p><img src="/../images/judgement.JPG" alt="img">   </p>
+<h3 id="迭代器组件功能"><a href="#迭代器组件功能" class="headerlink" title="迭代器组件功能"></a>迭代器组件功能</h3><h4 id="功能描述"><a href="#功能描述" class="headerlink" title="功能描述"></a>功能描述</h4><p>  把上游传过来的数据根据输入的迭代器表达转换成字符串的形式。上游传过来的数据可能是list, 也有可能是map. 需要根据输入的迭代器表达式输出字符串。如果是list则需要循环遍历出list所有的数据。<br>例子： 迭代器配置: ‘\{\{output.q\}\} &#x3D;哈&#x3D;\{\{output.a\}\}’  |||<br>最终下游大模型节点得到这个字符串：<br>’接口规范1&#x3D;哈&#x3D;问题1|||接口规范2&#x3D;哈&#x3D;问题1|||接口规范3&#x3D;哈&#x3D;问题1|||接口规范4&#x3D;哈&#x3D;问题1|||接口规范5&#x3D;哈&#x3D;问题1‘<br><img src="/../images/iterator.JPG" alt="img"></p>
+<h4 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h4><ol>
+<li>从功能描述可知，第一个.前面的是变量名，需要使用java 正则表达式Pattern，Matcher。把它切割出来。才能得到对应数据。</li>
+<li>引入com.google.gson。因为上游传入的参数可能是Map, 也有可能是List. 需要判断传入的数据是哪种类型。gson 提供了api方便我们判断</li>
+<li>需要考虑嵌套数据。map 里面某个属性可能还嵌套其他属性。比如输入的表达式可能是 a.b.c 需要取出a的孙子节点c的数据。实现细节， 需要同时使用 com.google.gson 和java 正则表达式实现。</li>
+</ol>
+<h3 id="数据库组件功能"><a href="#数据库组件功能" class="headerlink" title="数据库组件功能"></a>数据库组件功能</h3><p> 功能描述： 在sql表达框内输入sql。 使用 \{\{\}\}\ 把变量名括起来。只支持查询语句<br> 功能实现比较简单。</p>
+<ol>
+<li>使用java正则表达式 取出变量名</li>
+<li>找到对应变量名 把它替换成？。使用预处理方式执行sql;防止sql 注入。</li>
+<li>直接使用jdbc模板类把参数名填充执行sql语句。</li>
+</ol>
+<h3 id="意图识别功能-（实现的主要是针对excel文档问答场景）"><a href="#意图识别功能-（实现的主要是针对excel文档问答场景）" class="headerlink" title="意图识别功能 （实现的主要是针对excel文档问答场景）"></a>意图识别功能 （实现的主要是针对excel文档问答场景）</h3><h4 id="功能描述-1"><a href="#功能描述-1" class="headerlink" title="功能描述"></a>功能描述</h4><p>  用户输入一个问题，需要去判断这个问题是否存在知识库当中。如果不存在。需要根据问题进行分析。返回3个最可能用户问的问题。后台还会返回转换后的参数交给下游及知识库去精确匹配以提升准确率。</p>
+<h4 id="技术实现-1"><a href="#技术实现-1" class="headerlink" title="技术实现"></a>技术实现</h4><p>   完成该功能，需要前置功能: 知识库管理功能，知识构建功能, 术语管理功能。</p>
+<ol>
+<li>知识库管理功能主要是知识库的权限隔离，增删改查功能。</li>
+<li>知识构建主要是把word文档，excel文档进行embedding向量化，存储到向量库（redis集群实现的）和pgsql库。<br>针对excel文档，还需区分实体和概念入术语表。实体是表格里的数据。概念是表头的数据。</li>
+<li>术语管理功能。术语的增删改查功能以及同义词的管理功能</li>
+<li>界面编排界面，需要指定参数哪个知识库，实体和概念对应的知识库和文件是哪个</li>
+</ol>
+<h4 id="意图识别实现思路"><a href="#意图识别实现思路" class="headerlink" title="意图识别实现思路"></a>意图识别实现思路</h4><p>  初期实现思路是通过结巴分词对问题进行分词，然后根据分词结果与术语匹配。发现性能很差而且分词不准，并且结巴分词java版已经停止维护。 优化思路是先根据编排界面的查询术语库，根据术语库把问题进行分词。如果问题中包含术语。则把对应包含的术语。区分概念和实体与编排界面上配置的参数一一匹配上。另外如果配置了同义词。还需对问题进行同义词替换。把同义词替换成术语。如果参数一一匹配上了。最终把用户输入的一句话。输出转换成一个Map形式交给下游。里面包含了实体和概念对应所在的文件，知识库。从而使得在知识库进行向量搜索时，大大提升准确率。如果有参数没有匹配上。及说明知识库中不包含用户所在的问题。即要返回3个最可能用户问的问题返回。初期实现思路是，写好提升词；直接把问题和术语直接丢个大模型。让大模型给我生成用户最可能要问的问题。然而，这种实现思路，会出现以下问题，一是性能问题。调用大模型需要时间。二是准确率问题， 不同的大模型用相同的提示词返回答案不一致。往往调试好的提示词，换一个大模型就不行了，导致返回的问题一直回答不了陷入死循环。最后抛弃了这种实现方式。采用的是lucene + hanlp 技术实现。通过hanlp 对问题进行分词。找出最相似的实体， 和最相似的概念。 然后进行拼接问题。缺点是问题模式有点固定。不像大模型返回的问题自然。优点是能确保返回的问题是可以被回答出来的。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">2024-05-09-bug修复</a>
         </h2>
 
         <div class="post-meta">
@@ -802,14 +849,211 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2023-11-03 15:05:40" itemprop="dateCreated datePublished" datetime="2023-11-03T15:05:40+08:00">2023-11-03</time>
+              <time title="创建时间：2024-05-09 09:28:19" itemprop="dateCreated datePublished" datetime="2024-05-09T09:28:19+08:00">2024-05-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-12-19 09:52:30" itemprop="dateModified" datetime="2023-12-19T09:52:30+08:00">2023-12-19</time>
+                <time title="修改时间：2024-05-28 15:02:29" itemprop="dateModified" datetime="2024-05-28T15:02:29+08:00">2024-05-28</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>825</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>使用java 正则表达式处理数据，报错</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Pattern pattern = Pattern.compile(&quot;\\&#123;\\&#123;(.+?)\\&#125;\\&#125;&quot;);</span><br><span class="line">      Matcher matcher = pattern.matcher(iteratorExp);</span><br><span class="line">      StringBuffer buffer = new StringBuffer();</span><br><span class="line">      while (matcher.find()) &#123;</span><br><span class="line">          String variableName = matcher.group(1); // 获取变量名</span><br><span class="line">          if (jsonElement.isJsonObject()) &#123;</span><br><span class="line">              JsonObject jsonObject = jsonElement.getAsJsonObject();</span><br><span class="line">              JsonElement jsonment = getElementByPath(jsonObject, variableName, key);</span><br><span class="line">              if (jsonment != null) &#123;</span><br><span class="line">                  String escapedText = jsonment.getAsString().replaceAll(&quot;\\$&quot;, &quot;\\\\\\$&quot;).replaceAll(&quot;/&quot;, &quot;\\\\/&quot;);</span><br><span class="line">                  matcher.appendReplacement(buffer, escapedText);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line">      matcher.appendTail(buffer);</span><br><span class="line">      return buffer.toString();</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>.*+?|()[]{}^$\ 在正则表达式中存在特殊含义，当数据存在这些字符时，需要对其转义  Pattern.quote(input);</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
+<li>转义x<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String escaped = Pattern.quote(input);</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/" class="post-title-link" itemprop="url">2024-04-23-性能优化-csv大文件同步入库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-23 19:48:25" itemprop="dateCreated datePublished" datetime="2024-04-23T19:48:25+08:00">2024-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-24 14:40:56" itemprop="dateModified" datetime="2024-04-24T14:40:56+08:00">2024-04-24</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>738</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>云调资源数据同步。同步设备数据。大csv文件同步数据入库。发生OOM溢出</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>以下为问题代码.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String fullUrl = HttpUtil.urlWithForm(url, paramMap, CharsetUtil.CHARSET_UTF_8, true);</span><br><span class="line">String response  = HttpUtil.createGet(fullUrl).addHeaders(header).execute().body();</span><br><span class="line">List&lt;EquipmentDataDTO&gt; equipmentDataDTOList = transferCsvData(response);</span><br><span class="line">if (equipmentDataDTOList != null) &#123;</span><br><span class="line">    log.info(&quot;同步设备:&quot; + equArray[i] + &quot;,数据大小&quot; + equipmentDataDTOList.size());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 使用hutool的HttpUtil类去调用外部接口获取设备数据。HttpUtil.createGet(fullUrl).addHeaders(header).execute().body()； .execute()是同步执行的，程序会在发送请求后阻塞，直到收到响应为止。.body()会把数据全部获取完毕，然后一次性塞到内存当中。当数据非常大时，会导致OOM。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>改成异步执行，流式响应体处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InputStream response  = HttpUtil.createGet(fullUrl).addHeaders(header).executeAsync().bodyStream();</span><br></pre></td></tr></table></figure>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>对于2G 的csv文件,能正常响应并同步入库</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/" class="post-title-link" itemprop="url">2023-04-07-bug修复-RedisTemplate与StringRedisTemplate</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-07 10:36:09" itemprop="dateCreated datePublished" datetime="2024-04-07T10:36:09+08:00">2024-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-17 17:45:45" itemprop="dateModified" datetime="2024-07-17T17:45:45+08:00">2024-07-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -830,8 +1074,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    <a title="valine" href="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -841,14 +1085,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>752</span>
+              <span>1.7k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -860,347 +1104,20 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>前端展示组织树，一直点下一级，点到最后一级时，选择一个组织，同级组织全部被选中。</p>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>发现返回的组织树的id是长整型。而前端用的是number类型接收。number类型最大范围为9007199254740992。 导致精度丢失，同一级别节点的id变成一样。导致都被选中</p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>将long型数字替换成字符串。<br>后端处理在字段上加 @JsonSerialize(using &#x3D; ToStringSerializer.class)</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">import com.fasterxml.jackson.databind.annotation.JsonSerialize;</span><br><span class="line">import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;</span><br><span class="line">    @JsonSerialize(using = ToStringSerializer.class)</span><br><span class="line">    private Long orgId;</span><br></pre></td></tr></table></figure>
-<h4 id="引发的思考-前端传String类型可以自动转化成long类型的原理。"><a href="#引发的思考-前端传String类型可以自动转化成long类型的原理。" class="headerlink" title="引发的思考 前端传String类型可以自动转化成long类型的原理。"></a>引发的思考 前端传String类型可以自动转化成long类型的原理。</h4><p>DispatcherServlet -》AbstractHandlerMethodAdapter -》<br>RequestMappingHandlerAdapter &#x3D;》ServletInvocableHandlerMethod &#x3D;》<br>HandlerMethodArgumentResolver &#x3D;》InvocableHandlerMethod &#x3D;》<br>HandlerMethodArgumentResolverComposite &#x3D;》 RequestResponseBodyMethodProcessor<br>&#x3D;》AbstractJackson2HttpMessageConverter</p>
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>报错代码为以下代码。从redis 中获取数据，然后转成UserInfoDTO对象 报错。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if (StringUtils.isNotBlank(sessionId)) &#123;</span><br><span class="line">    // 根据sessionId从缓存读取用户信息，存在认为用户已登录，放行</span><br><span class="line">    Object currentUser = cacheClient.hget(SessionConst.USER_SESSIONS_KEY + sessionId, SessionConst.SHARE_CURRENT_USER_KEY);</span><br><span class="line">    System.out.println(currentUser);</span><br><span class="line"></span><br><span class="line">    if (Objects.nonNull(currentUser)) &#123;</span><br><span class="line">        userInfo_ = JSON.parseObject(currentUser.toString(), UserInfoDTO.class);</span><br><span class="line">        System.out.println(userInfo_);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>这段代码是另一个模块复制过来的，在另一个模块不报错。在这个模块就报错了。 经过调试发现从redis 获取的数据json字符串外面还包了一层双引号，如下图。 导致转换对象报错。最后发现两个模块所用的redis模板类不一样导致的。当前模块用的是StringRedisTemplate，另一模块用的RedisTemplate则没有这个问题。原因是在于StringRedisTemplate默认使用的是基于字符串的序列化和反序列化策略，而RedisTemplate使用的是基于Java序列化的策略。这导致了它们在处理特定数据类型时的行为差异。StringRedisTemplate更适合处理简单的字符串或字符串形式的数据，而RedisTemplate由于其默认的序列化策略，更适合处理复杂的Java对象。<br><img src="/../images/2024-4-07-redis.JPG" alt="调试截图"></p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
+<li>StringRedisTemplate 改成 RedisTemplate</li>
+<li>手动处理双引号的情况<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String value = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">if (value != null &amp;&amp; value.startsWith(&quot;\&quot;&quot;) &amp;&amp; value.endsWith(&quot;\&quot;&quot;)) &#123;</span><br><span class="line">    value = value.substring(1, value.length() - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="RedisTemplate与StringRedisTemplate的区别"><a href="#RedisTemplate与StringRedisTemplate的区别" class="headerlink" title="RedisTemplate与StringRedisTemplate的区别"></a>RedisTemplate与StringRedisTemplate的区别</h4><ol>
+<li><p>StringRedisTemplate：专门为字符串操作优化。它默认使用StringRedisSerializer对键和值进行序列化。StringRedisSerializer将Java对象转换成字符串时，如果输入是字符串，它基本上是直接返回这个字符串（不进行额外的处理）。因此，如果你在存储时手动将对象转换为JSON字符串，然后使用StringRedisTemplate存储这个字符串，它实际上是直接存储了这个JSON字符串。在获取这个值时，如果原始数据是带双引号的字符串，这些双引号也会被当作字符串的一部分返回。</p>
+</li>
+<li><p>RedisTemplate：是更通用的模板，可以用于各种数据类型的Redis操作。它默认使用JdkSerializationRedisSerializer进行序列化，这个序列化器会将Java对象序列化为字节序列，并在这个过程中保留对象的类型信息。当使用RedisTemplate存储数据时，即便是字符串，也会先将其转换成字节序列然后再存储。当从Redis获取数据时，它会将这些字节序列反序列化回原始的Java对象。因此，如果你使用RedisTemplate存储经过JSON序列化的字符串，这个字符串会被作为一个单独的对象处理，而不是简单地作为一个字符串。在反序列化时，RedisTemplate能够正确地处理类型，避免了额外的双引号问题。</p>
+</li>
+</ol>
 
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/" class="post-title-link" itemprop="url">面试感悟</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-10-09 11:56:02" itemprop="dateCreated datePublished" datetime="2023-10-09T11:56:02+08:00">2023-10-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-10 10:33:21" itemprop="dateModified" datetime="2023-10-10T10:33:21+08:00">2023-10-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BA%BA%E7%94%9F%E6%84%9F%E6%82%9F/" itemprop="url" rel="index"><span itemprop="name">人生感悟</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>643</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          Welcome to my blog, enter password to read.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/10/09/%E9%9D%A2%E8%AF%95%E6%84%9F%E6%82%9F/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/10/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/09/10/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86/" class="post-title-link" itemprop="url">面试经历</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-09-10 10:14:28" itemprop="dateCreated datePublished" datetime="2023-09-10T10:14:28+08:00">2023-09-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-01-11 15:02:58" itemprop="dateModified" datetime="2024-01-11T15:02:58+08:00">2024-01-11</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/09/10/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/09/10/%E9%9D%A2%E8%AF%95%E7%BB%8F%E5%8E%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>陆陆续续面了几家公司。面试下来感觉自己知识点掌握的还不扎实。八股文看了总是记不住，只是脑子里有个概念。半知半解。需要继续努力学习。</p>
-<h3 id="springboot配置文件加载顺序"><a href="#springboot配置文件加载顺序" class="headerlink" title="springboot配置文件加载顺序"></a>springboot配置文件加载顺序</h3><p>1.命令行参数。所有的配置都可以在命令行上进行指定；<br>来自java:comp&#x2F;env的JNDI属性；<br>2.Java系统属性（System.getProperties()）；<br>3.操作系统环境变量 ；<br>4.jar包外部的application-{profile}.properties或application.yml(带spring.profile)配置文件<br>5.jar包内部的application-{profile}.properties或application.yml(带spring.profile)配置文件 再来加载不带profile<br>6.jar包外部的application.properties或application.yml(不带spring.profile)配置文件<br>7.jar包内部的application.properties或application.yml(不带spring.profile)配置文件<br>8.@Configuration注解类上的@PropertySource</p>
-<h3 id="对称加密和非对称加密"><a href="#对称加密和非对称加密" class="headerlink" title="对称加密和非对称加密"></a>对称加密和非对称加密</h3><p>对称加密：加密和解密用的是同一个密码或者同一套逻辑的加密方式。<br>常见的对称加密算法有DES、3DES、AES、Blowfish、IDEA、RC5、RC6，<br>非对称加密用的是一对秘钥，分别叫做公钥（public key）和私钥（private key），也叫非对称秘钥。非对称秘钥既可以用于加密还可以用于认证</p>
-<h3 id="一条sql语句在MySQL的执行过程"><a href="#一条sql语句在MySQL的执行过程" class="headerlink" title="一条sql语句在MySQL的执行过程"></a>一条sql语句在MySQL的执行过程</h3><p>客户端 -》 连接器 -》 分析器 -》 优化器 -》 执行器 -》 执行引擎<br>BufferPool查找数据—》写入undo log—-&gt;修改内存数据—–》写入redo log buffer——&gt;提交事务时，把redo log刷盘—–》binlog 刷盘—-》redo log 完成commit标记—》内存中脏数据刷入磁盘</p>
-<h3 id="redo-日志-undo-日志-和binlog-日志的区别"><a href="#redo-日志-undo-日志-和binlog-日志的区别" class="headerlink" title="redo 日志 undo 日志 和binlog 日志的区别"></a>redo 日志 undo 日志 和binlog 日志的区别</h3><p>redo日志、Undo日志和Binlog日志是MySQL中不同类型的日志文件，它们各自用于不同的目的，具有不同的特性和作用：<br>Redo日志（重做日志）：<br>作用：Redo日志是用于恢复数据库数据一致性和持久性的日志。它记录了每个事务对数据库的物理更改，包括数据页的修改。<br>存储位置：通常存储在InnoDB存储引擎中，以二进制文件的形式存在于数据库的数据目录中（例如ib_logfile0和ib_logfile1）。<br>特性：Redo日志是物理日志，记录了对数据的实际更改。它以追加方式写入，通常是循环使用的，以节省磁盘空间。Redo日志的主要作用是在数据库崩溃或重新启动后，通过重播Redo日志中的操作来恢复数据的一致性和完整性。</p>
-<p>Undo日志（回滚日志）：<br>作用：Undo日志用于支持事务的回滚和MVCC。它记录了事务对数据的修改之前的旧值，以便在需要回滚事务或执行读取操作时提供原始数据的一致性视图。<br>存储位置：通常存储在InnoDB存储引擎中，以表空间的方式存在。<br>特性：Undo日志记录了事务的逻辑操作，以便在需要时执行反操作（回滚）。每个事务都有自己的Undo日志，用于维护数据的多版本并发控制（MVCC）。</p>
-<p>Binlog日志（二进制日志）：<br>作用：Binlog日志用于记录数据库的更改操作，包括数据的插入、更新和删除，以及DDL（数据定义语言）操作，例如表的创建和删除。它通常用于数据复制、备份和恢复。<br>存储位置：通常存储在MySQL服务器的二进制日志文件中，以文本或二进制格式记录。<br>特性：Binlog日志是逻辑日志，它记录了数据库的逻辑更改操作。它通常由MySQL主服务器用于将更改传送给从服务器，以实现数据复制。Binlog日志还可以用于创建点播或增量备份。</p>
-<p>总结：Redo日志用于恢复数据库的物理更改，Undo日志用于支持事务的回滚和MVCC，Binlog日志用于记录数据库的逻辑更改操作。这些日志在数据库管理和维护中起着不同的角色，以确保数据的一致性、完整性和可用性。</p>
-<h3 id="TCP-三次握手"><a href="#TCP-三次握手" class="headerlink" title="TCP 三次握手"></a>TCP 三次握手</h3><p>TCP（传输控制协议）的三次握手是建立TCP连接的过程，用于确保通信的两端都愿意接受和发送数据。下面是TCP三次握手的过程：</p>
-<p>第一次握手 - 客户端向服务器发送请求：</p>
-<p>客户端首先创建一个用于通信的TCP套接字，并将标志位设置为SYN（同步请求）。<br>客户端选择一个初始序列号（ISN，Initial Sequence Number）并包含在TCP报文中。<br>客户端选择一个随机的初始序列号，这个序列号用于后续的数据传输。<br>客户端将这个SYN报文发送给服务器，请求建立连接。<br>第二次握手 - 服务器确认请求：</p>
-<p>服务器收到客户端的SYN报文。<br>服务器也创建一个用于通信的TCP套接字，并将标志位设置为SYN。<br>服务器选择一个自己的初始序列号（ISN）。<br>服务器将自己的初始序列号和确认号设置为客户端的ISN加1，并包含在TCP报文中。<br>服务器将这个SYN+ACK报文发送给客户端，表示接受连接请求。<br>第三次握手 - 客户端确认连接：</p>
-<p>客户端收到服务器的SYN+ACK报文。<br>客户端将确认号设置为服务器的初始序列号加1，并将标志位设置为ACK（确认）。<br>客户端将这个ACK报文发送给服务器，表示确认连接。<br>连接建立：</p>
-<p>服务器收到客户端的ACK报文后，连接建立。<br>从此时开始，客户端和服务器都可以安全地在连接上进行数据传输。<br>至此，TCP连接建立完成，双方可以开始进行双向的数据传输。三次握手的过程确保了连接的双方都能够互相通信，并且双方都知道连接已经建立。在数据传输完毕后，还会进行四次握手来安全地关闭连接。这些握手过程是TCP协议中用于建立和终止连接的关键步骤，确保了数据的可靠传输。</p>
-<h3 id="TCP-4次挥手"><a href="#TCP-4次挥手" class="headerlink" title="TCP 4次挥手"></a>TCP 4次挥手</h3><p>TCP连接的关闭需要四次挥手的过程，是为了确保数据的可靠传输和连接的完全终止。四次挥手的目的如下：</p>
-<p>客户端通知服务器关闭：第一次挥手，客户端发送一个带有FIN（Finish）标志的TCP报文给服务器，表示它已经完成了数据的发送，希望关闭连接。客户端继续允许接收来自服务器的数据。</p>
-<p>服务器确认关闭请求：第二次挥手，服务器接收到客户端的FIN报文后，发送一个带有ACK标志的TCP报文给客户端，以确认收到关闭请求。此时，服务器仍然可以向客户端发送数据。</p>
-<p>服务器通知客户端关闭：第三次挥手，服务器决定关闭连接时，它会发送一个带有FIN标志的TCP报文给客户端，表示服务器已经完成了数据的发送，希望关闭连接。</p>
-<p>客户端确认关闭：第四次挥手，客户端接收到服务器的FIN报文后，发送一个带有ACK标志的TCP报文给服务器，以确认收到关闭请求。此时，连接处于完全关闭状态，双方都不再允许发送数据。</p>
-<p>四次挥手的过程确保了双方都有足够的时间来完成未完成的数据传输，同时也允许双方确认彼此的关闭意图。这有助于防止数据的丢失和不完整传输，同时保证连接的完全终止。如果只进行三次挥手，可能导致一方提前关闭连接，另一方仍然试图发送数据，从而导致数据的丢失。四次挥手的过程提供了更完善的连接终止机制。</p>
-<h3 id="select-for-update-是锁表还是锁行？"><a href="#select-for-update-是锁表还是锁行？" class="headerlink" title="select for update 是锁表还是锁行？"></a>select for update 是锁表还是锁行？</h3><p>如果查询条件用了索引&#x2F;主键，那么select ….. for update就会进行行锁。<br>如果是普通字段(没有索引&#x2F;主键)，那么select ….. for update就会进行锁表。</p>
-<h3 id="过滤器和拦截器的区别"><a href="#过滤器和拦截器的区别" class="headerlink" title="过滤器和拦截器的区别"></a>过滤器和拦截器的区别</h3><p> 过滤器Filter基于Servlet实现，过滤器的主要应用场景是对字符编码、跨域等问题进行过滤。Servlet的工作原理是拦截配置好的客户端请求，然后对Request和Response进行处理。Filter过滤器随着web应用的启动而启动，只初始化一次。Filter的使用比较简单，继承Filter 接口，实现对应的init、doFilter以及destroy方法即可。</p>
-<p>拦截器是SpringMVC中实现的一种基于Java反射（动态代理）机制的方法增强工具，拦截器的实现是继承HandlerInterceptor 接口，并实现接口的preHandle、postHandle和afterCompletion方法。</p>
-<h3 id="spring-常用注解"><a href="#spring-常用注解" class="headerlink" title="spring 常用注解"></a>spring 常用注解</h3><p>1.声明式的的注解<br>@controller,@resource,@Dao,@service 等<br>2.配置类的<br>@config<br>3.属性注入类<br>@autowire<br>4事务管理类<br>@Transcation</p>
-<h3 id="单体架构和微服务架构的区别以及优缺点"><a href="#单体架构和微服务架构的区别以及优缺点" class="headerlink" title="单体架构和微服务架构的区别以及优缺点"></a>单体架构和微服务架构的区别以及优缺点</h3><p>单体架构 部署简单 </p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/11/%E5%85%B3%E4%BA%8E%E7%A6%BB%E8%81%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2023/08/11/%E5%85%B3%E4%BA%8E%E7%A6%BB%E8%81%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" class="post-title-link" itemprop="url">关于离职的一些想法</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2023-08-11 11:41:46" itemprop="dateCreated datePublished" datetime="2023-08-11T11:41:46+08:00">2023-08-11</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-11-03 15:09:05" itemprop="dateModified" datetime="2023-11-03T15:09:05+08:00">2023-11-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BA%BA%E7%94%9F%E6%84%9F%E6%82%9F/" itemprop="url" rel="index"><span itemprop="name">人生感悟</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2023/08/11/%E5%85%B3%E4%BA%8E%E7%A6%BB%E8%81%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2023/08/11/%E5%85%B3%E4%BA%8E%E7%A6%BB%E8%81%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>528</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          Welcome to my blog, enter password to read.
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2023/08/11/%E5%85%B3%E4%BA%8E%E7%A6%BB%E8%81%8C%E7%9A%84%E4%B8%80%E4%BA%9B%E6%83%B3%E6%B3%95/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
       
     </div>
 
@@ -1218,7 +1135,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/7/">7</a><a class="extend next" rel="next" href="/page/3/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1283,7 +1200,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-count">64</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1294,7 +1211,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">28</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1330,12 +1247,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">85k</span>
+    <span title="站点总字数">146k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">2:35</span>
+    <span title="站点阅读时长">4:26</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

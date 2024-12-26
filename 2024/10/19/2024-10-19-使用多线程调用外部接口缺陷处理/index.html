@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
+  </script>
+
+  <meta name="description" content="问题描述 - Problem description调用外部系统同步机架下的u位数据，发现有的u位数据没有正常同步过来。 -The external system is called to synchronize the U-bit data under the rack, and the existing U-bit data is not synchronized properly.因为u位数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2024-10-19-使用多线程调用外部接口缺陷处理 -Use multithreading to invoke external interface defect handling">
+<meta property="og:url" content="http://example.com/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/index.html">
+<meta property="og:site_name" content="夏远建的博客">
+<meta property="og:description" content="问题描述 - Problem description调用外部系统同步机架下的u位数据，发现有的u位数据没有正常同步过来。 -The external system is called to synchronize the U-bit data under the rack, and the existing U-bit data is not synchronized properly.因为u位数">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-10-19T13:55:19.000Z">
+<meta property="article:modified_time" content="2024-10-26T12:01:57.867Z">
+<meta property="article:author" content="夏远建">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2024-10-19-使用多线程调用外部接口缺陷处理 -Use multithreading to invoke external interface defect handling | 夏远建的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">夏远建的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">不积硅步，无以至千里；不积小流，无以成江海</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2024-10-19-使用多线程调用外部接口缺陷处理 -Use multithreading to invoke external interface defect handling
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-10-19 21:55:19" itemprop="dateCreated datePublished" datetime="2024-10-19T21:55:19+08:00">2024-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-10-26 20:01:57" itemprop="dateModified" datetime="2024-10-26T20:01:57+08:00">2024-10-26</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="问题描述-Problem-description"><a href="#问题描述-Problem-description" class="headerlink" title="问题描述 - Problem description"></a>问题描述 - Problem description</h3><p>调用外部系统同步机架下的u位数据，发现有的u位数据没有正常同步过来。 -The external system is called to synchronize the U-bit data under the rack, and the existing U-bit data is not synchronized properly.<br>因为u位数据数量很多，对方系统没有提供批量同步的接口。所以使用多线程的方法调用。下面是调用代码。-Because of the large amount of U-bit data, the other system does not provide an interface for batch synchronization. So use multi-threaded method calls. Here’s the call code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">     long startTime = System.currentTimeMillis();</span><br><span class="line">     List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">     log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">     if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">         return;</span><br><span class="line">     &#125;</span><br><span class="line">     String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">     Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">            sk, System.currentTimeMillis(), nonce);</span><br><span class="line">     String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">     CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">     List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">     for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">         CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">             @Override</span><br><span class="line">             public void run() &#123;</span><br><span class="line">                 try &#123;</span><br><span class="line">                     commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                     String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                     CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                     if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                     List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                     if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                         for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                             RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                             transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                             roomckCloudResUS.add(roomckResU);</span><br><span class="line">                         &#125;</span><br><span class="line">                     &#125;</span><br><span class="line">                     roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                 &#125;</span><br><span class="line">                 catch (Exception e) &#123;</span><br><span class="line">                     log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                     log.error(e.getMessage(), e);</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;, ThreadUtils.ioPool);</span><br><span class="line">         futureList.add(future);</span><br><span class="line">     &#125;</span><br><span class="line">     CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">     log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="问题分析-problem-analysis"><a href="#问题分析-problem-analysis" class="headerlink" title="问题分析 - problem analysis"></a>问题分析 - problem analysis</h3><ol>
+<li>我犯了一个很基础的错误，commonRequestDTO 是多线程共享的，赋值的时候没有加锁，导致传的参数可能被其他线程覆盖了。所以有的u位数据没有同步。 - I made a very basic mistake, commonRequestDTO is shared by multiple threads, and there is no lock when assigning the value, which causes the passed parameters to be overridden by other threads. So some U-bit data is not synchronized</li>
+<li>分析日志发现。当接口多次调用的时候。对方服务器接口会返回500，拒绝服务. 代码没有重试机制，缺少健壮性。</li>
+</ol>
+<ul>
+<li>Analyze log findings. When an interface is called multiple times. The other server interface will return a 500 and refuse service. The code has no retry mechanism and lacks robustness.</li>
+</ul>
+<ol start="3">
+<li>调用外部接口获取密钥的 header 是所有线程共用的。而这个同步数据有点多。大概需要30分钟才能同步完成。而接口的密钥有效性只有2分钟，所以在2分钟之后后面再次调用接口会出现认证失败。</li>
+</ol>
+<ul>
+<li>The header that calls an external interface to obtain a key is shared by all threads. And this synchronization data is a bit much. It takes about 30 minutes to sync. The key validity of the interface is only 2 minutes, so if the API is called again after 2 minutes, the authentication will fail</li>
+</ul>
+<h3 id="问题解决-problem-solution"><a href="#问题解决-problem-solution" class="headerlink" title="问题解决 - problem solution"></a>问题解决 - problem solution</h3><ol>
+<li>对commonRequestDTO.setId(roomckCloudResCabinet.getId()); 这行代码加锁 -Lock the line of code: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>代码加上重试机制 优化后代码 - Code with retry mechanism, optimized code as follows<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">@Async</span><br><span class="line">@Scheduled(cron = &quot;$&#123;task.ucabinetdata.sync.cron&#125;&quot;)</span><br><span class="line">@SchedulerLock(name = &quot;CloudCt_task.ucabinetdata.sync&quot;, lockAtLeastForString = &quot;PT30M&quot;, lockAtMostForString = &quot;PT60M&quot;)</span><br><span class="line">public void syncStation() &#123;</span><br><span class="line">    log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">    long startTime = System.currentTimeMillis();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">    log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">    if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">    Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">           sk, System.currentTimeMillis(), nonce);</span><br><span class="line">    String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; failedCabinets = Collections.synchronizedList(new ArrayList&lt;&gt;());</span><br><span class="line">    for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">        CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    synchronized (commonRequestDTO) &#123;</span><br><span class="line">                        commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                    &#125;</span><br><span class="line">                    String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                    CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                    if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                    List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                    if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                        for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                            RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                            transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                            roomckCloudResUS.add(roomckResU);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Exception e) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                    failedCabinets.add(roomckCloudResCabinet);</span><br><span class="line">                    log.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ThreadUtils.ioPool);</span><br><span class="line">        futureList.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">    CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">    log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line">    // 处理失败的请求</span><br><span class="line">    if (!failedCabinets.isEmpty()) &#123;</span><br><span class="line">        log.info(&quot;有&quot; + failedCabinets.size() + &quot;个机架调用接口失败。开始发起重试&quot;);</span><br><span class="line">        retryFailedRequests(failedCabinets, header, url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private void retryFailedRequests(List&lt;RoomckCloudResCabinet&gt; failedCabinets, Map&lt;String, String&gt; header, String url) &#123;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    for (RoomckCloudResCabinet cabinet : failedCabinets) &#123;</span><br><span class="line">        int retryCount = 0;</span><br><span class="line">        boolean success = false;</span><br><span class="line">        while (retryCount &lt; MAX_RETRIES &amp;&amp; !success) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(cabinet.getId());</span><br><span class="line">                &#125;</span><br><span class="line">                String response = HttpUtil.createPost(url)</span><br><span class="line">                        .addHeaders(header)</span><br><span class="line">                        .body(JSONUtil.toJsonStr(commonRequestDTO))</span><br><span class="line">                        .execute().body();</span><br><span class="line">                CabinetUResultDTO result = JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(</span><br><span class="line">                        result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                    for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                        RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                        transferUCabinet(cabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                        roomckCloudResUS.add(roomckResU);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                success = true; // 如果成功则退出重试循环</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                retryCount++;</span><br><span class="line">                log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试第&quot; + retryCount + &quot;次失败。&quot;);</span><br><span class="line">                log.error(e.getMessage(), e);</span><br><span class="line">                if (retryCount &gt;= MAX_RETRIES) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试已达到最大次数。&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>每次调用接口的时候都重新获取密钥 把 Map&lt;String, String&gt; header &#x3D; GetCloudSignUtil.getHeaders(ak,sk, System.currentTimeMillis(), nonce); 放到方法内部。</li>
+</ol>
+<ul>
+<li>Each time the interface is called, the key is re-obtained, and the <code>Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak, sk, System.currentTimeMillis(), nonce);</code> is placed within the method.</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" rel="prev" title="2024-10-07-手机app端登录不上,session获取不到,问题处理 - The mobile app cannot be logged in, the session cannot be obtained, and the problem is handled">
+      <i class="fa fa-chevron-left"></i> 2024-10-07-手机app端登录不上,session获取不到,问题处理 - The mobile app cannot be logged in, the session cannot be obtained, and the problem is handled
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/11/04/2024-11-04-%E5%B9%BF%E4%B8%9C%E7%A7%BB%E5%8A%A8iot%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%8F%91%E6%84%9F%E6%82%9F/" rel="next" title="2024-11-04-广东移动iot项目开发感悟">
+      2024-11-04-广东移动iot项目开发感悟 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0-Problem-description"><span class="nav-number">1.</span> <span class="nav-text">问题描述 - Problem description</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90-problem-analysis"><span class="nav-number">2.</span> <span class="nav-text">问题分析 - problem analysis</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3-problem-solution"><span class="nav-number">3.</span> <span class="nav-text">问题解决 - problem solution</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">夏远建</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夏远建</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">146k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">4:26</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'JM04yDYxfC7OBdEVFPgjYe82-gzGzoHsz',
+      appKey     : 'N0ThHHvSUDiGsV5vHwy9wavK',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
