@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 6.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
+  </script>
+
+  <meta name="description" content="问题描述实现一个和大模型聊天记录的功能。 实现方式后端对接大模型接口。 把算法返回的流时数据。使用SSE技术像前端推送大模型生成的内容。  后端模型实现流1234567891011121314151617181920212223242526@PostMapping(&quot;testCompletion&quot;)   public void testCompletion(@RequestBo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="2025-01-05 流式接口前后端实现-- 暂停流，记录日志等功能实现">
+<meta property="og:url" content="http://example.com/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/index.html">
+<meta property="og:site_name" content="夏远建的博客">
+<meta property="og:description" content="问题描述实现一个和大模型聊天记录的功能。 实现方式后端对接大模型接口。 把算法返回的流时数据。使用SSE技术像前端推送大模型生成的内容。  后端模型实现流1234567891011121314151617181920212223242526@PostMapping(&quot;testCompletion&quot;)   public void testCompletion(@RequestBo">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-05T06:58:11.000Z">
+<meta property="article:modified_time" content="2025-01-05T07:06:22.863Z">
+<meta property="article:author" content="夏远建">
+<meta property="article:tag" content="大模型功能">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>2025-01-05 流式接口前后端实现-- 暂停流，记录日志等功能实现 | 夏远建的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">夏远建的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">不积硅步，无以至千里；不积小流，无以成江海</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-首页">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-关于">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-标签">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-分类">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-归档">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          2025-01-05 流式接口前后端实现-- 暂停流，记录日志等功能实现
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-01-05 14:58:11 / 修改时间：15:06:22" itemprop="dateCreated datePublished" datetime="2025-01-05T14:58:11+08:00">2025-01-05</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>实现一个和大模型聊天记录的功能。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>后端对接大模型接口。 把算法返回的流时数据。使用SSE技术像前端推送大模型生成的内容。</p>
+<ol>
+<li>后端模型实现流<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">@PostMapping(&quot;testCompletion&quot;)</span><br><span class="line">   public void testCompletion(@RequestBody Map&lt;String, Object&gt; request,</span><br><span class="line">                                    HttpServletResponse response) &#123;</span><br><span class="line"></span><br><span class="line">       try (BufferedReader bufferedReader = new BufferedReader(new FileReader(&quot;aiwrite-web/src/main/java/com/iwhalecloud/sas/aichat/controller/mock.txt&quot;))) &#123;</span><br><span class="line">           CompletionsUtils.setResHeader(response, true);</span><br><span class="line">           PrintWriter writer = response.getWriter();</span><br><span class="line">           String line;</span><br><span class="line">           while ((line = bufferedReader.readLine()) != null) &#123;</span><br><span class="line">               writer.write(&quot;data: &quot; + line + &quot;\n\n&quot;); // SSE 格式</span><br><span class="line">               writer.flush(); // 确保数据立即发送</span><br><span class="line">               // 模拟延迟</span><br><span class="line">               try &#123;</span><br><span class="line">                   Thread.sleep(1000); // 每秒发送一行</span><br><span class="line">               &#125; catch (InterruptedException e) &#123;</span><br><span class="line">                   Thread.currentThread().interrupt();</span><br><span class="line">                   throw new RuntimeException(&quot;Thread was interrupted&quot;, e);</span><br><span class="line">               &#125;</span><br><span class="line">           &#125;</span><br><span class="line">       &#125; catch (Exception e) &#123;</span><br><span class="line">           log.error(&quot;mock error&quot;, e);</span><br><span class="line">       &#125; finally &#123;</span><br><span class="line">           CompletionsUtils.closeResponseWriter(response);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></li>
+<li>前端接收流数据 技术实现<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">/* eslint-disable no-await-in-loop */</span><br><span class="line">import &#123; getUserCode &#125; from &#x27;./request&#x27;;</span><br><span class="line"></span><br><span class="line">/** 流式数据请求 */</span><br><span class="line">export const streamRequest = (url, datas, serviceName, onSuccess = null, onError = null, onComplete = null) =&gt; &#123;</span><br><span class="line">  // 创建 AbortController 用于取消请求</span><br><span class="line">  const controller = new AbortController();</span><br><span class="line">  const &#123; signal &#125; = controller;</span><br><span class="line"></span><br><span class="line">  let isCancelled = false; // 标志是否取消请求</span><br><span class="line"></span><br><span class="line">  async function fetchData(aiurl) &#123;</span><br><span class="line">    const params = &#123;</span><br><span class="line">      params: &#123; ...datas &#125;,</span><br><span class="line">      service_name: serviceName,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">      const fetchparams = &#123;</span><br><span class="line">        method: &#x27;POST&#x27;,</span><br><span class="line">        headers: &#123;</span><br><span class="line">          Accept: &#x27;*/*&#x27;, // 修复 Accept 键</span><br><span class="line">          &#x27;Content-Type&#x27;: &#x27;application/json&#x27;,</span><br><span class="line">          &#x27;x-signature-sessionId&#x27;: sessionStorage.getItem(&#x27;sessionId&#x27;), // 确保 seeid 有效</span><br><span class="line">          userCode: getUserCode(), // 确保 getUserCode() 返回值</span><br><span class="line">        &#125;,</span><br><span class="line">        body: JSON.stringify(params), // 序列化请求体</span><br><span class="line">        signal, // 传入信号用于取消 fetch</span><br><span class="line">      &#125;;</span><br><span class="line">      const response = await fetch(aiurl, fetchparams);</span><br><span class="line"></span><br><span class="line">      const reader = response.body.getReader();</span><br><span class="line">      const decoder = new TextDecoder();</span><br><span class="line"></span><br><span class="line">      let done = false;</span><br><span class="line">      let textContent = &#x27;&#x27;;</span><br><span class="line">      let formattedText = &#x27;&#x27;;</span><br><span class="line"></span><br><span class="line">      while (!done &amp;&amp; !isCancelled) &#123;</span><br><span class="line">        try &#123;</span><br><span class="line">          const &#123; value, done: readerDone &#125; = await reader.read();</span><br><span class="line">          done = readerDone;</span><br><span class="line"></span><br><span class="line">          if (value) &#123;</span><br><span class="line">            const chunk = decoder.decode(value, &#123; stream: true &#125;);</span><br><span class="line">            textContent += chunk;</span><br><span class="line"></span><br><span class="line">            const aa = textContent.replace(/data:/g, &#x27;&#x27;);</span><br><span class="line"></span><br><span class="line">            // 分割成单独的 JSON 对象</span><br><span class="line">            const lines = aa.trim().split(&#x27;\n&#x27;);</span><br><span class="line"></span><br><span class="line">            // 提取 result_object 并拼接</span><br><span class="line">            const result = lines;</span><br><span class="line">            // .map(line =&gt; &#123;</span><br><span class="line">            //   try &#123;</span><br><span class="line">            //     return JSON.parse(line).result_object;</span><br><span class="line">            //   &#125; catch (err) &#123;</span><br><span class="line">            //     // 忽略无效的 JSON 数据</span><br><span class="line">            //     return &#x27;&#x27;;</span><br><span class="line">            //   &#125;</span><br><span class="line">            // &#125;)</span><br><span class="line">            // .join(&#x27;&#x27;);</span><br><span class="line"></span><br><span class="line">            // 解码 Unicode 字符</span><br><span class="line">            const decodedResult = decodeURIComponent(</span><br><span class="line">              JSON.stringify(result).replace(/\\u/g, &#x27;%u&#x27;).slice(1, -1)</span><br><span class="line">            );</span><br><span class="line"></span><br><span class="line">            formattedText = decodedResult.replace(/\\n/g, &#x27;\n&#x27;);</span><br><span class="line"></span><br><span class="line">            // 调用成功回调（如果未取消）</span><br><span class="line">            if (onSuccess &amp;&amp; !isCancelled) &#123;</span><br><span class="line">              onSuccess(formattedText);</span><br><span class="line">            &#125;</span><br><span class="line">          &#125;</span><br><span class="line">        &#125; catch (e) &#123;</span><br><span class="line">          if (onError) &#123;</span><br><span class="line">            onError(e);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      // 请求完成后调用 onComplete 回调（如果未取消）</span><br><span class="line">      if (done &amp;&amp; !isCancelled &amp;&amp; onComplete) &#123;</span><br><span class="line">        onComplete(formattedText);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125; catch (err) &#123;</span><br><span class="line">      // 捕获取消请求或其他错误</span><br><span class="line">      if (err.name === &#x27;AbortError&#x27;) &#123;</span><br><span class="line">        onError(&#x27;Request canceled&#x27;);</span><br><span class="line">      &#125; else if (onError) &#123;</span><br><span class="line">        onError(err);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  fetchData(url);</span><br><span class="line"></span><br><span class="line">  // 返回取消请求的方法</span><br><span class="line">  return () =&gt; &#123;</span><br><span class="line">    isCancelled = true; // 设置取消标志</span><br><span class="line">    controller.abort(); // 中止 fetch 请求</span><br><span class="line">  &#125;;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%A4%A7%E6%A8%A1%E5%9E%8B%E5%8A%9F%E8%83%BD/" rel="tag"># 大模型功能</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/" rel="prev" title="2025-01-05 多门户实现bug修复">
+      <i class="fa fa-chevron-left"></i> 2025-01-05 多门户实现bug修复
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">实现方式</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">夏远建</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">夏远建</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+    <span title="站点总字数">170k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">5:09</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('//unpkg.com/valine/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'JM04yDYxfC7OBdEVFPgjYe82-gzGzoHsz',
+      appKey     : 'N0ThHHvSUDiGsV5vHwy9wavK',
+      placeholder: "Just go go",
+      avatar     : 'mm',
+      meta       : guest,
+      pageSize   : '10' || 10,
+      visitor    : false,
+      lang       : 'zh-CN' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

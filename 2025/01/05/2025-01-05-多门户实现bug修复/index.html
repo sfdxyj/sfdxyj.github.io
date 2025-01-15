@@ -20,20 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.html"};
   </script>
 
-  <meta name="description" content="Welcome to my blog, enter password to read.">
+  <meta name="description" content="问题描述需要实现 通过配置来加载对应的门户集成接口。通过 Spring Boot的配置类，用于根据不同的配置加载不同的门户服务实现。 使用     @ConditionalOnProperty(name &#x3D; “portal.service.type”, matchIfMissing &#x3D; true)来配置默认加载门户。 发现当配置门户portal.service.type时，会报">
 <meta property="og:type" content="article">
-<meta property="og:title" content="我眼中的远光">
-<meta property="og:url" content="http://example.com/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/index.html">
+<meta property="og:title" content="2025-01-05 多门户实现bug修复">
+<meta property="og:url" content="http://example.com/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/index.html">
 <meta property="og:site_name" content="夏远建的博客">
-<meta property="og:description" content="Welcome to my blog, enter password to read.">
+<meta property="og:description" content="问题描述需要实现 通过配置来加载对应的门户集成接口。通过 Spring Boot的配置类，用于根据不同的配置加载不同的门户服务实现。 使用     @ConditionalOnProperty(name &#x3D; “portal.service.type”, matchIfMissing &#x3D; true)来配置默认加载门户。 发现当配置门户portal.service.type时，会报">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-04-25T00:55:22.000Z">
-<meta property="article:modified_time" content="2023-10-10T02:30:15.374Z">
+<meta property="article:published_time" content="2025-01-05T06:44:28.000Z">
+<meta property="article:modified_time" content="2025-01-05T06:54:54.408Z">
 <meta property="article:author" content="夏远建">
-<meta property="article:tag" content="感想">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/">
+<link rel="canonical" href="http://example.com/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/">
 
 
 <script id="page-configurations">
@@ -46,7 +45,7 @@
   };
 </script>
 
-  <title>我眼中的远光 | 夏远建的博客</title>
+  <title>2025-01-05 多门户实现bug修复 | 夏远建的博客</title>
   
 
 
@@ -167,7 +166,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -180,7 +179,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          我眼中的远光
+          2025-01-05 多门户实现bug修复
         </h1>
 
         <div class="post-meta">
@@ -189,24 +188,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-04-25 08:55:22" itemprop="dateCreated datePublished" datetime="2020-04-25T08:55:22+08:00">2020-04-25</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-10-10 10:30:15" itemprop="dateModified" datetime="2023-10-10T10:30:15+08:00">2023-10-10</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E4%BA%BA%E7%94%9F%E6%84%9F%E6%82%9F/" itemprop="url" rel="index"><span itemprop="name">人生感悟</span></a>
-                </span>
+              <time title="创建时间：2025-01-05 14:44:28 / 修改时间：14:54:54" itemprop="dateCreated datePublished" datetime="2025-01-05T14:44:28+08:00">2025-01-05</time>
             </span>
 
           
@@ -218,8 +202,8 @@
       </span>
       <span class="post-meta-item-text">Valine：</span>
     
-    <a title="valine" href="/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/25/%E6%88%91%E7%9C%BC%E4%B8%AD%E7%9A%84%E8%BF%9C%E5%85%89/" itemprop="commentCount"></span>
+    <a title="valine" href="/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2025/01/05/2025-01-05-%E5%A4%9A%E9%97%A8%E6%88%B7%E5%AE%9E%E7%8E%B0bug%E4%BF%AE%E5%A4%8D/" itemprop="commentCount"></span>
     </a>
   </span>
   
@@ -229,7 +213,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.3k</span>
+              <span>1.2k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -248,18 +232,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="Oh, this is an invalid password. Check and try again, please." data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
-  <script id="hbeData" type="hbeData" data-hmacdigest="a644e572372d5050e60ea6dd7ad8996e729fc2f4e5489a92d19a5e4830eb1db1">f4cc23558ba95030556638b09840cfb711aff169be4de51911f88a15f275c2d31c6c57ce49b87c001ce842d202c8f61c29e3ef728c269f81a2c52d5aac0d24dace90ecf3a26a49a897928c7495c9157f302999d8e988d7996240b212402ee92517d7b2441f028e847069f825aef985699e0b93d2b2815bfa58366d510d495eaba3fff1a25fe57edc1662652f81e0db395f879fa1da2abb53d9a95871a3d62fa5dacee691b39cc57326acadbb0e668653a98c676d3321caf3c553b7c8379e1c08a44f2ca2f341606cde66e6aa13cd3891cb9906a93c1bd3906b932b8eceb67f778605411dc5d778b0a24ebc39d885e1b92c9a0d39a58bb292ed9946c7d2c110ed806ff5753b77aded0a5365853223b2c992c42c2471bcf93c94737b8d4651beecaf7df6f821c2056f3ec3d3742650920cfcbfe64c8397b3d2c98e0c50cbcfb302708843478b2b117b2e3dd95514dcb192d96e082f9ab12d4bf6b773a40060a9866e298894d7a7fa3f32d28462a5f4472e802c4a7246333c51bebcd346f51a501f31360cb3aef0c0802163f8391ce86ae08283fe5c39288cb95103f7266094190fb065a8c1d6e526f9e952bdad54022197cf5f67483b5917e92abdfac8659e089e1db7fd5e72a22abdc3a1c295fe8fc12e508b5d8c284a2bed15d2c6e51bf360ffa009b085ff2ad75d27470608976df38784206de1d320bb670039b32f8043ac7c8b47eda2eb3a1ff589e10fcb456475a6812d8ed4e2fa9f76a639bbe175156b6784421feff7be5bb13d2e2fbd108f8cb8e3e78c2819ccf385f610fd1fa7a63a55b90631cfe767a0debb3c57648af7d561757e1eedcf7788ec9d4428ec4348e02bfdd81e2543c011d9cccc1f956b5f8934ddad001eba4475fdaf39383946e10e1b278c898df08bbb2569340c4c8a1c480a8d61668c59a0fc94eeb4226c37d5a26d8a9b950a4f101496147ef8805941db82622633e4eb7d747b728b218bd29f1fd2de407e761c1f1b4eb2b3397b19abc0a5c389b0a6d906d8f553b7b0e4b905176e422f73e1a54e5ca19d7ca4200671cb6d9660283882cc6b638bdef53c92125d2253dd7e6ee30298f47a8bf62f760b5ce494fb74cb9ac769fe32a79a398135dd4a3c6b0e9f94e5848f14632e2f33c4a40fc3f68eeccfe8341d9bb6f73c54e029e02d23769fb207b4b9c1ec96d021fb79f8bbb939d1f40096f9d69841758942ebddb5e001456449e5d8296f6f1a066608ea4df4eb8e1c657e8c0f4598ccd8bffe1f2be39243fd0e24fc37e15ae4cb3ea7c31493fd05a698d4f8c205b75f4b6a292f5cf42ceeab5cc964c0f9c329ea237e26f3b8505b657cefa0f6d73dbcc15baf16898f88cc4ae397261610b95eced8a848bf7f50284932ed507ad24b6e3e60da15efc50ed950377f0a0fe1d1d11633acee47db44ae0e6ba2aff3ec2a74d1f825016740f070af19e082cd053b06ea1d9569c8c30e6cb6c6cdf44f814b5b24b522058d8bc96235eb3187a9964e61bb0bd6104913f920d8b211d11472e38573964b81235209fcdbc4603476e52dba12d8fd07d37c7533731e6233039c7e3c5994a472c920cd4c1dc6b302882ec99f0712a10f9b17ccd70c54aec52e0081453e3847c7b9622e87e7217543418c0dfc5264692485d9fbe8f601c290e1c56a30f8123c196be4d0b04449d23a28c3d057d478f696dbe658115d74c24f4fd6b23caa21f0d0e40ed31d7290ad68e493018f9750112fcd31f8d8b89d8d4e2d96928d7c2eb08ce53b66b6480f0a2fc1ca0cd0ba8e0299ed746aee1565869b7ca92d241d27bbf5c7fd09ace10690500164ede4c35cf7ed98e44672c499cdf75aac1199ccfa6b0db3bc1e913216fe0dc162fb523d1628a19505786f4423a601969af7789efc402bfb5feb0633f0f862d31c49c656250cfd5b8f5b8ff62b9452b3b433bb43aad2f33819362c4f804128195f48fccccd86e9e345e53e7ea250f188e961964345c575256325aa123419f93dda05dff2318cb792d9154c6cd2c9f428d511bb87c22b45b95276dd07162bd31194a08e4c6d1a87bf0637ee99f3ee98171d2cabde856c7de252854507b9fd33b9d80d6355d77d73a8d095059935d6be9c81a2218a4985bcaa969af48ed26301758e26194ab8c0087fa5d1382811655f265f8f2b25849b60ef49547027ee129f42d51440a4f205d421b7c49131e16545fb3ee013d692b41646d29a17507ac32f2be8485c48306cd4259ad8bdd7b98dd0185bb03e98470311865cc595096a035a41baa6df989d443c86e28f4cc32be99f8783409cba2116abf1729f4b82ee1c4cbc1008e97303bfefa84b066658a9b377a9a368d5a618feaa00eef7fdc9516a9f69bf0cb486e2b300f55f3ee9df361cf74c1e56b6fdc02970b8b0a4e4606c705eab831f96271dd8fecad0e1f37566970b9c00e4aabf5adf9d329f74bdae4aac91b484338474d4e93ed51f5c6dae998a1aeec8c670cad1a126dac01f42aed3edb68edd9ec0a38db1f31994cbc321d7b240bd68970dc788667e913934396e06aab689b64fe600ac1c50153e0e04233776b08b3577632d99246adfea6995a21f3afbf54cce98955980b5a201528da5aecbc55bd0ba39a2d98ca044a80ce01c090f9f1db7103ab4ae48a1e6c96c0171ef82f09c8f4957a296b6fa90dec04749116ebe09904d160ebe09d8ea4e4a5d47869b85a50e3e9e933973fb3c6edfe18c9dac57e3e93da8c7cde683ed48854ef2fa1c3a05bde965a7e805eb854824bf16823f5f70a41b1f1237472607295d3f19f702ff7f70d3a88b0d5d2230d9bb21cd33336d4cf279980a0a4ca19404d4089da8df5644e940a5da7d1e69af0aa02c626ac43304ca30a4180569ace2cf20b856f66f1e5f0b0b8d68039c6070673f70d3609f1414a5ef638421d0eec9e43219e1abae4422c5d97bd8ec713bf7306cc00baa24be06576d736d25d2aa2a099c6531e60cbfa6d76663fac775c8d8fb68f21b0b2ef1ad6da3a32e7e805ef5c5d5ab90a92360d6da09364ee312feaae6dee1783ad347ba2e2c1aa8fcd865029a501200793e19156bf9bc9c33e6cc35f23b306f27876da2d7d7963950a67ae28671142a1703c7f792e2203810f38f609ec7d84bab927f15114f596d21912d5cfafd4bcd5ad62662fbaab8da095a8de53084b62d43e273e3a40821861858957dcb680533f5c03c4e4a3dfbaed9382fd29c8defed2127319b80a070c305f2da6f2618ae1950c268dbe4cffb362511dec9093d55853fc4f947acd9ab9c689efb29c81be8e01776515948443af42425b830a5c64a7cb6f82c6b313f6e11796218b3e26243d620e261327e651d382dada2162f459c232056e09ae9963f7daf293e448299ce7c42399fbcd9455cb164520e3806d26d3a8538d74327407f7bc4b36eedcf28c825d1a0dd714d9f103e3245439682f9f15dd1fb1e4a34e555da016f58d2a7921efe355fae92adc5dc942c2a266274d1e0819e5746b250c75caec95682749df95158a7843745a39b55f63f9e05be89b17109107333aa0c31c6687ac9d4d1797ad450014cd468d9395f97ef40ebec39bab0b9e4eaf300ebb55660db554447ef922dba493a39623d7d7801e30c70b11a8dbf27cbb30306f6b5fb5f04ea42bf1550d06eab8517917b6457e9b87fe47dfa000b2c0b9987c33d027a8fecacdd5f2ed33d024b9096618190655edad2778f0d69436c5b7be000010603312534589f79b48dcc5695e1746961e7a1bbe6d8f055beb5e8b6dc17435de3cfb2f0d085d28ce757f114191b9f2a66336c2d18a56057644daaccc368c0c3359dc9cca48fd9a5441b5079b5a85683f7d59521bb0c18976cc5b3ba25bd8c59341c7f3e8629f8120e046f6713d6f640a85d95b302ec6e65dabc7acc42aff3ccd661d59e8f1221f068d9da49570979454c3e209ff38ab00a4f41a8d9d9d18cd73961fb4a0439e86f9cc6145374605a5cb1cb42f8764065d3c8dc5c44e338d61121594f209c648934682827e8c5d6c999097600158ce394e3dda1092d83063e1f921b75dd21515df6a75d67422feeaebbf4b2b81bfb51832f4651ec4da35ae5bb4633cf4b77d42f61e6933013043d1b2e4e81f2e46bc0dd168dcf2742ba853ec252438dbfb52420c1c8862e2bb1cd607014fca22149767b60cf1ee319690330311a66da51bf2027e65ad0df74eeaa829ffde246853df30bbfc5118ea9d763c43c6ac51fcff0da3923d0fc73917d5785eaf42df2ae4d5ceb7b596d492eece98005ae9d55894ca4bc4f4a2752c3f32fa3707a4f3dfbc3946e119ea4af468858e07ee073f2f4323e1f5b466dfb8048ac00c1cc397edc4df6b62abc40c6fc6066c3230a30adee9846d0c8e4819fa0acd7643a9404ff301c42d532afbfdfa0580ca2a65f8a22829f8c98440b7ecaff56d6d9b35effc606b2625e3844e15fd2b85b0f702057ed6d1926a559a1c14637ef93c413efad6ac0e6d5e3cd6ad5c7c92ec7db71def536f7f0744ffcaa38c367b7aba1490076de74892781e3b834dd38c189a816afb9b8941a6351ead11abd738536e549a78459e904178b701230e437bc15da5a4e98374ddca4c59937ba827c1fc81d4020b9d3dd855b7668a2b1ce201035dbc0e805c0099b5c391f972a54e20637638b7bca9d4a6a632b7c6f88aafa80a458123c522192539762ecef5b07c4456471f0717b90b549ebb069534c663db7a0d343e8f50c815b7b0018423496fb01f545c1106d0da0a9a9a4be2a74666da11a33cc80d101787a0529f8df458fcc243e92efa1cf3c732e39a6d72071a470a21a7c1766c05bd692e14ddbca8914ea4b02cea70fc7c63f65f20063c5bfadcd8b766d4609864afa34469dbbda62588f24ce210d1cabae738514e1c6f0e3613828f4de33087364a6a95f47b542adfe91fede48b1e88113314d7333e85148a9846eb4dddb1aa373fb47802726842efeff61009849953e97007eab18f92fcd1ce3c8f5a36df6f2cd05fad6508214226b568bea1541f7d4a7a8387c8c8d9da1e2b898f90889cf16f4a605a4c499a891cd024715d94837298d84055fef43497672f7a2592b00eaf943438559dc742c55a5f14ff5291d4392d38c2d26114ad31f06ddbf336a810601720c5706235d003e624fcf90a8c8c4331b249b4815727c1201ee9ab08d93d9e1460be9ba2d99f8984e565a0c649af4157f81b46418d88ef9a3e54ba425afd5212f6c803c3dd3775625ed1743d12afdf851811799bd765e2ebfeeb352aa1398ffe32f600183aca23ad2032363bbaa536b6739b43b010b4bba9667b58a8314067d502f8158ab4cc51c58dba1942a4b0599eb6782a7cf97f80a4bcd704ba82f87cb19399c028944166593936b295cb2bd58e979924a091f6518a38ef7c4a73646022dc6ca9a</script>
-  <div class="hbe hbe-content">
-    <div class="hbe hbe-input hbe-input-default">
-      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
-      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
-        <span class="hbe hbe-input-label-content hbe-input-label-content-default">密码输入框上描述性内容</span>
-      </label>
-    </div>
-  </div>
-</div>
-<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
+        <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>需要实现 通过配置来加载对应的门户集成接口。通过 Spring Boot的配置类，用于根据不同的配置加载不同的门户服务实现。 使用     @ConditionalOnProperty(name &#x3D; “portal.service.type”, matchIfMissing &#x3D; true)<br>来配置默认加载门户。 发现当配置门户portal.service.type时，会报错。会同时加载对应的bean 和默认的 门户实现类。导致bean 冲突。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">@Configuration</span><br><span class="line">@Slf4j</span><br><span class="line">public class PortalServiceConfig &#123;</span><br><span class="line">    @Bean(name = &quot;portalRoom&quot;)</span><br><span class="line">    @ConditionalOnProperty(name = &quot;portal.service.type&quot;, havingValue = &quot;room&quot;)</span><br><span class="line">    public IportalService roomPortalService() &#123;</span><br><span class="line">        log.info(&quot;开始加载智慧机房门户。&quot;);</span><br><span class="line">        return new RoomPortalServiceImpl();</span><br><span class="line">    &#125;</span><br><span class="line">    @Bean(name = &quot;portalWhileOx&quot;)</span><br><span class="line">    @ConditionalOnProperty(name = &quot;portal.service.type&quot;, havingValue = &quot;whileOx&quot;)</span><br><span class="line">    public IportalService otherPortalService() &#123;</span><br><span class="line">        log.info(&quot;开始加载鲸牛门户。&quot;);</span><br><span class="line">        return new WhileOxPortalServiceImpl();</span><br><span class="line">    &#125;</span><br><span class="line">    @Bean(name = &quot;portalDefault&quot;)</span><br><span class="line">    @ConditionalOnProperty(name = &quot;portal.service.type&quot;, matchIfMissing = true)</span><br><span class="line">    public IportalService defaultPortalService() &#123;</span><br><span class="line">        log.info(&quot;没有配置portal.service.type。 默认加载智慧机房门户。&quot;);</span><br><span class="line">        return new RoomPortalServiceImpl();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>有多个配置文件。其中一个配置文件配置 portal.service.type。其他配置文件没有配置 导致配置实现类和默认实现类都生效了造成了bean 冲突</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>在非默认实现方法上使用 @Primary 注解。 冲突时 优先加载配置实现类。</p>
+
     </div>
 
     
@@ -267,9 +244,6 @@
     
 
       <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%84%9F%E6%83%B3/" rel="tag"># 感想</a>
-          </div>
 
         
 
@@ -277,12 +251,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/04/03/%E9%9B%86%E5%90%88/" rel="prev" title="集合">
-      <i class="fa fa-chevron-left"></i> 集合
+    <a href="/2024/12/26/2024-12-26-%E4%BD%BF%E7%94%A8JNA-%E5%92%8C-JNI-%E6%8A%80%E6%9C%AF%E8%B0%83%E7%94%A8c++%E4%BB%A3%E7%A0%81/" rel="prev" title="2024-12-26-使用JNA 和 JNI 技术调用c++代码">
+      <i class="fa fa-chevron-left"></i> 2024-12-26-使用JNA 和 JNI 技术调用c++代码
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/09/09/%E8%BD%AF%E8%80%83/" rel="next" title="计算机基本工作原理">
-      计算机基本工作原理 <i class="fa fa-chevron-right"></i>
+    <a href="/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/" rel="next" title="2025-01-05 流式接口前后端实现-- 暂停流，记录日志等功能实现">
+      2025-01-05 流式接口前后端实现-- 暂停流，记录日志等功能实现 <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -343,6 +317,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">问题描述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%88%86%E6%9E%90"><span class="nav-number">2.</span> <span class="nav-text">问题分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E5%86%B3%E5%8A%9E%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">解决办法</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -355,7 +330,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -393,7 +368,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -402,12 +377,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">146k</span>
+    <span title="站点总字数">170k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:26</span>
+    <span title="站点阅读时长">5:09</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

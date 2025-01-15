@@ -161,6 +161,219 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/" class="post-title-link" itemprop="url">2024-04-23-性能优化-csv大文件同步入库</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-23 19:48:25" itemprop="dateCreated datePublished" datetime="2024-04-23T19:48:25+08:00">2024-04-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-04-24 14:40:56" itemprop="dateModified" datetime="2024-04-24T14:40:56+08:00">2024-04-24</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/04/23/2024-04-23-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96-csv%E5%A4%A7%E6%96%87%E4%BB%B6%E5%90%8C%E6%AD%A5%E5%85%A5%E5%BA%93/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>738</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>云调资源数据同步。同步设备数据。大csv文件同步数据入库。发生OOM溢出</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>以下为问题代码.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String fullUrl = HttpUtil.urlWithForm(url, paramMap, CharsetUtil.CHARSET_UTF_8, true);</span><br><span class="line">String response  = HttpUtil.createGet(fullUrl).addHeaders(header).execute().body();</span><br><span class="line">List&lt;EquipmentDataDTO&gt; equipmentDataDTOList = transferCsvData(response);</span><br><span class="line">if (equipmentDataDTOList != null) &#123;</span><br><span class="line">    log.info(&quot;同步设备:&quot; + equArray[i] + &quot;,数据大小&quot; + equipmentDataDTOList.size());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 使用hutool的HttpUtil类去调用外部接口获取设备数据。HttpUtil.createGet(fullUrl).addHeaders(header).execute().body()； .execute()是同步执行的，程序会在发送请求后阻塞，直到收到响应为止。.body()会把数据全部获取完毕，然后一次性塞到内存当中。当数据非常大时，会导致OOM。</p>
+<h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><p>改成异步执行，流式响应体处理</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">InputStream response  = HttpUtil.createGet(fullUrl).addHeaders(header).executeAsync().bodyStream();</span><br></pre></td></tr></table></figure>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>对于2G 的csv文件,能正常响应并同步入库</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/" class="post-title-link" itemprop="url">2023-04-07-bug修复-RedisTemplate与StringRedisTemplate</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-04-07 10:36:09" itemprop="dateCreated datePublished" datetime="2024-04-07T10:36:09+08:00">2024-04-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-07-17 17:45:45" itemprop="dateModified" datetime="2024-07-17T17:45:45+08:00">2024-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/04/07/2023-04-07-bug%E4%BF%AE%E5%A4%8D-RedisTemplate-%E4%B8%8E-StringRedisTemplate/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>报错代码为以下代码。从redis 中获取数据，然后转成UserInfoDTO对象 报错。 </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">if (StringUtils.isNotBlank(sessionId)) &#123;</span><br><span class="line">    // 根据sessionId从缓存读取用户信息，存在认为用户已登录，放行</span><br><span class="line">    Object currentUser = cacheClient.hget(SessionConst.USER_SESSIONS_KEY + sessionId, SessionConst.SHARE_CURRENT_USER_KEY);</span><br><span class="line">    System.out.println(currentUser);</span><br><span class="line"></span><br><span class="line">    if (Objects.nonNull(currentUser)) &#123;</span><br><span class="line">        userInfo_ = JSON.parseObject(currentUser.toString(), UserInfoDTO.class);</span><br><span class="line">        System.out.println(userInfo_);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>这段代码是另一个模块复制过来的，在另一个模块不报错。在这个模块就报错了。 经过调试发现从redis 获取的数据json字符串外面还包了一层双引号，如下图。 导致转换对象报错。最后发现两个模块所用的redis模板类不一样导致的。当前模块用的是StringRedisTemplate，另一模块用的RedisTemplate则没有这个问题。原因是在于StringRedisTemplate默认使用的是基于字符串的序列化和反序列化策略，而RedisTemplate使用的是基于Java序列化的策略。这导致了它们在处理特定数据类型时的行为差异。StringRedisTemplate更适合处理简单的字符串或字符串形式的数据，而RedisTemplate由于其默认的序列化策略，更适合处理复杂的Java对象。<br><img src="/../images/2024-4-07-redis.JPG" alt="调试截图"></p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
+<li>StringRedisTemplate 改成 RedisTemplate</li>
+<li>手动处理双引号的情况<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">String value = stringRedisTemplate.opsForValue().get(key);</span><br><span class="line">if (value != null &amp;&amp; value.startsWith(&quot;\&quot;&quot;) &amp;&amp; value.endsWith(&quot;\&quot;&quot;)) &#123;</span><br><span class="line">    value = value.substring(1, value.length() - 1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h4 id="RedisTemplate与StringRedisTemplate的区别"><a href="#RedisTemplate与StringRedisTemplate的区别" class="headerlink" title="RedisTemplate与StringRedisTemplate的区别"></a>RedisTemplate与StringRedisTemplate的区别</h4><ol>
+<li><p>StringRedisTemplate：专门为字符串操作优化。它默认使用StringRedisSerializer对键和值进行序列化。StringRedisSerializer将Java对象转换成字符串时，如果输入是字符串，它基本上是直接返回这个字符串（不进行额外的处理）。因此，如果你在存储时手动将对象转换为JSON字符串，然后使用StringRedisTemplate存储这个字符串，它实际上是直接存储了这个JSON字符串。在获取这个值时，如果原始数据是带双引号的字符串，这些双引号也会被当作字符串的一部分返回。</p>
+</li>
+<li><p>RedisTemplate：是更通用的模板，可以用于各种数据类型的Redis操作。它默认使用JdkSerializationRedisSerializer进行序列化，这个序列化器会将Java对象序列化为字节序列，并在这个过程中保留对象的类型信息。当使用RedisTemplate存储数据时，即便是字符串，也会先将其转换成字节序列然后再存储。当从Redis获取数据时，它会将这些字节序列反序列化回原始的Java对象。因此，如果你使用RedisTemplate存储经过JSON序列化的字符串，这个字符串会被作为一个单独的对象处理，而不是简单地作为一个字符串。在反序列化时，RedisTemplate能够正确地处理类型，避免了额外的双引号问题。</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/03/13/%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -947,224 +1160,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">npm 问题处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-01-04 09:48:53" itemprop="dateCreated datePublished" datetime="2024-01-04T09:48:53+08:00">2024-01-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-13 10:51:06" itemprop="dateModified" datetime="2024-12-13T10:51:06+08:00">2024-12-13</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/04/npm%20%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>734</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="npm-遇到问题处理"><a href="#npm-遇到问题处理" class="headerlink" title="npm 遇到问题处理"></a>npm 遇到问题处理</h4><p>1.网关超时</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm ERR! code ERR_SOCKET_TIMEOUT</span><br><span class="line">npm ERR! network Socket timeout</span><br></pre></td></tr></table></figure>
-
-<p>解决办法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">npm config set proxy false</span><br><span class="line">npm cache verify</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol start="2">
-<li>npm 查看镜像</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">npm config get registry</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<ol start="3">
-<li>npm 查看镜像以及速度</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">nrm ls</span><br><span class="line">nrm test</span><br></pre></td></tr></table></figure>
-
-<ol start="4">
-<li>node 版本过高</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">opensslErrorStack: [</span><br><span class="line">   &#x27;error:03000086:digital envelope routines::initialization error&#x27;,</span><br><span class="line">   &#x27;error:0308010C:digital envelope routines::unsupported&#x27;</span><br><span class="line"> ],</span><br><span class="line"> library: &#x27;digital envelope routines&#x27;,</span><br><span class="line"> reason: &#x27;unsupported&#x27;,</span><br><span class="line"> code: &#x27;ERR_OSSL_EVP_UNSUPPORTED&#x27;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>解决办法</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">1. react</span><br><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">  &quot;dev&quot;: &quot;cross-env NODE_OPTIONS=--openssl-legacy-provider umi dev&quot;,</span><br><span class="line">&#125;</span><br><span class="line">2. vue</span><br><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">    &quot;dev&quot;: &quot;set NODE_OPTIONS=--openssl-legacy-provider &amp;&amp; vue-cli-service serve --open&quot;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BDjava%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BDjava%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">常见功能java代码实现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-01-04 09:14:59" itemprop="dateCreated datePublished" datetime="2024-01-04T09:14:59+08:00">2024-01-04</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-18 10:10:05" itemprop="dateModified" datetime="2024-12-18T10:10:05+08:00">2024-12-18</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BDjava%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/01/04/%E5%B8%B8%E8%A7%81%E5%8A%9F%E8%83%BDjava%E4%BB%A3%E7%A0%81%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="Map-遍历"><a href="#Map-遍历" class="headerlink" title="Map 遍历"></a>Map 遍历</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">for (Integer key : map.keySet()) &#123;</span><br><span class="line">    System.out.println(&quot;key = &quot; + key + &quot;, value = &quot; + map.get(key));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">  for (Map.Entry&lt;Integer, String&gt; entry : map.entrySet()) &#123;</span><br><span class="line">    System.out.println(&quot;key = &quot; + entry.getKey() + &quot;, value = &quot; + entry.getValue());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">list = list.stream().sorted(Comparator.comparing(Student::getAge)).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">list = list.stream().sorted(Comparator.comparing(Student::getAge).reversed()).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">list = list.sorted(Comparator.comparing(Student::getName).thenComparing(Student::getAge)).collect(Collectors.toList());</span><br><span class="line"></span><br><span class="line">   list.sort((a, b) -&gt; &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    Long idA = a.getId();</span><br><span class="line">                    Long idB = b.getId();</span><br><span class="line">                    return Double.compare(scoreMap.get(idB), scoreMap.get(idA)); // 降序排序</span><br><span class="line">                &#125; catch (Exception e) &#123;</span><br><span class="line">                    log.info(&quot;排序失败&quot; + e.getMessage(), e);</span><br><span class="line">                    return 0;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="前端-List-转成-Map"><a href="#前端-List-转成-Map" class="headerlink" title="前端 List 转成 Map"></a>前端 List 转成 Map</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">const list = [</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;attrValueId&quot;: 216543,</span><br><span class="line">        &quot;attrSpecCode&quot;: &quot;air_condition_report_use_profession&quot;,</span><br><span class="line">        &quot;attrValueCode&quot;: &quot;1&quot;,</span><br><span class="line">        &quot;attrValueName&quot;: &quot;CDN&quot;,</span><br><span class="line">        &quot;attrValueNameEn&quot;: null,</span><br><span class="line">        &quot;attrValueDesc&quot;: &quot;空调系统报表-使用专业&quot;,</span><br><span class="line">        &quot;attrValueOrder&quot;: null,</span><br><span class="line">        &quot;parentAttrSpecCode&quot;: null,</span><br><span class="line">        &quot;parentAttrValueCode&quot;: null</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;attrValueId&quot;: 216544,</span><br><span class="line">        &quot;attrSpecCode&quot;: &quot;air_condition_report_use_profession&quot;,</span><br><span class="line">        &quot;attrValueCode&quot;: &quot;2&quot;,</span><br><span class="line">        &quot;attrValueName&quot;: &quot;DC&quot;,</span><br><span class="line">        &quot;attrValueNameEn&quot;: null,</span><br><span class="line">        &quot;attrValueDesc&quot;: &quot;空调系统报表-使用专业&quot;,</span><br><span class="line">        &quot;attrValueOrder&quot;: null,</span><br><span class="line">        &quot;parentAttrSpecCode&quot;: null,</span><br><span class="line">        &quot;parentAttrValueCode&quot;: null</span><br><span class="line">    &#125;,</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">const useProfessionMap = list.reduce((acc, curr) =&gt; &#123;</span><br><span class="line">  acc[curr.attrValueCode] = curr.attrValueName;</span><br><span class="line">  return acc;</span><br><span class="line">&#125;, &#123;&#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h4 id="复制对象"><a href="#复制对象" class="headerlink" title="复制对象"></a>复制对象</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ObjRedisResponse response = new ObjRedisResponse();</span><br><span class="line">BeanUtils.copyProperties(confDO, response);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<h3 id="List-转-Map"><a href="#List-转-Map" class="headerlink" title="List 转 Map"></a>List 转 Map</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Map&lt;String, Long&gt; glossaryMap = glossaryEntity.stream()</span><br><span class="line">        .filter(item -&gt; item.getFileId() != null)</span><br><span class="line">        .collect(Collectors.toMap(TbGlossary::getGlossaryName, TbGlossary::getFileId,</span><br><span class="line">                (existingValue, newValue) -&gt; existingValue));</span><br></pre></td></tr></table></figure>
-
-<h3 id="List-对实体某个属性进行分组"><a href="#List-对实体某个属性进行分组" class="headerlink" title="List 对实体某个属性进行分组"></a>List<T> 对实体某个属性进行分组</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// 使用 Stream API 根据 cameraId 分组</span><br><span class="line">Map&lt;Long, List&lt;RoomckTrackLocation&gt;&gt; groupedByCameraId = roomckTrackLocations.stream()</span><br><span class="line">    .collect(Collectors.groupingBy(RoomckTrackLocation::getCameraId));</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1233,7 +1228,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1271,7 +1266,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1280,12 +1275,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">146k</span>
+    <span title="站点总字数">170k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:26</span>
+    <span title="站点阅读时长">5:09</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

@@ -161,6 +161,221 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-10 bug 处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-10 17:32:06" itemprop="dateCreated datePublished" datetime="2023-11-10T17:32:06+08:00">2023-11-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2023-12-19 09:53:21" itemprop="dateModified" datetime="2023-12-19T09:53:21+08:00">2023-12-19</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/bug-%E5%A4%84%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">bug 处理</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>746</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>后端返回前端，分页页码总数信息丢失，导致前端不能分页。</p>
+<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>使用的pagehelper分页插件进行分页。在进行性能优化时，把排序放到代码里排序，导致分页信息丢失。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">PageHelper.startPage(pageInfo.getPageNum(), pageInfo.getPageSize(), true);</span><br><span class="line">List&lt;EneRmAlarmDetails&gt; eneRmAlarmDetails = eneRmAlarmDetailsMapper.qryEneZjRmAlarmDetailsPageListNew(request);</span><br></pre></td></tr></table></figure>
+<p>使用PageHelper 插件后 eneRmAlarmDetails 返回的其实是page 对象，里面存有分页的信息，如果直接对其排序，会导致分页信息丢失。</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>知道其原理后，只要在new 一个对象存储分页对象，排序后在把数据塞进去。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PageInfo&lt;EneRmAlarmDetails&gt; pageInfoVO = new PageInfo&lt;&gt;(eneRmAlarmDetails);</span><br><span class="line">// sql 语句order by 排序导致索引失效，程序进行排序</span><br><span class="line">eneRmAlarmDetails = eneRmAlarmDetails.parallelStream().sorted(</span><br><span class="line">        Comparator.comparing(EneRmAlarmDetails::getAlarmTime).reversed().thenComparing(EneRmAlarmDetails::getRoomName)</span><br><span class="line">).collect(Collectors.toList());</span><br><span class="line">pageInfoVO.setList(eneRmAlarmDetails);</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2023-11-07 sql优化处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-11-08 09:26:39" itemprop="dateCreated datePublished" datetime="2023-11-08T09:26:39+08:00">2023-11-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-01-09 14:58:58" itemprop="dateModified" datetime="2024-01-09T14:58:58+08:00">2024-01-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" itemprop="url" rel="index"><span itemprop="name">性能优化</span></a>
+                </span>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/08/2023-11-07-sql%E4%BC%98%E5%8C%96%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>能耗告警模块查询详请很慢</p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>定位到以下sql </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">select a.id,a.city_id,a.city_name,a.building_id,a.building_name,a.room_id,a.room_name,a.equipment_type_code,a.equipment_type_name,</span><br><span class="line">       a.equipment_id,a.equipment_name,a.average_energy,a.default_power,a.level,a.fluctuation_range,a.average_max,a.average_min,</span><br><span class="line">       ROUND(a.alarm_outliers,2) alarm_outliers,a.create_time,a.alarm_time,a.ishandle,a.default_max,a.default_min,a.absolute_max,a.absolute_min,</span><br><span class="line">       a.repair_loaded,a.account_day,a.standard_deviation,a.absolute_value,</span><br><span class="line">       (select b.calculating_priority_first from ene_cfg_energycost_device b where a.equipment_id = b.csc_device_id and b.state = &#x27;101002&#x27; limit 1) as calculating_priority_first</span><br><span class="line">from ene_rm_alarm_details a</span><br><span class="line">    left join roomck_building_rel c on a.building_id = c.other_building_id and c.other_org_source = &#x27;3&#x27;</span><br><span class="line">    left join roomck_building d on c.building_id = d.id</span><br><span class="line">    left join roomck_room_rel t3 on a.room_id = t3.other_room_id and a.building_id = t3.other_build_id and t3.other_org_source = &#x27;3&#x27;</span><br><span class="line">    inner join roomck_organization ro on t3.room_id = ro.org_id and ro.org_level = 12</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;beginTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;gt;= #&#123;beginTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;endTime != null&quot;&gt;</span><br><span class="line">        and str_to_date(a.alarm_time, &#x27;%Y-%m-%d %H:%i:%s&#x27;) &amp;lt;= #&#123;endTime&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentTypeCode != null and equipmentTypeCode != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_type_code = #&#123;equipmentTypeCode&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;equipmentName != null and equipmentName != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.equipment_name like concat(&#x27;%&#x27;, #&#123;equipmentName&#125;, &#x27;%&#x27;)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;level != null and level != &#x27;&#x27;&quot;&gt;</span><br><span class="line">        and a.level = #&#123;level&#125;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">order by a.alarm_time,a.room_name</span><br></pre></td></tr></table></figure>
+<p>发现该sql进行多表关联，且查询的字段用了函数计算。 ene_rm_alarm_details 是大表300多万数据。进行explain分析。<br>进行了全表扫描。 另外order by 字段没建立索引，导致索引失效</p>
+<h3 id="优化思路"><a href="#优化思路" class="headerlink" title="优化思路"></a>优化思路</h3><p>1.拆分sql 语句, 先查出ene_rm_alarm_details的主键 id，然后在通过id去查详情数据。<br>2.ene_rm_alarm_details 的room_id字段上建立索引。<br>3.去掉order by a.alarm_time,a.room_name，改为程序进行排序。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">SELECT</span><br><span class="line">a.id</span><br><span class="line">FROM ene_rm_alarm_details a</span><br><span class="line">INNER JOIN (</span><br><span class="line">    SELECT DISTINCT t3.other_room_id FROM  roomck_room_rel t3</span><br><span class="line">    LEFT JOIN roomck_building_rel c ON t3.other_build_id = c.other_building_id  and c.other_org_source = &#x27;2&#x27;</span><br><span class="line">    INNER JOIN roomck_organization ro  ON ro.org_id = t3.room_id  and t3.other_org_source = &#x27;2&#x27;</span><br><span class="line">&lt;where&gt;</span><br><span class="line">    &lt;if test=&quot;regionToOrgId != null&quot;&gt;</span><br><span class="line">        and  find_in_set(#&#123;regionToOrgId&#125;, ro.path_code)</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">    &lt;if test=&quot;orgIds != null and !orgIds.isEmpty()&quot;&gt;</span><br><span class="line">        &lt;foreach collection=&quot;orgIds&quot; item=&quot;item&quot; open=&quot; and (&quot; separator=&quot; or &quot; close=&quot;)&quot;&gt;</span><br><span class="line">            find_in_set(#&#123;item&#125;,ro.path_code)</span><br><span class="line">        &lt;/foreach&gt;</span><br><span class="line">    &lt;/if&gt;</span><br><span class="line">&lt;/where&gt;</span><br><span class="line">) tb on a.room_id = tb.other_room_id</span><br></pre></td></tr></table></figure>
+<h3 id="优化结果"><a href="#优化结果" class="headerlink" title="优化结果"></a>优化结果</h3><p>查询耗时1分多钟优化到 5~8 秒</p>
+<h3 id="进一步优化空间"><a href="#进一步优化空间" class="headerlink" title="进一步优化空间"></a>进一步优化空间</h3><p>业务上进行优化 ene_rm_alarm_details是大表，不应该检索所有数据。业务上应该默认查询最近一年的数据或者给一个时间范围。通过在告警时间上建立索引。把大表变成小表，然后在跟其他表进行关联时。性能会提升一大截。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/03/2023-11-02-bug%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1040,201 +1255,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/18/webservice-%E6%B5%8B%E8%AF%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/02/18/webservice-%E6%B5%8B%E8%AF%95/" class="post-title-link" itemprop="url">webservice 测试 </a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-02-18 11:02:05" itemprop="dateCreated datePublished" datetime="2021-02-18T11:02:05+08:00">2021-02-18</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-09-29 11:24:55" itemprop="dateModified" datetime="2024-09-29T11:24:55+08:00">2024-09-29</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/02/18/webservice-%E6%B5%8B%E8%AF%95/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/18/webservice-%E6%B5%8B%E8%AF%95/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>15 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="1-测试代码"><a href="#1-测试代码" class="headerlink" title="1.测试代码"></a>1.测试代码</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Copyright 2000-2020 YGSoft.Inc All Rights Reserved.</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">import</span> javax.xml.namespace.QName;</span><br><span class="line"><span class="keyword">import</span> javax.xml.rpc.ParameterMode;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.axis.client.Call;</span><br><span class="line"><span class="keyword">import</span> org.apache.axis.client.Service;</span><br><span class="line"><span class="keyword">import</span> org.apache.axis.encoding.XMLType;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 在此写上类的相关说明.&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xiayuanjian &lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0.0 2020年12月2日&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.5.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">Test</span> &#123;</span><br><span class="line">    <span class="keyword">static</span> <span class="type">int</span> x=<span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> &#123;</span><br><span class="line">		<span class="comment">// TODO Auto-generated method stub</span></span><br><span class="line"><span class="comment">//		for(int i=0; i&lt;10000;i++)</span></span><br><span class="line"><span class="comment">//		&#123;</span></span><br><span class="line"><span class="comment">//			 try &#123;  </span></span><br><span class="line"><span class="comment">//		            String endpoint = &quot;http://127.0.0.1:9080/grm/dj/res/service/IShanghaiSettleDataContext?wsdl&quot;;  </span></span><br><span class="line"><span class="comment">//		            Service service = new Service();  </span></span><br><span class="line"><span class="comment">//		            Call call = (Call) service.createCall();  </span></span><br><span class="line"><span class="comment">//		            </span></span><br><span class="line"><span class="comment">//		            call.setTargetEndpointAddress(endpoint);  </span></span><br><span class="line"><span class="comment">//		            call.setOperationName(&quot;querySettleDatabyCompid&quot;);// WSDL里面描述的接口名称  </span></span><br><span class="line"><span class="comment">//		            call.addParameter(new QName(&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;,&quot;arg0&quot;),  </span></span><br><span class="line"><span class="comment">//		                    org.apache.axis.Constants.XSD_STRING,ParameterMode.IN</span></span><br><span class="line"><span class="comment">//		                   ); </span></span><br><span class="line"><span class="comment">//		            call.addParameter(new QName(&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;,&quot;arg1&quot;),  </span></span><br><span class="line"><span class="comment">//		                    org.apache.axis.Constants.XSD_STRING,ParameterMode.IN);</span></span><br><span class="line"><span class="comment">//		            call.addParameter(new QName(&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;,&quot;arg2&quot;),  </span></span><br><span class="line"><span class="comment">//		                    org.apache.axis.Constants.XSD_STRING,ParameterMode.IN);</span></span><br><span class="line"><span class="comment">//		            call.addParameter(new QName(&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;,&quot;arg3&quot;),  </span></span><br><span class="line"><span class="comment">//		                    org.apache.axis.Constants.XSD_STRING,ParameterMode.IN);</span></span><br><span class="line"><span class="comment">//		            call.setReturnType(org.apache.axis.encoding.XMLType.XSD_STRING);// 设置返回类型  </span></span><br><span class="line"><span class="comment">//		            String arg3 = (String) call.invoke(new Object[] &#123; &quot;2020-10-12&quot;,&quot;2020-11-12&quot;,&quot;00000002&quot;,&quot;4401&quot; &#125;);  </span></span><br><span class="line"><span class="comment">//		            // 给方法传递参数，并且调用方法  </span></span><br><span class="line"><span class="comment">////		            System.out.println(&quot;result is &quot; + arg3); </span></span><br><span class="line"><span class="comment">//		            if(arg3.indexOf(&quot;compid&quot;) != -1)</span></span><br><span class="line"><span class="comment">//		            &#123;</span></span><br><span class="line"><span class="comment">//		            	x++;</span></span><br><span class="line"><span class="comment">//		            &#125;</span></span><br><span class="line"><span class="comment">//		        &#125; catch (Exception e) &#123;  </span></span><br><span class="line"><span class="comment">//		            System.err.println(e.toString());  </span></span><br><span class="line"><span class="comment">//		        &#125; </span></span><br><span class="line"><span class="comment">//		&#125;</span></span><br><span class="line">	    </span><br><span class="line"><span class="comment">//        String endpoint = &quot;http://10.51.170.1:33912/grm/res/service/IReFbsQueryByPaymentTransferWsService?wsdl&quot;;  </span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line">	     <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">100</span>; i++)</span><br><span class="line">	     &#123;</span><br><span class="line">		     <span class="keyword">try</span> &#123;  </span><br><span class="line">		            <span class="type">String</span> <span class="variable">endpoint</span> <span class="operator">=</span> <span class="string">&quot;http://127.0.0.1:9080/grm/res/service/IReFbsQueryByPaymentTransferWsService?wsdl&quot;</span>;  </span><br><span class="line">		            <span class="type">Service</span> <span class="variable">service</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Service</span>();  </span><br><span class="line">		            <span class="type">Call</span> <span class="variable">call</span> <span class="operator">=</span> (Call) service.createCall();  </span><br><span class="line">		            </span><br><span class="line">		            call.setTargetEndpointAddress(endpoint);  </span><br><span class="line">		            call.setOperationName(<span class="string">&quot;findFbsPaymentTransferInfo&quot;</span>);<span class="comment">// WSDL里面描述的接口名称  </span></span><br><span class="line">		            call.addParameter(<span class="keyword">new</span> <span class="title class_">QName</span>(<span class="string">&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;</span>,<span class="string">&quot;arg0&quot;</span>),  </span><br><span class="line">		            		 XMLType.XSD_STRING,ParameterMode.IN</span><br><span class="line">		                   ); </span><br><span class="line"><span class="comment">//					call.addParameter(&quot;xml&quot;, XMLType.XSD_STRING,ParameterMode.IN);//xml为execute方法的参数名，后面定义类型，和方式</span></span><br><span class="line"></span><br><span class="line">		            <span class="type">String</span> <span class="variable">s</span> <span class="operator">=</span></span><br><span class="line">		             		 <span class="string">&quot;&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf-8&#x27;?&gt;&quot;</span></span><br><span class="line">	         				+ <span class="string">&quot;&lt;DOCUMENT&gt;&quot;</span></span><br><span class="line">	         				+ <span class="string">&quot;&lt;compid&gt;4400&lt;/compid&gt;&quot;</span></span><br><span class="line">	         				+ <span class="string">&quot;&lt;ywrq&gt;2021-01-29&lt;/ywrq&gt;&quot;</span></span><br><span class="line">	         				+ <span class="string">&quot;&lt;/DOCUMENT&gt;&quot;</span>;</span><br><span class="line"><span class="comment">//		            System.out.print(s);</span></span><br><span class="line">		            call.setReturnType(org.apache.axis.encoding.XMLType.XSD_STRING);<span class="comment">// 设置返回类型  </span></span><br><span class="line">		            <span class="type">String</span> <span class="variable">arg3</span> <span class="operator">=</span> (String) call.invoke(<span class="keyword">new</span> <span class="title class_">Object</span>[] &#123;  </span><br><span class="line">		            		s 		</span><br><span class="line">		            &#125;);  </span><br><span class="line">		            <span class="keyword">if</span>(arg3.indexOf(<span class="string">&quot;yhlb&quot;</span>) != -<span class="number">1</span>)</span><br><span class="line">		            &#123;</span><br><span class="line">		            	x++;</span><br><span class="line">		            &#125;</span><br><span class="line">		            <span class="comment">// 给方法传递参数，并且调用方法  </span></span><br><span class="line">		        &#125; <span class="keyword">catch</span> (Exception e) &#123;  </span><br><span class="line">		            System.err.println(e.toString());  </span><br><span class="line">		        &#125; </span><br><span class="line">	    	 </span><br><span class="line">	     &#125;</span><br><span class="line"></span><br><span class="line">         System.out.println(<span class="string">&quot;result is &quot;</span> + x);  </span><br><span class="line"></span><br><span class="line">	&#125;</span><br><span class="line"><span class="comment">//	 static public  void webserviceTest(final String endpoint,final String funcname)</span></span><br><span class="line"><span class="comment">//	 &#123; </span></span><br><span class="line"><span class="comment">//		     for(int i=0; i&lt;100; i++)</span></span><br><span class="line"><span class="comment">//		     &#123;</span></span><br><span class="line"><span class="comment">//			     try &#123;  </span></span><br><span class="line"><span class="comment">////			            String endpoint = &quot;http://10.51.170.1:33912/grm/res/service/IReFbsQueryByPaymentTransferWsService?wsdl&quot;;  </span></span><br><span class="line"><span class="comment">//			            Service service = new Service();  </span></span><br><span class="line"><span class="comment">//			            Call call = (Call) service.createCall();  </span></span><br><span class="line"><span class="comment">//			            </span></span><br><span class="line"><span class="comment">//			            call.setTargetEndpointAddress(endpoint);  </span></span><br><span class="line"><span class="comment">//			            call.setOperationName(funcname);// WSDL里面描述的接口名称  </span></span><br><span class="line"><span class="comment">//			            call.addParameter(new QName(&quot;http://ws.service.res.dj.cgw.gris.ygsoft.com/&quot;,&quot;arg0&quot;),  </span></span><br><span class="line"><span class="comment">//			            		 XMLType.XSD_STRING,ParameterMode.IN</span></span><br><span class="line"><span class="comment">//			                   ); </span></span><br><span class="line"><span class="comment">////						call.addParameter(&quot;xml&quot;, XMLType.XSD_STRING,ParameterMode.IN);//xml为execute方法的参数名，后面定义类型，和方式</span></span><br><span class="line"><span class="comment">//			            String s =</span></span><br><span class="line"><span class="comment">//			             		 &quot;&lt;?xml version=&#x27;1.0&#x27; encoding=&#x27;utf-8&#x27;?&gt;&quot;</span></span><br><span class="line"><span class="comment">//		         				+ &quot;&lt;DOCUMENT&gt;&quot;</span></span><br><span class="line"><span class="comment">//		         				+ &quot;&lt;compid&gt;4400&lt;/compid&gt;&quot;</span></span><br><span class="line"><span class="comment">//		         				+ &quot;&lt;ywrq&gt;2021-01-29&lt;/ywrq&gt;&quot;</span></span><br><span class="line"><span class="comment">//		         				+ &quot;&lt;/DOCUMENT&gt;&quot;;</span></span><br><span class="line"><span class="comment">////			            System.out.print(s);</span></span><br><span class="line"><span class="comment">//			            call.setReturnType(org.apache.axis.encoding.XMLType.XSD_STRING);// 设置返回类型  </span></span><br><span class="line"><span class="comment">//			            String arg3 = (String) call.invoke(new Object[] &#123;  </span></span><br><span class="line"><span class="comment">//			            		s 		</span></span><br><span class="line"><span class="comment">//			            &#125;);  </span></span><br><span class="line"><span class="comment">//			            if(arg3.indexOf(&quot;yhlb&quot;) != -1)</span></span><br><span class="line"><span class="comment">//			            &#123;</span></span><br><span class="line"><span class="comment">//			            	x++;</span></span><br><span class="line"><span class="comment">//			            &#125;</span></span><br><span class="line"><span class="comment">//			            // 给方法传递参数，并且调用方法  </span></span><br><span class="line"><span class="comment">//			        &#125; catch (Exception e) &#123;  </span></span><br><span class="line"><span class="comment">//			            System.err.println(e.toString());  </span></span><br><span class="line"><span class="comment">//			        &#125; </span></span><br><span class="line"><span class="comment">//		    	 </span></span><br><span class="line"><span class="comment">//		     &#125;</span></span><br><span class="line"><span class="comment">//</span></span><br><span class="line"><span class="comment">//	         System.out.println(&quot;result is &quot; + x);</span></span><br><span class="line"><span class="comment">//	 &#125;</span></span><br><span class="line">	 </span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h4 id="另一种方式调用webservice服务-2024-09-29-更新-Another-way-to-call-the-webservice-service-Updated-on-2024-09-29"><a href="#另一种方式调用webservice服务-2024-09-29-更新-Another-way-to-call-the-webservice-service-Updated-on-2024-09-29" class="headerlink" title="另一种方式调用webservice服务 2024-09-29 更新 - Another way to call the webservice service Updated on 2024-09-29"></a>另一种方式调用webservice服务 2024-09-29 更新 - Another way to call the webservice service Updated on 2024-09-29</h4><ol>
-<li>使用HttpURLConnection直接调用  - Use HttpURLConnection to make a direct call</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">private static void sendSoapRequest(String endpoint, String soapRequest) throws IOException, WebServiceException &#123;</span><br><span class="line">     URL url = new URL(endpoint);</span><br><span class="line">     HttpURLConnection connection = (HttpURLConnection) url.openConnection();</span><br><span class="line"></span><br><span class="line">     connection.setRequestMethod(&quot;POST&quot;);</span><br><span class="line">     connection.setRequestProperty(&quot;Content-Type&quot;, &quot;text/xml; charset=utf-8&quot;);</span><br><span class="line">     connection.setRequestProperty(&quot;SOAPAction&quot;, &quot;http://intf.smpin.tydic.com/BillInfo&quot;);</span><br><span class="line">     connection.setDoOutput(true);</span><br><span class="line"></span><br><span class="line">     try (OutputStream outputStream = connection.getOutputStream()) &#123;</span><br><span class="line">         outputStream.write(soapRequest.getBytes(StandardCharsets.UTF_8));</span><br><span class="line">         outputStream.flush();</span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     int responseCode = connection.getResponseCode();</span><br><span class="line">     if (responseCode != 200) &#123;</span><br><span class="line">         throw new WebServiceException(&quot;Web服务调用失败: HTTP error code : &quot; + responseCode);</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<ol start="2">
-<li>构造soap报文 - Construct SOAP message</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">private static String buildSoapRequest(BillInfo billInfo,  BillReqVo billReqVo) &#123;</span><br><span class="line">    return &quot;&lt;soapenv:Envelope xmlns:soapenv=\&quot;http://schemas.xmlsoap.org/soap/envelope/\&quot; xmlns:intf=\&quot;http://intf.smpin.tydic.com\&quot; xmlns:vo=\&quot;http://vo.intf.smpin.tydic.com\&quot;&gt;&quot; +</span><br><span class="line">            &quot;   &lt;soapenv:Header/&gt;&quot; +</span><br><span class="line">            &quot;   &lt;soapenv:Body&gt;&quot; +</span><br><span class="line">            &quot;      &lt;intf:BillInfo&gt;&quot; +</span><br><span class="line">            &quot;         &lt;intf:UserVo&gt;&quot; +</span><br><span class="line">            &quot;            &lt;vo:userName&gt;&quot; + billInfo.getUserVo().getUserName() + &quot;&lt;/vo:userName&gt;&quot; +</span><br><span class="line">            &quot;            &lt;vo:passWord&gt;&quot; + billInfo.getUserVo().getPassWord() + &quot;&lt;/vo:passWord&gt;&quot; +</span><br><span class="line">            &quot;            &lt;vo:sysCode&gt;&quot; + billInfo.getUserVo().getSysCode() + &quot;&lt;/vo:sysCode&gt;&quot; +</span><br><span class="line">            &quot;            &lt;vo:productId&gt;&quot; + billInfo.getUserVo().getProductId() + &quot;&lt;/vo:productId&gt;&quot; +</span><br><span class="line">            &quot;         &lt;/intf:UserVo&gt;&quot; +</span><br><span class="line">            &quot;         &lt;intf:ArrayOfBillReqVo&gt;&quot; +</span><br><span class="line">            &quot;            &lt;vo:BillReqVo&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:channelType&gt;&quot; + billReqVo.getChannelType() + &quot;&lt;/vo:channelType&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:endDate&gt;&quot; + billReqVo.getEndDate() + &quot;&lt;/vo:endDate&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:planId&gt;&quot; + billReqVo.getPlanId() + &quot;&lt;/vo:planId&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:params&gt;&quot; + billReqVo.getParams() + &quot;&lt;/vo:params&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:beginDate&gt;&quot; + billReqVo.getBeginDate() + &quot;&lt;/vo:beginDate&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:pushUrl&gt;&quot; + billReqVo.getPushUrl() + &quot;&lt;/vo:pushUrl&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:endHour&gt;&quot; + billReqVo.getEndHour() + &quot;&lt;/vo:endHour&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:createStaff&gt;&quot; + billReqVo.getCreateStaff() + &quot;&lt;/vo:createStaff&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:latnId&gt;&quot; + billReqVo.getLatnId() + &quot;&lt;/vo:latnId&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:toTel&gt;&quot; + billReqVo.getToTel() + &quot;&lt;/vo:toTel&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:beginHour&gt;&quot; + billReqVo.getBeginHour() + &quot;&lt;/vo:beginHour&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:flowCode&gt;&quot; + billReqVo.getFlowCode() + &quot;&lt;/vo:flowCode&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:sentContent&gt;&quot; + billReqVo.getSentContent() + &quot;&lt;/vo:sentContent&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:createDespart&gt;&quot; + billReqVo.getCreateDespart() + &quot;&lt;/vo:createDespart&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:businessId&gt;&quot; + billReqVo.getBusinessId() + &quot;&lt;/vo:businessId&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:sentType&gt;&quot; + billReqVo.getSentType() + &quot;&lt;/vo:sentType&gt;&quot; +</span><br><span class="line">            &quot;               &lt;vo:sysCode&gt;&quot; + billReqVo.getSysCode() + &quot;&lt;/vo:sysCode&gt;&quot; +</span><br><span class="line">            &quot;            &lt;/vo:BillReqVo&gt;&quot; +</span><br><span class="line">            &quot;         &lt;/intf:ArrayOfBillReqVo&gt;&quot; +</span><br><span class="line">            &quot;      &lt;/intf:BillInfo&gt;&quot; +</span><br><span class="line">            &quot;   &lt;/soapenv:Body&gt;&quot; +</span><br><span class="line">            &quot;&lt;/soapenv:Envelope&gt;&quot;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">SQL 使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-27 11:39:10" itemprop="dateCreated datePublished" datetime="2021-01-27T11:39:10+08:00">2021-01-27</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2023-02-12 22:36:56" itemprop="dateModified" datetime="2023-02-12T22:36:56+08:00">2023-02-12</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/01/27/SQL-%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>539</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="1-写完SQL先explain查看执行计划（SQL性能优化）"><a href="#1-写完SQL先explain查看执行计划（SQL性能优化）" class="headerlink" title="1. 写完SQL先explain查看执行计划（SQL性能优化）"></a>1. 写完SQL先explain查看执行计划（SQL性能优化）</h4><p>日常开发写SQL的时候，尽量养成这个好习惯呀：写完SQL后，用explain分析一下，尤其注意走不走索引。</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">explain select userid,name,age from user </span><br><span class="line">where userid =10086 or age =18;</span><br></pre></td></tr></table></figure>
-<h4 id="2-操作delete或者update语句，加个limit"><a href="#2-操作delete或者update语句，加个limit" class="headerlink" title="2. 操作delete或者update语句，加个limit"></a>2. 操作delete或者update语句，加个limit</h4><h4 id="3-设计表的时候，所有表和字段都添加相应的注释"><a href="#3-设计表的时候，所有表和字段都添加相应的注释" class="headerlink" title="3. 设计表的时候，所有表和字段都添加相应的注释"></a>3. 设计表的时候，所有表和字段都添加相应的注释</h4><h4 id="4-SQL书写格式，关键字大小保持一致，使用缩进"><a href="#4-SQL书写格式，关键字大小保持一致，使用缩进" class="headerlink" title="4. SQL书写格式，关键字大小保持一致，使用缩进"></a>4. SQL书写格式，关键字大小保持一致，使用缩进</h4><h4 id="5-尽量使用varchar代替-char。"><a href="#5-尽量使用varchar代替-char。" class="headerlink" title="5. 尽量使用varchar代替 char。"></a>5. 尽量使用varchar代替 char。</h4><h3 id="mysql"><a href="#mysql" class="headerlink" title="mysql"></a>mysql</h3><h4 id="1-树查询"><a href="#1-树查询" class="headerlink" title="1.树查询"></a>1.树查询</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">WITH RECURSIVE CTE_CONNECT_BY AS (</span><br><span class="line">SELECT 1 AS LEVEL,S.* FROM ELEC_RE_APPRO_ORG_LV S</span><br><span class="line"> WHERE UNIT_CODE = &#x27;1501&#x27;</span><br><span class="line">UNION ALL</span><br><span class="line">SELECT LEVEL + 1 AS LEVEL, S.* FROM CTE_CONNECT_BY R INNER JOIN ELEC_RE_APPRO_ORG_LV S ON s.UNIT_CODE =  r.P_UNIT_NAME</span><br><span class="line">)</span><br><span class="line">SELECT UNIT_CODE FROM CTE_CONNECT_BY  WHERE UNIT_LEVEL = &#x27;1&#x27; </span><br></pre></td></tr></table></figure>
-<h4 id="2-行转列"><a href="#2-行转列" class="headerlink" title="2. 行转列"></a>2. 行转列</h4>
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1303,7 +1323,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">64</span>
+          <span class="site-state-item-count">65</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1341,7 +1361,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2024</span>
+  <span itemprop="copyrightYear">2025</span>
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
@@ -1350,12 +1370,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">146k</span>
+    <span title="站点总字数">170k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">4:26</span>
+    <span title="站点阅读时长">5:09</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
