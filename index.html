@@ -161,6 +161,294 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/15/2025-03-15-%E5%89%8D%E7%AB%AF%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96pdf-worker-js%E5%A4%B1%E8%B4%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/15/2025-03-15-%E5%89%8D%E7%AB%AF%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96pdf-worker-js%E5%A4%B1%E8%B4%A5/" class="post-title-link" itemprop="url">2025-03-15 前端生产环境获取pdf.worker.js失败</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-03-15 21:14:48 / 修改时间：21:21:43" itemprop="dateCreated datePublished" datetime="2025-03-15T21:14:48+08:00">2025-03-15</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2025/03/15/2025-03-15-%E5%89%8D%E7%AB%AF%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96pdf-worker-js%E5%A4%B1%E8%B4%A5/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2025/03/15/2025-03-15-%E5%89%8D%E7%AB%AF%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E8%8E%B7%E5%8F%96pdf-worker-js%E5%A4%B1%E8%B4%A5/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>571</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>实现pdf预览组件需要设置pdfjsLib.GlobalWorkerOptions.workerSrc &#x3D; ‘&#x2F;tenderDocument&#x2F;pdf.worker.min.mjs’;<br>工作线程。pdf.worker.min.mjs这个放在前端包public下。开发环境预览效果正常。一放到生产环境死活不行。发现浏览器报这个错<br>Failed to load module script: Expected a JavaScript module script but the server responded with a MIME type of “application&#x2F;octet-stream”. Strict MIME type checking is enforced for module scripts per HTML spec. </p>
+<h3 id="问题分析"><a href="#问题分析" class="headerlink" title="问题分析"></a>问题分析</h3><p>服务器返回的 Content-Type 不对返回的类型是application&#x2F;octet-stream。 需要返回js 模块</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><p>在nginx配置下增加以下配置</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">http &#123;</span><br><span class="line">    include       mime.types;</span><br><span class="line">    default_type  application/octet-stream;</span><br><span class="line"></span><br><span class="line">    types &#123;</span><br><span class="line">        application/javascript mjs;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/03/12/2025-03-12-%E5%89%8D%E7%AB%AFreact-%E5%AE%9E%E7%8E%B0pdf%E9%A2%84%E8%A7%88%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/03/12/2025-03-12-%E5%89%8D%E7%AB%AFreact-%E5%AE%9E%E7%8E%B0pdf%E9%A2%84%E8%A7%88%E7%BB%84%E4%BB%B6/" class="post-title-link" itemprop="url">2025-03-12 前端react 实现pdf预览组件</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-03-12 14:24:59" itemprop="dateCreated datePublished" datetime="2025-03-12T14:24:59+08:00">2025-03-12</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-15 21:10:50" itemprop="dateModified" datetime="2025-03-15T21:10:50+08:00">2025-03-15</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2025/03/12/2025-03-12-%E5%89%8D%E7%AB%AFreact-%E5%AE%9E%E7%8E%B0pdf%E9%A2%84%E8%A7%88%E7%BB%84%E4%BB%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2025/03/12/2025-03-12-%E5%89%8D%E7%AB%AFreact-%E5%AE%9E%E7%8E%B0pdf%E9%A2%84%E8%A7%88%E7%BB%84%E4%BB%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>10k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>19 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>标书审核查重对标书进行预览并且对查重部分实现标注功能。原来使用iframe 实现 很简单。但是实现内容标注功能很困难改成使用 pdf.js 实现</p>
+<ol>
+<li>iframe 实现 pdf 预览<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">/* eslint-disable */</span><br><span class="line">import React, &#123; useEffect, useState &#125; from &#x27;react&#x27;;</span><br><span class="line"></span><br><span class="line">const PdfViewer = (props) =&gt; &#123;</span><br><span class="line">  const [pdfUrl, setPdfUrl] = useState(&#x27;&#x27;);</span><br><span class="line">  const &#123; page, url, visible &#125; = props;</span><br><span class="line"></span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    if (visible) &#123;</span><br><span class="line">      var time = new Date().getTime();</span><br><span class="line">      var timestr = &#x27;&amp;t=&#x27; + time;</span><br><span class="line">      var url1 = url + &#x27;#navpanes=0&amp;toolbar=0&amp;page=&#x27; + page + timestr;</span><br><span class="line">      setPdfUrl(url1);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;, [page, url, visible]);</span><br><span class="line">  return (</span><br><span class="line">    &lt;&gt;&#123;visible &amp;&amp; &lt;iframe key=&#123;new Date().getTime()&#125; className=&quot;pdf-iframe&quot; title=&quot;预览文档&quot; src=&#123;pdfUrl&#125; width=&quot;100%&quot; height=&quot;100%&quot;&gt;&lt;/iframe&gt;&#125;&lt;/&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default PdfViewer;</span><br></pre></td></tr></table></figure></li>
+<li>pdf.js 方式实现pdf 预览<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br></pre></td><td class="code"><pre><span class="line">import React, &#123; useEffect, useRef, useState &#125; from &#x27;react&#x27;;</span><br><span class="line">import * as pdfjsLib from &#x27;pdfjs-dist&#x27;;</span><br><span class="line">import &#x27;pdfjs-dist/web/pdf_viewer.css&#x27;;</span><br><span class="line"></span><br><span class="line">pdfjsLib.GlobalWorkerOptions.workerSrc = &#x27;/tenderDocument/pdf.worker.min.mjs&#x27;;</span><br><span class="line">const PdfViewer = (&#123; page, url, visible, bndoxSource &#125;) =&gt; &#123;</span><br><span class="line">  const containerRef = useRef(null);</span><br><span class="line">  const abortControllerRef = useRef(new AbortController());</span><br><span class="line">  const pdfDocRef = useRef(null);</span><br><span class="line"></span><br><span class="line">  // 清理函数</span><br><span class="line">  const cleanup = () =&gt; &#123;</span><br><span class="line">    abortControllerRef.current.abort();</span><br><span class="line">    if (containerRef.current) &#123;</span><br><span class="line">      containerRef.current.innerHTML = &#x27;&#x27;;</span><br><span class="line">    &#125;</span><br><span class="line">    pdfDocRef.current = null;</span><br><span class="line">    abortControllerRef.current = new AbortController(); // 重置控制器</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  const jumpToPage = (pageNum) =&gt; &#123;</span><br><span class="line">    if (!pdfDocRef.current) return;</span><br><span class="line"></span><br><span class="line">    const totalPages = pdfDocRef.current.numPages;</span><br><span class="line">    const targetPage = Math.min(Math.max(1, pageNum), totalPages);</span><br><span class="line"></span><br><span class="line">    const checkAndScroll = () =&gt; &#123;</span><br><span class="line">      const pageElement = document.getElementById(`page-$&#123;targetPage&#125;`);</span><br><span class="line">      if (pageElement) &#123;</span><br><span class="line">        pageElement.scrollIntoView(&#123; behavior: &#x27;auto&#x27;, block: &#x27;start&#x27; &#125;);</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        requestAnimationFrame(checkAndScroll);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    checkAndScroll();</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  // 主渲染逻辑</span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    if (!visible) return;</span><br><span class="line"></span><br><span class="line">    const loadAndRender = async () =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">        cleanup(); // 先清理之前的渲染</span><br><span class="line">        // 加载 PDF 文档</span><br><span class="line">        const loadingTask = pdfjsLib.getDocument(&#123;</span><br><span class="line">          url,</span><br><span class="line">          signal: abortControllerRef.current.signal</span><br><span class="line">        &#125;);</span><br><span class="line">        const pdfDoc = await loadingTask.promise;</span><br><span class="line">        pdfDocRef.current = pdfDoc;</span><br><span class="line">        // 渲染目标页面及后续页面</span><br><span class="line">        const pagePromises = [];</span><br><span class="line">        for (let i = 1; i &lt;= pdfDoc.numPages; i++) &#123;</span><br><span class="line">          try &#123;</span><br><span class="line">            const pageref = await pdfDoc.getPage(i);</span><br><span class="line">            await renderPage(i, pageref);</span><br><span class="line">          &#125; catch (error) &#123;</span><br><span class="line">            console.error(`渲染第 $&#123;i&#125; 页时出错:`, error);</span><br><span class="line">          &#125;</span><br><span class="line">        &#125;</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        if (err.name !== &#x27;AbortException&#x27;) &#123;</span><br><span class="line">          console.error(&#x27;PDF 加载/渲染失败:&#x27;, err);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      jumpToPage(page);</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    loadAndRender();</span><br><span class="line"></span><br><span class="line">    return cleanup;</span><br><span class="line">  &#125;, [url, visible, page])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  const renderPage = async (pageNum, pageref) =&gt; &#123;</span><br><span class="line">    const container = containerRef.current;</span><br><span class="line">    const pdfPage = pageref;</span><br><span class="line">    // 根据容器宽度计算缩放比例</span><br><span class="line">    const containerWidth = container.clientWidth;</span><br><span class="line">    const viewport = pdfPage.getViewport(&#123;</span><br><span class="line">      scale: containerWidth / pdfPage.getViewport(&#123; scale: 1 &#125;).width</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    // 创建页面容器</span><br><span class="line">    const pageContainer = document.createElement(&#x27;div&#x27;);</span><br><span class="line">    pageContainer.id = `page-$&#123;pageNum&#125;`;</span><br><span class="line">    pageContainer.style.position = &#x27;relative&#x27;;</span><br><span class="line">    pageContainer.style.marginBottom = &#x27;20px&#x27;; // 添加页间距</span><br><span class="line"></span><br><span class="line">    // 创建并配置Canvas</span><br><span class="line">    const canvas = document.createElement(&#x27;canvas&#x27;);</span><br><span class="line">    const context = canvas.getContext(&#x27;2d&#x27;);</span><br><span class="line">    canvas.width = viewport.width;</span><br><span class="line">    canvas.height = viewport.height;</span><br><span class="line"></span><br><span class="line">    // 渲染PDF内容</span><br><span class="line">    await pdfPage.render(&#123;</span><br><span class="line">      canvasContext: context,</span><br><span class="line">      viewport: viewport</span><br><span class="line">    &#125;).promise;</span><br><span class="line">    pageContainer.appendChild(canvas);</span><br><span class="line"></span><br><span class="line">    // 创建标注层</span><br><span class="line">    if (pageNum == page &amp;&amp; bndoxSource != null) &#123;</span><br><span class="line">      const annotationLayer = document.createElement(&#x27;div&#x27;);</span><br><span class="line">      annotationLayer.style.position = &#x27;absolute&#x27;;</span><br><span class="line">      annotationLayer.style.inset = &#x27;0&#x27;;</span><br><span class="line">      annotationLayer.style.pointerEvents = &#x27;none&#x27;;</span><br><span class="line">      annotationLayer.style.zIndex = &#x27;2&#x27;;</span><br><span class="line">      drawAnnotations(annotationLayer, viewport);</span><br><span class="line">      pageContainer.appendChild(annotationLayer);</span><br><span class="line">    &#125;</span><br><span class="line">    // 组装页面元素</span><br><span class="line">    containerRef.current.appendChild(pageContainer);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  const drawAnnotations = (annotationLayer, viewport) =&gt; &#123;</span><br><span class="line">    if (!bndoxSource) return;</span><br><span class="line"></span><br><span class="line">    bndoxSource.forEach(([x1, y1, x2, y2]) =&gt; &#123;</span><br><span class="line">      const div = document.createElement(&#x27;div&#x27;);</span><br><span class="line">      div.style.cssText = `</span><br><span class="line">        position: absolute;</span><br><span class="line">        left: $&#123;x1 * viewport.scale&#125;px;</span><br><span class="line">        top: $&#123;y1 * viewport.scale&#125;px;</span><br><span class="line">        width: $&#123;(x2 - x1) * viewport.scale&#125;px;</span><br><span class="line">        height: $&#123;(y2 - y1) * viewport.scale&#125;px;</span><br><span class="line">        border: 2px solid red;</span><br><span class="line">        box-sizing: border-box;</span><br><span class="line">        background-color: rgba(255, 192, 203, 0.5);</span><br><span class="line">      `;</span><br><span class="line">      annotationLayer.appendChild(div);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return visible &amp;&amp; (</span><br><span class="line">    &lt;div</span><br><span class="line">      ref=&#123;containerRef&#125;</span><br><span class="line">      style=&#123;&#123;</span><br><span class="line">        width: &#x27;100%&#x27;,</span><br><span class="line">        height: &#x27;100%&#x27;,</span><br><span class="line">        overflowY: &#x27;auto&#x27;,</span><br><span class="line">        position: &#x27;relative&#x27;</span><br><span class="line">      &#125;&#125;</span><br><span class="line">    /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default PdfViewer;</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="待改进点"><a href="#待改进点" class="headerlink" title="待改进点"></a>待改进点</h3><ol>
+<li>全量渲染每一页的pdf. 然后再跳转到外部传来的页码页面。 大文件pdf 可能会卡顿。</li>
+<li>为了保证pdf 页码按顺序渲染。 使用for 循环 一页一页渲染，没有使用并行渲染。</li>
+<li>原来每个内容异常点都会渲染一次。重复获取后端接口文件</li>
+</ol>
+<h3 id="改进思路"><a href="#改进思路" class="headerlink" title="改进思路"></a>改进思路</h3><ol>
+<li>对与url相同的pdf 不再重复调用后端接口获取文件</li>
+<li>只渲染当前异常界面</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">/* eslint-disable */</span><br><span class="line">import React, &#123; useEffect, useRef &#125; from &#x27;react&#x27;;</span><br><span class="line">import * as pdfjsLib from &#x27;pdfjs-dist&#x27;;</span><br><span class="line">import &#x27;pdfjs-dist/web/pdf_viewer.css&#x27;;</span><br><span class="line"></span><br><span class="line">const workerSrc = window.location.origin + &#x27;/tenderDocument/pdf.worker.mjs&#x27;;</span><br><span class="line">pdfjsLib.GlobalWorkerOptions.workerSrc = workerSrc;</span><br><span class="line"></span><br><span class="line">console.log(pdfjsLib.GlobalWorkerOptions.workerSrc);</span><br><span class="line">const PdfViewer = (&#123; page, url, visible, bndoxSource &#125;) =&gt; &#123;</span><br><span class="line">  const containerRef = useRef(null);</span><br><span class="line">  const abortControllerRef = useRef(new AbortController());</span><br><span class="line">  const pdfDocRef = useRef(null);</span><br><span class="line">  const lastUrlRef = useRef(null); // 缓存上一次的 URL</span><br><span class="line"></span><br><span class="line">  // 清理函数</span><br><span class="line">  const cleanup = (force = false) =&gt; &#123;</span><br><span class="line">    if (force || url !== lastUrlRef.current) &#123;</span><br><span class="line">      abortControllerRef.current.abort();</span><br><span class="line">      if (containerRef.current) &#123;</span><br><span class="line">        containerRef.current.innerHTML = &#x27;&#x27;;</span><br><span class="line">      &#125;</span><br><span class="line">      pdfDocRef.current = null;</span><br><span class="line">      abortControllerRef.current = new AbortController();</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  const jumpToPage = pageNum =&gt; &#123;</span><br><span class="line">    if (!pdfDocRef.current) return;</span><br><span class="line"></span><br><span class="line">    const totalPages = pdfDocRef.current.numPages;</span><br><span class="line">    const targetPage = Math.min(Math.max(1, pageNum), totalPages);</span><br><span class="line"></span><br><span class="line">    const checkAndScroll = () =&gt; &#123;</span><br><span class="line">      const pageElement = document.getElementById(`page-$&#123;targetPage&#125;`);</span><br><span class="line">      if (pageElement) &#123;</span><br><span class="line">        pageElement.scrollIntoView(&#123; behavior: &#x27;auto&#x27;, block: &#x27;start&#x27; &#125;);</span><br><span class="line">      &#125; else &#123;</span><br><span class="line">        requestAnimationFrame(checkAndScroll);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    checkAndScroll();</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  // 主渲染逻辑</span><br><span class="line">  useEffect(() =&gt; &#123;</span><br><span class="line">    if (!visible) return;</span><br><span class="line"></span><br><span class="line">    const loadAndRender = async () =&gt; &#123;</span><br><span class="line">      try &#123;</span><br><span class="line">              // 每次渲染前清除旧页面</span><br><span class="line">          if (containerRef.current) &#123;</span><br><span class="line">            containerRef.current.innerHTML = &#x27;&#x27;;</span><br><span class="line">          &#125;</span><br><span class="line">          // 如果 URL 相同且 PDF 文档已加载，则跳过加载过程</span><br><span class="line">        if (url === lastUrlRef.current &amp;&amp; pdfDocRef.current) &#123;</span><br><span class="line">          console.log(&quot;地址相同&quot;)</span><br><span class="line">          const targetPage = Math.min(Math.max(1, page), pdfDocRef.current.numPages);</span><br><span class="line">          const pageref = await pdfDocRef.current.getPage(targetPage);</span><br><span class="line">          await renderPage(page, pageref);</span><br><span class="line">          jumpToPage(page); // 直接跳转到指定页面</span><br><span class="line">          return;</span><br><span class="line">        &#125;</span><br><span class="line">        cleanup(true); // 强制清理旧内容</span><br><span class="line">        // 加载 PDF 文档</span><br><span class="line">        const loadingTask = pdfjsLib.getDocument(&#123;</span><br><span class="line">          url,</span><br><span class="line">          signal: abortControllerRef.current.signal,</span><br><span class="line">        &#125;);</span><br><span class="line">        const pdfDoc = await loadingTask.promise;</span><br><span class="line">        pdfDocRef.current = pdfDoc;</span><br><span class="line">        lastUrlRef.current = url;</span><br><span class="line">        const targetPage = Math.min(Math.max(1, page), pdfDoc.numPages);</span><br><span class="line"></span><br><span class="line">        const pageref = await pdfDoc.getPage(targetPage);</span><br><span class="line"></span><br><span class="line">        await renderPage(page, pageref);</span><br><span class="line">        jumpToPage(page);</span><br><span class="line"></span><br><span class="line">        // 渲染目标页面及后续页面</span><br><span class="line">        // eslint-disable-next-line no-plusplus</span><br><span class="line">        // for (let i = 1; i &lt;= pdfDoc.numPages; i++) &#123;</span><br><span class="line">        //   try &#123;</span><br><span class="line">        //     // eslint-disable-next-line no-await-in-loop</span><br><span class="line">        //     const pageref = await pdfDoc.getPage(i);</span><br><span class="line">        //     // eslint-disable-next-line no-await-in-loop</span><br><span class="line">        //     await renderPage(i, pageref);</span><br><span class="line">        //   &#125; catch (error) &#123;</span><br><span class="line">        //     // console.error(`渲染第 $&#123;i&#125; 页时出错:`, error);</span><br><span class="line">        //   &#125;</span><br><span class="line">        // &#125;</span><br><span class="line">      &#125; catch (err) &#123;</span><br><span class="line">        if (err.name !== &#x27;AbortException&#x27;) &#123;</span><br><span class="line">          // console.error(&#x27;PDF 加载/渲染失败:&#x27;, err);</span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">    loadAndRender();</span><br><span class="line"></span><br><span class="line">    // eslint-disable-next-line consistent-return</span><br><span class="line">    return () =&gt; cleanup();</span><br><span class="line">  &#125;, [url, page, visible]);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  const renderPage = async (pageNum, pageref) =&gt; &#123;</span><br><span class="line">    const container = containerRef.current;</span><br><span class="line">    const pdfPage = pageref;</span><br><span class="line">    // 根据容器宽度计算缩放比例</span><br><span class="line">    const containerWidth = container.clientWidth;</span><br><span class="line">    const viewport = pdfPage.getViewport(&#123;</span><br><span class="line">      scale: containerWidth / pdfPage.getViewport(&#123; scale: 1 &#125;).width,</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    // 创建页面容器</span><br><span class="line">    const pageContainer = document.createElement(&#x27;div&#x27;);</span><br><span class="line">    pageContainer.id = `page-$&#123;pageNum&#125;`;</span><br><span class="line">    pageContainer.style.position = &#x27;relative&#x27;;</span><br><span class="line">    pageContainer.style.marginBottom = &#x27;20px&#x27;; // 添加页间距</span><br><span class="line"></span><br><span class="line">    // 创建并配置Canvas</span><br><span class="line">    const canvas = document.createElement(&#x27;canvas&#x27;);</span><br><span class="line">    const context = canvas.getContext(&#x27;2d&#x27;);</span><br><span class="line">    canvas.width = viewport.width;</span><br><span class="line">    canvas.height = viewport.height;</span><br><span class="line"></span><br><span class="line">    // 渲染PDF内容</span><br><span class="line">    await pdfPage.render(&#123;</span><br><span class="line">      canvasContext: context,</span><br><span class="line">      viewport,</span><br><span class="line">    &#125;).promise;</span><br><span class="line"></span><br><span class="line">    if (containerRef.current) &#123;</span><br><span class="line">      containerRef.current.appendChild(canvas);</span><br><span class="line">    &#125;</span><br><span class="line">    pageContainer.appendChild(canvas);</span><br><span class="line"></span><br><span class="line">    // 创建标注层</span><br><span class="line">    if (pageNum === page &amp;&amp; bndoxSource != null) &#123;</span><br><span class="line">      const annotationLayer = document.createElement(&#x27;div&#x27;);</span><br><span class="line">      annotationLayer.style.position = &#x27;absolute&#x27;;</span><br><span class="line">      annotationLayer.style.inset = &#x27;0&#x27;;</span><br><span class="line">      annotationLayer.style.pointerEvents = &#x27;none&#x27;;</span><br><span class="line">      annotationLayer.style.zIndex = &#x27;2&#x27;;</span><br><span class="line">      drawAnnotations(annotationLayer, viewport);</span><br><span class="line">      pageContainer.appendChild(annotationLayer);</span><br><span class="line">    &#125;</span><br><span class="line">    // 组装页面元素</span><br><span class="line">    containerRef.current.appendChild(pageContainer);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  const drawAnnotations = (annotationLayer, viewport) =&gt; &#123;</span><br><span class="line">    if (!bndoxSource) return;</span><br><span class="line"></span><br><span class="line">    bndoxSource.forEach(([x1, y1, x2, y2]) =&gt; &#123;</span><br><span class="line">      const div = document.createElement(&#x27;div&#x27;);</span><br><span class="line">      div.style.cssText = `</span><br><span class="line">        position: absolute;</span><br><span class="line">        left: $&#123;x1 * viewport.scale&#125;px;</span><br><span class="line">        top: $&#123;y1 * viewport.scale&#125;px;</span><br><span class="line">        width: $&#123;(x2 - x1) * viewport.scale&#125;px;</span><br><span class="line">        height: $&#123;(y2 - y1) * viewport.scale&#125;px;</span><br><span class="line">        border: 2px solid red;</span><br><span class="line">        box-sizing: border-box;</span><br><span class="line">        background-color: rgba(255, 192, 203, 0.5);</span><br><span class="line">      `;</span><br><span class="line">      annotationLayer.appendChild(div);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;;</span><br><span class="line"></span><br><span class="line">  return visible &amp;&amp; (</span><br><span class="line">    &lt;div</span><br><span class="line">      ref=&#123;containerRef&#125;</span><br><span class="line">      style=&#123;&#123;</span><br><span class="line">        width: &#x27;100%&#x27;,</span><br><span class="line">        height: &#x27;100%&#x27;,</span><br><span class="line">        overflowY: &#x27;auto&#x27;,</span><br><span class="line">        position: &#x27;relative&#x27;,</span><br><span class="line">      &#125;&#125;</span><br><span class="line">    /&gt;</span><br><span class="line">  );</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">export default PdfViewer;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/02/27/2025-02-27-%E4%BD%BF%E7%94%A8freesshd-%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0sftp-%E7%8E%AF%E5%A2%83/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2025/02/27/2025-02-27-%E4%BD%BF%E7%94%A8freesshd-%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0sftp-%E7%8E%AF%E5%A2%83/" class="post-title-link" itemprop="url">2025-02-27 使用freesshd 搭建本地sftp 环境</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2025-02-27 10:36:38 / 修改时间：10:42:18" itemprop="dateCreated datePublished" datetime="2025-02-27T10:36:38+08:00">2025-02-27</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2025/02/27/2025-02-27-%E4%BD%BF%E7%94%A8freesshd-%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0sftp-%E7%8E%AF%E5%A2%83/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2025/02/27/2025-02-27-%E4%BD%BF%E7%94%A8freesshd-%E6%90%AD%E5%BB%BA%E6%9C%AC%E5%9C%B0sftp-%E7%8E%AF%E5%A2%83/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>251</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h3><p>本地无法连接公司的sftp 服务器，本地widows环境部署一个sftp 服务器。</p>
+<h3 id="实现方式"><a href="#实现方式" class="headerlink" title="实现方式"></a>实现方式</h3><p>使用freesshd 实现</p>
+<h3 id="后端配置"><a href="#后端配置" class="headerlink" title="后端配置"></a>后端配置</h3><p>ftp.host&#x3D;127.0.0.1<br>ftp.port&#x3D;22<br>ftp.account&#x3D;xyj<br>ftp.secretKey&#x3D;admin<br>ftp.targetPath&#x3D;&#x2F;</p>
+<h3 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h3><p>sftp <a href="mailto:&#120;&#121;&#106;&#64;&#49;&#x32;&#x37;&#46;&#48;&#x2e;&#x30;&#46;&#x31;">&#120;&#121;&#106;&#64;&#49;&#x32;&#x37;&#46;&#48;&#x2e;&#x30;&#46;&#x31;</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2025/01/05/2025-01-05-%E6%B5%81%E5%BC%8F%E6%8E%A5%E5%8F%A3%E5%89%8D%E5%90%8E%E7%AB%AF%E5%AE%9E%E7%8E%B0-%E6%9A%82%E5%81%9C%E6%B5%81%EF%BC%8C%E8%AE%B0%E5%BD%95%E6%97%A5%E5%BF%97%E7%AD%89%E5%8A%9F%E8%83%BD%E5%AE%9E%E7%8E%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1120,316 +1408,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-10-19-使用多线程调用外部接口缺陷处理 -Use multithreading to invoke external interface defect handling</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-10-19 21:55:19" itemprop="dateCreated datePublished" datetime="2024-10-19T21:55:19+08:00">2024-10-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-10-26 20:01:57" itemprop="dateModified" datetime="2024-10-26T20:01:57+08:00">2024-10-26</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>8.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>16 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="问题描述-Problem-description"><a href="#问题描述-Problem-description" class="headerlink" title="问题描述 - Problem description"></a>问题描述 - Problem description</h3><p>调用外部系统同步机架下的u位数据，发现有的u位数据没有正常同步过来。 -The external system is called to synchronize the U-bit data under the rack, and the existing U-bit data is not synchronized properly.<br>因为u位数据数量很多，对方系统没有提供批量同步的接口。所以使用多线程的方法调用。下面是调用代码。-Because of the large amount of U-bit data, the other system does not provide an interface for batch synchronization. So use multi-threaded method calls. Here’s the call code.</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">     long startTime = System.currentTimeMillis();</span><br><span class="line">     List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">     log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">     if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">         return;</span><br><span class="line">     &#125;</span><br><span class="line">     String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">     Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">            sk, System.currentTimeMillis(), nonce);</span><br><span class="line">     String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">     CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">     List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">     for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">         CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">             @Override</span><br><span class="line">             public void run() &#123;</span><br><span class="line">                 try &#123;</span><br><span class="line">                     commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                     String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                     CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                     if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                     List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                     if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                         for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                             RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                             transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                             roomckCloudResUS.add(roomckResU);</span><br><span class="line">                         &#125;</span><br><span class="line">                     &#125;</span><br><span class="line">                     roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                 &#125;</span><br><span class="line">                 catch (Exception e) &#123;</span><br><span class="line">                     log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                     log.error(e.getMessage(), e);</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;, ThreadUtils.ioPool);</span><br><span class="line">         futureList.add(future);</span><br><span class="line">     &#125;</span><br><span class="line">     CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">     log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h3 id="问题分析-problem-analysis"><a href="#问题分析-problem-analysis" class="headerlink" title="问题分析 - problem analysis"></a>问题分析 - problem analysis</h3><ol>
-<li>我犯了一个很基础的错误，commonRequestDTO 是多线程共享的，赋值的时候没有加锁，导致传的参数可能被其他线程覆盖了。所以有的u位数据没有同步。 - I made a very basic mistake, commonRequestDTO is shared by multiple threads, and there is no lock when assigning the value, which causes the passed parameters to be overridden by other threads. So some U-bit data is not synchronized</li>
-<li>分析日志发现。当接口多次调用的时候。对方服务器接口会返回500，拒绝服务. 代码没有重试机制，缺少健壮性。</li>
-</ol>
-<ul>
-<li>Analyze log findings. When an interface is called multiple times. The other server interface will return a 500 and refuse service. The code has no retry mechanism and lacks robustness.</li>
-</ul>
-<ol start="3">
-<li>调用外部接口获取密钥的 header 是所有线程共用的。而这个同步数据有点多。大概需要30分钟才能同步完成。而接口的密钥有效性只有2分钟，所以在2分钟之后后面再次调用接口会出现认证失败。</li>
-</ol>
-<ul>
-<li>The header that calls an external interface to obtain a key is shared by all threads. And this synchronization data is a bit much. It takes about 30 minutes to sync. The key validity of the interface is only 2 minutes, so if the API is called again after 2 minutes, the authentication will fail</li>
-</ul>
-<h3 id="问题解决-problem-solution"><a href="#问题解决-problem-solution" class="headerlink" title="问题解决 - problem solution"></a>问题解决 - problem solution</h3><ol>
-<li>对commonRequestDTO.setId(roomckCloudResCabinet.getId()); 这行代码加锁 -Lock the line of code: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>代码加上重试机制 优化后代码 - Code with retry mechanism, optimized code as follows<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">@Async</span><br><span class="line">@Scheduled(cron = &quot;$&#123;task.ucabinetdata.sync.cron&#125;&quot;)</span><br><span class="line">@SchedulerLock(name = &quot;CloudCt_task.ucabinetdata.sync&quot;, lockAtLeastForString = &quot;PT30M&quot;, lockAtMostForString = &quot;PT60M&quot;)</span><br><span class="line">public void syncStation() &#123;</span><br><span class="line">    log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">    long startTime = System.currentTimeMillis();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">    log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">    if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">    Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">           sk, System.currentTimeMillis(), nonce);</span><br><span class="line">    String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; failedCabinets = Collections.synchronizedList(new ArrayList&lt;&gt;());</span><br><span class="line">    for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">        CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    synchronized (commonRequestDTO) &#123;</span><br><span class="line">                        commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                    &#125;</span><br><span class="line">                    String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                    CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                    if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                    List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                    if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                        for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                            RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                            transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                            roomckCloudResUS.add(roomckResU);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Exception e) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                    failedCabinets.add(roomckCloudResCabinet);</span><br><span class="line">                    log.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ThreadUtils.ioPool);</span><br><span class="line">        futureList.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">    CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">    log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line">    // 处理失败的请求</span><br><span class="line">    if (!failedCabinets.isEmpty()) &#123;</span><br><span class="line">        log.info(&quot;有&quot; + failedCabinets.size() + &quot;个机架调用接口失败。开始发起重试&quot;);</span><br><span class="line">        retryFailedRequests(failedCabinets, header, url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private void retryFailedRequests(List&lt;RoomckCloudResCabinet&gt; failedCabinets, Map&lt;String, String&gt; header, String url) &#123;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    for (RoomckCloudResCabinet cabinet : failedCabinets) &#123;</span><br><span class="line">        int retryCount = 0;</span><br><span class="line">        boolean success = false;</span><br><span class="line">        while (retryCount &lt; MAX_RETRIES &amp;&amp; !success) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(cabinet.getId());</span><br><span class="line">                &#125;</span><br><span class="line">                String response = HttpUtil.createPost(url)</span><br><span class="line">                        .addHeaders(header)</span><br><span class="line">                        .body(JSONUtil.toJsonStr(commonRequestDTO))</span><br><span class="line">                        .execute().body();</span><br><span class="line">                CabinetUResultDTO result = JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(</span><br><span class="line">                        result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                    for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                        RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                        transferUCabinet(cabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                        roomckCloudResUS.add(roomckResU);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                success = true; // 如果成功则退出重试循环</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                retryCount++;</span><br><span class="line">                log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试第&quot; + retryCount + &quot;次失败。&quot;);</span><br><span class="line">                log.error(e.getMessage(), e);</span><br><span class="line">                if (retryCount &gt;= MAX_RETRIES) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试已达到最大次数。&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
-<li>每次调用接口的时候都重新获取密钥 把 Map&lt;String, String&gt; header &#x3D; GetCloudSignUtil.getHeaders(ak,sk, System.currentTimeMillis(), nonce); 放到方法内部。</li>
-</ol>
-<ul>
-<li>Each time the interface is called, the key is re-obtained, and the <code>Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak, sk, System.currentTimeMillis(), nonce);</code> is placed within the method.</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-10-07-手机app端登录不上,session获取不到,问题处理 - The mobile app cannot be logged in, the session cannot be obtained, and the problem is handled</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-10-07 16:43:34" itemprop="dateCreated datePublished" datetime="2024-10-07T16:43:34+08:00">2024-10-07</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-10-19 22:01:48" itemprop="dateModified" datetime="2024-10-19T22:01:48+08:00">2024-10-19</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="问题描述-Problem-description"><a href="#问题描述-Problem-description" class="headerlink" title="问题描述 - Problem description"></a>问题描述 - Problem description</h3><p>web 能正常登录机房系统。 手机app却不能正常登录 - Web can log in to the computer room system normally. The mobile app cannot be logged in normally</p>
-<h2 id="以下是报错日志-The-following-is-the-error-log报错代码-error-code通过日志分析。发现当app登录时，一直获取不到对应的sessionID-但是很奇怪的是app端和web端后台都是访问同一个接口。web-端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。-因为app端配置了反向代理。访问的登录接口为-http-172-21-72-176-8311-roomck-app-aiFactoryServer-system-session-verificationCode，它带了-roomck-app-前缀。-而服务器设置了-Path-aiFactoryServer-HttpOnly-路径必须以-aiFactoryServer开头才会携带cookie-所以app一直不能正常登录系统。"><a href="#以下是报错日志-The-following-is-the-error-log报错代码-error-code通过日志分析。发现当app登录时，一直获取不到对应的sessionID-但是很奇怪的是app端和web端后台都是访问同一个接口。web-端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。-因为app端配置了反向代理。访问的登录接口为-http-172-21-72-176-8311-roomck-app-aiFactoryServer-system-session-verificationCode，它带了-roomck-app-前缀。-而服务器设置了-Path-aiFactoryServer-HttpOnly-路径必须以-aiFactoryServer开头才会携带cookie-所以app一直不能正常登录系统。" class="headerlink" title="以下是报错日志 -  The following is the error log报错代码 - error code通过日志分析。发现当app登录时，一直获取不到对应的sessionID. 但是很奇怪的是app端和web端后台都是访问同一个接口。web 端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。 因为app端配置了反向代理。访问的登录接口为 http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode，它带了 &#x2F;roomck-app 前缀。 而服务器设置了 Path&#x3D;&#x2F;aiFactoryServer; HttpOnly 路径必须以&#x2F;aiFactoryServer开头才会携带cookie,所以app一直不能正常登录系统。"></a>以下是报错日志 -  The following is the error log<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : requestSessionId= null</span><br><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : session.getId()= BECF178C43BE3DD1B060A3775EE5E0F5</span><br><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : session.getId()= BECF178C43BE3DD1B060A3775EE5E0F5</span><br><span class="line">2024-10-07 15:33:03.367 ERROR 19 --- [nio-7106-exec-3] c.i.a.c.e.h.C.doFilter() Line: 38        : CommonExceptionHandlerFilter拦截异常null</span><br><span class="line">java.lang.NullPointerException: null</span><br><span class="line">        at com.iwhalecloud.aiFactory.auth.server.security.FormLoginUsernamePasswordFilter.checkVerificationCode(FormLoginUsernamePasswordFilter.java:737) ~[common-auth-server-1.0.jar!/:na]</span><br><span class="line">        at com.iwhalecloud.aiFactory.auth.server.security.FormLoginUsernamePasswordFilter.attemptAuthentication(FormLoginUsernamePasswordFilter.java:396) ~[common-auth-server-1.0.jar!/:na]</span><br><span class="line">        at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:231) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:361) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>报错代码 - error code<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String verificationCode = portalSessionUtil.getLocalSessionAttr(session.getId(), &quot;VERIFICATION_CODE&quot;).toString();</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>通过日志分析。发现当app登录时，一直获取不到对应的sessionID. 但是很奇怪的是app端和web端后台都是访问同一个接口。web 端能正常登录，可以获取到session，app端却不能。<br>使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。 因为app端配置了反向代理。访问的登录接口为 <a target="_blank" rel="noopener" href="http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode%EF%BC%8C%E5%AE%83%E5%B8%A6%E4%BA%86">http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode，它带了</a> &#x2F;roomck-app 前缀。 而服务器设置了 Path&#x3D;&#x2F;aiFactoryServer; HttpOnly 路径必须以&#x2F;aiFactoryServer开头才会携带cookie,所以app一直不能正常登录系统。</h2><p>Through log analysis, it was found that when the app logs in, it consistently fails to obtain the corresponding sessionID. However, it is quite strange that both the app side and the web backend are accessing the same interface. The web side can log in normally and obtain a session, but the app side cannot.</p>
-<p>Continuously debugged using postMan. Finally, the problem was found. When accessing the interface from the app end, cookies are not set. This is because the app end is configured with a reverse proxy. The login interface accessed is <a target="_blank" rel="noopener" href="http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode">http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode</a>, which includes the &#x2F;roomck-app prefix. However, the server is set to Path&#x3D;&#x2F;aiFactoryServer; HttpOnly, and the path must start with &#x2F;aiFactoryServer to carry the cookie. Therefore, the app has been unable to log in to the system normally.</p>
-<h3 id="解决办法-Solution-Method"><a href="#解决办法-Solution-Method" class="headerlink" title="解决办法 - Solution Method"></a>解决办法 - Solution Method</h3><p>为了不增加安全风险，前端调整访问路径。并在nginx 增加对应的代理规则 - In order not to increase security risks, the front-end adjusts the access path and add the corresponding proxy rule to nginx</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-09-10 sftp上传下载问题处理</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-09-10 16:42:15" itemprop="dateCreated datePublished" datetime="2024-09-10T16:42:15+08:00">2024-09-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-09-11 11:32:42" itemprop="dateModified" datetime="2024-09-11T11:32:42+08:00">2024-09-11</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>6 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="sftp-下载调试"><a href="#sftp-下载调试" class="headerlink" title="sftp 下载调试"></a>sftp 下载调试</h3><p>公司sftp服务器因安全策略本地无法直接连接。不好调试问题。本机windows安装sftp服务.<br>下载freeSSHd 作为sftp 服务端，下载FileZilla 做客户端。<br>调试上传功能无问题，下载的时候出现 java.io.IOException: Pipe closed 下载文件内容无法正常下载<br>下载代码</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public InputStream downloadFile(String filePath, int operationTimeout) &#123;</span><br><span class="line">      ExecutorService executor = Executors.newSingleThreadExecutor();</span><br><span class="line">      Future&lt;InputStream&gt; future = executor.submit(() -&gt; &#123;</span><br><span class="line">          ChannelSftp channelSftp = null;</span><br><span class="line">          try &#123;</span><br><span class="line">              channelSftp = setupJsch();</span><br><span class="line">              return channelSftp.get(filePath);</span><br><span class="line">          &#125; catch (Exception e) &#123;</span><br><span class="line">              log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">              throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">          &#125; finally &#123;</span><br><span class="line">              if (channelSftp != null &amp;&amp; channelSftp.isConnected()) &#123;</span><br><span class="line">                  channelSftp.disconnect();</span><br><span class="line">                  try &#123;</span><br><span class="line">                      channelSftp.getSession().disconnect();</span><br><span class="line">                  &#125; catch (JSchException e) &#123;</span><br><span class="line">                      log.error(&quot;SFTP 会话断开失败&quot;, e);</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">      try &#123;</span><br><span class="line">          return future.get(operationTimeout, TimeUnit.MILLISECONDS);</span><br><span class="line">      &#125; catch (TimeoutException e) &#123;</span><br><span class="line">          future.cancel(true);</span><br><span class="line">          log.error(&quot;SFTP 下载文件超时: &quot; + filePath, e);</span><br><span class="line">          throw new RuntimeException(&quot;SFTP 下载文件超时&quot;, e);</span><br><span class="line">      &#125; catch (Exception e) &#123;</span><br><span class="line">          log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">          throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">      &#125; finally &#123;</span><br><span class="line">          executor.shutdown();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125; </span><br></pre></td></tr></table></figure>
-<p>这段代码可能会导致“管道关闭”问题，主要原因是 ChannelSftp 的连接在任务完成后立即被关闭，而返回的 InputStream 依赖于这个连接。如果在关闭连接后尝试读取 InputStream，就会出现 java.io.IOException: Pipe closed 异常。</p>
-<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
-<li>使用管道流<br>可以使用 PipedInputStream 和 PipedOutputStream 来在任务和主线程之间传递数据，这样可以在任务完成后关闭 ChannelSftp 连接，但仍然能读取数据。</li>
-<li>在任务中读取数据<br>在任务中读取数据并将其存储在内存中（例如，使用 ByteArrayOutputStream），然后返回一个新的 InputStream<br>改进代码<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">public InputStream downloadFile(String filePath, int operationTimeout) &#123;</span><br><span class="line">    ExecutorService executor = Executors.newSingleThreadExecutor();</span><br><span class="line">    Future&lt;byte[]&gt; future = executor.submit(() -&gt; &#123;</span><br><span class="line">        ChannelSftp channelSftp = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            channelSftp = setupJsch();</span><br><span class="line">            try (InputStream inputStream = channelSftp.get(filePath);</span><br><span class="line">                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) &#123;</span><br><span class="line">                byte[] buffer = new byte[1024];</span><br><span class="line">                int bytesRead;</span><br><span class="line">                while ((bytesRead = inputStream.read(buffer)) != -1) &#123;</span><br><span class="line">                    outputStream.write(buffer, 0, bytesRead);</span><br><span class="line">                &#125;</span><br><span class="line">                return outputStream.toByteArray();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">            throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            if (channelSftp != null &amp;&amp; channelSftp.isConnected()) &#123;</span><br><span class="line">                channelSftp.disconnect();</span><br><span class="line">                try &#123;</span><br><span class="line">                    channelSftp.getSession().disconnect();</span><br><span class="line">                &#125; catch (JSchException e) &#123;</span><br><span class="line">                    log.error(&quot;SFTP 会话断开失败&quot;, e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        byte[] fileData = future.get(operationTimeout, TimeUnit.MILLISECONDS);</span><br><span class="line">        return new ByteArrayInputStream(fileData);</span><br><span class="line">    &#125; catch (TimeoutException e) &#123;</span><br><span class="line">        future.cancel(true);</span><br><span class="line">        log.error(&quot;SFTP 下载文件超时: &quot; + filePath, e);</span><br><span class="line">        throw new RuntimeException(&quot;SFTP 下载文件超时&quot;, e);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">        throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1498,7 +1476,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1509,7 +1487,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1545,12 +1523,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">170k</span>
+    <span title="站点总字数">181k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:09</span>
+    <span title="站点阅读时长">5:29</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

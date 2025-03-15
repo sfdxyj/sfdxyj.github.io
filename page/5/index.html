@@ -161,6 +161,439 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/12/08/%E6%99%BA%E6%85%A7%E6%9C%BA%E6%88%BF%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/12/08/%E6%99%BA%E6%85%A7%E6%9C%BA%E6%88%BF%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/" class="post-title-link" itemprop="url">智慧机房前端框架</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2023-12-08 14:59:43" itemprop="dateCreated datePublished" datetime="2023-12-08T14:59:43+08:00">2023-12-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-28 15:29:07" itemprop="dateModified" datetime="2024-12-28T15:29:07+08:00">2024-12-28</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/12/08/%E6%99%BA%E6%85%A7%E6%9C%BA%E6%88%BF%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/12/08/%E6%99%BA%E6%85%A7%E6%9C%BA%E6%88%BF%E5%89%8D%E7%AB%AF%E6%A1%86%E6%9E%B6/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>21k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>38 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>智慧机房前端架构采用 React + UmiJs + Dva + Hook + AHooks + antDesign (UI)</p>
+<h3 id="什么是-React"><a href="#什么是-React" class="headerlink" title="什么是 React"></a>什么是 React</h3><p>官方文档： <a target="_blank" rel="noopener" href="https://react.docschina.org/">https://react.docschina.org</a></p>
+<ol>
+<li>用于构建用户界面的 JavaScript 框架. React 是用于渲染 UI 的 JS 库，衍生的 React Native 是跨屏 App 解决方案</li>
+<li>声明式设计：声明范式</li>
+<li>高效：使用 VDOM，减少 DOM 的交互</li>
+<li>灵活：与已知的库或框架完好配合</li>
+<li>JSX：一种独立的语言，试图解决很多 JS 的缺陷，ES6 包含了几乎所有 JSX 的特性</li>
+<li>组件：代码复用</li>
+<li>单向响应数据流：比双向绑定更简单，更快。</li>
+</ol>
+<h4 id="项目启动，编译"><a href="#项目启动，编译" class="headerlink" title="项目启动，编译"></a>项目启动，编译</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">&quot;scripts&quot;: &#123;</span><br><span class="line">  &quot;presite&quot;: &quot;node ./scripts/generateMock.js &amp;&amp; cd functions &amp;&amp; npm install&quot;,</span><br><span class="line">  &quot;start&quot;: &quot;cross-env NODE_OPTIONS=--max-old-space-size=4096 APP_TYPE=site UMI_UI=none umi dev&quot;,</span><br><span class="line">  &quot;start:gdyd&quot;: &quot;cross-env NODE_OPTIONS=--max-old-space-size=4096 APP_TYPE=site APP_VERSION=&#x27;gdyd&#x27; UMI_UI=none umi dev&quot;,</span><br><span class="line">  &quot;start:no-mock&quot;: &quot;cross-env MOCK=none umi dev&quot;,</span><br><span class="line">  &quot;build&quot;: &quot;cross-env PROGRESS=none umi build&quot;,</span><br><span class="line">  &quot;build:roomck&quot;: &quot;cross-env NODE_OPTIONS=--max-old-space-size=8192 APP_PREFIX=roomck PROGRESS=none umi build&quot;,</span><br><span class="line">  &quot;build:roomck-gdyd&quot;: &quot;cross-env NODE_OPTIONS=--max-old-space-size=8192 APP_PREFIX=roomck APP_VERSION=&#x27;gdyd&#x27; TABLE_PADDING_BOTTOM=&#x27;0&#x27; PROGRESS=none umi build&quot;,</span><br><span class="line">  &quot;build:aio&quot;: &quot;cross-env en=aio umi build&quot;,</span><br><span class="line">  &quot;site&quot;: &quot;npm run presite &amp;&amp; cross-env APP_TYPE=site npm run build &amp;&amp; firebase deploy&quot;,</span><br><span class="line">  &quot;analyze&quot;: &quot;cross-env ANALYZE=1 umi build&quot;,</span><br><span class="line">  &quot;lint:style&quot;: &quot;stylelint \&quot;src/**/*.less\&quot; --syntax less&quot;,</span><br><span class="line">  &quot;lint&quot;: &quot;eslint --ext .js src tests &amp;&amp; npm run lint:style&quot;,</span><br><span class="line">  &quot;lint:fix&quot;: &quot;eslint --fix --ext .js src mock tests &amp;&amp; npm run lint:style&quot;,</span><br><span class="line">  &quot;lint-staged&quot;: &quot;lint-staged&quot;,</span><br><span class="line">  &quot;lint-staged:js&quot;: &quot;eslint --ext .js&quot;,</span><br><span class="line">  &quot;tslint&quot;: &quot;npm run tslint:fix&quot;,</span><br><span class="line">  &quot;tslint:fix&quot;: &quot;tslint --fix &#x27;src/**/*.ts*&#x27;&quot;,</span><br><span class="line">  &quot;test&quot;: &quot;umi test&quot;,</span><br><span class="line">  &quot;test:component&quot;: &quot;umi test ./src/components&quot;,</span><br><span class="line">  &quot;test:all&quot;: &quot;node ./tests/run-tests.js&quot;,</span><br><span class="line">  &quot;prettier&quot;: &quot;prettier --write &#x27;./src/**/*&#x27;&quot;,</span><br><span class="line">  &quot;docker:dev&quot;: &quot;docker-compose -f ./docker/docker-compose.dev.yml up&quot;,</span><br><span class="line">  &quot;docker:build&quot;: &quot;docker-compose -f ./docker/docker-compose.dev.yml build&quot;,</span><br><span class="line">  &quot;docker-prod:dev&quot;: &quot;docker-compose -f ./docker/docker-compose.yml up&quot;,</span><br><span class="line">  &quot;docker-prod:build&quot;: &quot;docker-compose -f ./docker/docker-compose.yml build&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>使用 umi 组织管理项目</p>
+<h3 id="umi-是什么"><a href="#umi-是什么" class="headerlink" title="umi 是什么"></a>umi 是什么</h3><p>Umi，中文可发音为乌米，是可扩展的企业级前端应用框架。Umi 以路由为基础的，同时支持配置式路由和约定式路由，保证路由的功能完备，并以此进行功能扩展。然后配以生命周期完善的插件体系，覆盖从源码到构建产物的每个生命周期，支持各种功能扩展和业务需求。<br>官方文档： <a target="_blank" rel="noopener" href="https://umijs.org/">https://umijs.org</a></p>
+<p>Umi.js 是一个基于 React 的企业级前端框架，提供了一套约定优于配置的机制来组织和管理项目。以下是 Umi.js 如何组织和管理项目的关键点：</p>
+<ol>
+<li>目录结构<br>src&#x2F;pages：这是 Umi.js 的核心目录，Umi.js 会根据这个目录下的文件和文件夹自动生成路由。每个文件对应一个路由页面，每个文件夹可以包含多个页面组件。</li>
+</ol>
+<p>src&#x2F;layouts：用于存放布局组件。你可以在这里定义应用的整体布局结构，并在路由配置中使用这些布局。</p>
+<p>src&#x2F;models：用于存放应用的全局状态管理文件，通常与 Umi.js 的插件 Dva 一起使用。</p>
+<p>src&#x2F;services：用于存放与后端 API 交互的代码，通常是一些请求函数。</p>
+<p>src&#x2F;assets：用于存放静态资源，如图片、字体等。</p>
+<p>src&#x2F;components：用于存放应用的通用组件。</p>
+<p>src&#x2F;app.js 或 src&#x2F;app.ts：用于配置全局的应用设置，比如路由守卫、全局状态等。</p>
+<ol start="2">
+<li><p>路由管理<br>Umi.js 使用约定式路由，通过 src&#x2F;pages 目录自动生成路由。每个页面组件会根据其文件路径自动生成对应的路由路径。你也可以使用配置式路由，通过配置文件手动定义路由。</p>
+</li>
+<li><p>插件系统<br>Umi.js 提供了强大的插件系统，允许开发者通过插件扩展框架功能。常见的插件包括：</p>
+</li>
+</ol>
+<p>Dva：用于状态管理。<br>Ant Design：用于 UI 组件库集成。<br>国际化：支持多语言配置。<br>权限管理：用于控制页面访问权限。 4. 配置文件<br>Umi.js 提供了灵活的配置文件，通常是 .umirc.js 或 config&#x2F;config.js，用于配置路由、插件、主题、构建选项等。</p>
+<ol start="5">
+<li><p>构建与部署<br>Umi.js 使用 Webpack 进行构建，提供了多种优化和定制选项。你可以通过 umi build 命令生成生产环境的构建文件。</p>
+</li>
+<li><p>开发体验<br>热重载：Umi.js 支持热重载，开发时修改代码会自动更新页面。<br>调试工具：提供了 Umi UI 工具，可以可视化管理项目配置和插件。<br>Umi.js 的设计目标是提供一个高效、易用的开发环境，通过约定优于配置的理念减少开发者的配置负担，同时提供灵活的扩展点以满足不同项目的需求。</p>
+</li>
+</ol>
+<h4 id="config-配置"><a href="#config-配置" class="headerlink" title="config 配置"></a>config 配置</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br></pre></td><td class="code"><pre><span class="line">/* eslint-disable */</span><br><span class="line">// https://umijs.org/config/</span><br><span class="line">import pageRoutes from &#x27;./router.config&#x27;;</span><br><span class="line">import defaultSettings from &#x27;../src/defaultSettings&#x27;;</span><br><span class="line">import lightTheme from &#x27;./lightThemeExtra&#x27;;</span><br><span class="line">// import webpackPlugin from &#x27;./plugin.config&#x27;;</span><br><span class="line"></span><br><span class="line">// 后端服务本地启动的端口</span><br><span class="line">export const pathPortMap = &#123;</span><br><span class="line">  &#x27;/energy-manage&#x27;: &#x27;9091&#x27;,</span><br><span class="line">  &#x27;/video-web&#x27;: &#x27;9097&#x27;,</span><br><span class="line">  &#x27;/roomck-web&#x27;: &#x27;8099&#x27;,</span><br><span class="line">  &#x27;/roomck-zhejiang&#x27;: &#x27;8095&#x27;,</span><br><span class="line">  &#x27;/zhejiang-cm&#x27;: &#x27;8095&#x27;,</span><br><span class="line">  &#x27;/guangdong-cm&#x27;: &#x27;8095&#x27;,</span><br><span class="line">  &#x27;/roomck-monitor&#x27;: &#x27;8090&#x27;,</span><br><span class="line">  &#x27;/shaanxi-ct&#x27;: &#x27;8096&#x27;,</span><br><span class="line">  &#x27;/cloud-ct&#x27;: &#x27;8096&#x27;,</span><br><span class="line">  &#x27;/video-gateway-process&#x27;: &#x27;9093&#x27;,</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">// 指定这个地址，访问本地启动的服务，无需指定端口。示例: &#x27;http://10.45.134.88&#x27;。</span><br><span class="line">// 仍需要ctrl+l选择服务器登录, 本地服务所连的redis后台应与所选的登录服务器一致。</span><br><span class="line">// 服务对应端口在上面的pathPortMap中修改</span><br><span class="line">export const remoteAddr = &#x27;&#x27;; // 下面的enableDevLoginModal为false时不生效。</span><br><span class="line"></span><br><span class="line">// 1.改成false没有登录弹窗。</span><br><span class="line">// 2.设置为true时开发环境下此插件会覆盖部分应用中的HTTP请求头，可查看 config/devLoginHelper.js中的onProxyReq。</span><br><span class="line">// 3.更改true/false之后请重新启动服务: npm start</span><br><span class="line">export const enableDevLoginModal = true;</span><br><span class="line">const plugins = [</span><br><span class="line">  [</span><br><span class="line">    &#x27;umi-plugin-react&#x27;,</span><br><span class="line">    &#123;</span><br><span class="line">      antd: true,</span><br><span class="line">      dva: &#123;</span><br><span class="line">        hmr: true,</span><br><span class="line">      &#125;,</span><br><span class="line">      targets: &#123;</span><br><span class="line">        ie: 9,</span><br><span class="line">      &#125;,</span><br><span class="line">      locale: &#123;</span><br><span class="line">        enable: false, // default false</span><br><span class="line">        default: &#x27;zh-CN&#x27;, // default zh-CN</span><br><span class="line">        baseNavigator: true, // default true, when it is true, will use `navigator.language` overwrite default</span><br><span class="line">      &#125;,</span><br><span class="line">      dynamicImport: &#123;</span><br><span class="line">        loadingComponent: &#x27;./components/PageLoading/index&#x27;,</span><br><span class="line">      &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ],</span><br><span class="line">];</span><br><span class="line"></span><br><span class="line">// judge add ga</span><br><span class="line">if (process.env.APP_TYPE === &#x27;site&#x27;) &#123;</span><br><span class="line">  plugins.push([</span><br><span class="line">    &#x27;umi-plugin-ga&#x27;,</span><br><span class="line">    &#123;</span><br><span class="line">      code: &#x27;UA-72788897-6&#x27;,</span><br><span class="line">    &#125;,</span><br><span class="line">  ]);</span><br><span class="line">&#125;</span><br><span class="line">// 10.45.134.199:9066</span><br><span class="line">// const target = &#x27;http://10.45.134.199:9066&#x27;; // lh环境</span><br><span class="line"></span><br><span class="line">const appPrefix = process.env.APP_PREFIX;</span><br><span class="line">const appVersion = process.env.APP_VERSION;</span><br><span class="line"></span><br><span class="line">// const target = &#x27;http://172.21.72.175:30009&#x27;; // 开发环境</span><br><span class="line">const target = &#x27;http://172.21.72.185:8579&#x27;; // 测试环境</span><br><span class="line">// const target = &#x27;http://172.21.72.185:8111&#x27;; // 测试环境</span><br><span class="line">// const target = &#x27;http://10.45.135.159:8099&#x27;; // 本地环境</span><br><span class="line"></span><br><span class="line">const ecService = &#x27;http://172.21.72.175:8196&#x27;;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">const IS_DEV = process.env.NODE_ENV === &#x27;development&#x27;;</span><br><span class="line"></span><br><span class="line">if (IS_DEV &amp;&amp; enableDevLoginModal) &#123;</span><br><span class="line">  plugins.push(</span><br><span class="line">    &#x27;./config/devLogMiddlewarePlugin.js&#x27;,</span><br><span class="line">  );</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">const uglifyJSOptions =</span><br><span class="line">  process.env.en === &#x27;aio&#x27;</span><br><span class="line">    ? &#123;</span><br><span class="line">      base: IS_DEV ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">      exportStatic: true, // nginx 打包</span><br><span class="line">      // 静态资源的前缀</span><br><span class="line">      // publicPath: &#x27;/&#x27;,</span><br><span class="line">      publicPath: IS_DEV ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">      cssPublicPath: IS_DEV ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">    &#125;</span><br><span class="line">    : &#123;</span><br><span class="line">      // 路由的前缀</span><br><span class="line">      base: IS_DEV ? &#x27;&#x27; : &#x27;/&#x27;,</span><br><span class="line">      exportStatic: true, // nginx 打包</span><br><span class="line">      // 静态资源的前缀</span><br><span class="line">      publicPath: &#x27;/&#x27;,</span><br><span class="line">    &#125;;</span><br><span class="line"></span><br><span class="line">export default &#123;</span><br><span class="line">  // add for transfer to umi</span><br><span class="line">  plugins,</span><br><span class="line">  targets: &#123;</span><br><span class="line">    ie: 11,</span><br><span class="line">  &#125;,</span><br><span class="line">  define: &#123;</span><br><span class="line">    APP_TYPE: process.env.APP_TYPE || &#x27;&#x27;,</span><br><span class="line">    IS_DEV,</span><br><span class="line">    SERVER_CONTEXT: process.env.en === &#x27;aio&#x27; ? &#x27;&#x27; : &#x27;/mz-ivs&#x27;,</span><br><span class="line">    EVN_TYPE: process.env.EVN_TYPE || &#x27;&#x27;,</span><br><span class="line">    LOCAL_CTY: process.env.LOCAL_CTY || &#x27;&#x27;,</span><br><span class="line">    LARGE_SCREEN: process.env.LARGE_SCREEN || &#x27;&#x27;,</span><br><span class="line">    APP_NAME: process.env.APP_NAME || &#x27;&#x27;,</span><br><span class="line">    THEME_COLOR: process.env.THEME_COLOR || &#x27;&#x27;,</span><br><span class="line">    USER_RIGHTS: process.env.USER_RIGHTS || &#x27;&#x27;,</span><br><span class="line">    APP_PREFIX: appPrefix || &#x27;&#x27;,</span><br><span class="line">    APP_VERSION: appVersion || &#x27;&#x27;,</span><br><span class="line">    SM4_ENCRYPT: process.env.SM4_ENCRYPT || &#x27;0&#x27;,</span><br><span class="line">    TABLE_PADDING_BOTTOM: process.env.TABLE_PADDING_BOTTOM || &#x27;0&#x27;,</span><br><span class="line">    REAL_TIME_RENDERING: process.env.REAL_TIME_RENDERING || &#x27;&#x27;,</span><br><span class="line">    WEBSOCKET_SWITCH: process.env.WEBSOCKET_SWITCH || &#x27;&#x27;,</span><br><span class="line">    // Trigger config reloading.</span><br><span class="line">    ENABLE_DEV_LOGIN: enableDevLoginModal,</span><br><span class="line">  &#125;,</span><br><span class="line">  // 路由配置</span><br><span class="line">  routes: pageRoutes,</span><br><span class="line">  ...(IS_DEV ? &#123; devtool: &#x27;source-map&#x27; &#125; : &#123;&#125;),</span><br><span class="line">  // title: process.env.APP_NAME || &#x27;&#x27;,</span><br><span class="line">  // Theme for antd</span><br><span class="line">  // https://ant.design/docs/react/customize-theme-cn</span><br><span class="line">  theme:</span><br><span class="line">    process.env.THEME_COLOR === &#x27;1&#x27;</span><br><span class="line">      ? &#123;</span><br><span class="line">        &#x27;primary-color&#x27;: defaultSettings.primaryColor,</span><br><span class="line">        // common</span><br><span class="line">        &#x27;@border-style&#x27;: &#x27;1px solid rgba(0, 0, 0, .1)&#x27;,</span><br><span class="line">        &#x27;@text-color-inverse&#x27;: &#x27;#1890FF&#x27;,</span><br><span class="line">        // font</span><br><span class="line">        &#x27;@font-color-1&#x27;: &#x27;rgba(0,0,0,.85)&#x27;,</span><br><span class="line">        &#x27;@font-color-4&#x27;: &#x27;#1470CC&#x27;,</span><br><span class="line">        &#x27;@font-color-6&#x27;: &#x27;rgba(0,0,0,.65)&#x27;,</span><br><span class="line"></span><br><span class="line">        // bg</span><br><span class="line">        &#x27;@bg-color-1&#x27;: &#x27;#fff&#x27;,</span><br><span class="line">        &#x27;@bg-color-4&#x27;: &#x27;#fff&#x27;, // 弹窗背景色</span><br><span class="line">        &#x27;@bg-color-5&#x27;: &#x27;#fafafa&#x27;, // 点位-配置算法背景色</span><br><span class="line">        &#x27;@bg-color-6&#x27;: &#x27;#1890FF&#x27;, // 点位-配置算法顶部栏色</span><br><span class="line"></span><br><span class="line">        // table</span><br><span class="line">        &#x27;@table-second-bg&#x27;: &#x27;#f7f7f7 !important&#x27;,</span><br><span class="line">        &#x27;@primary-border-1&#x27;: &#x27;1px solid #dfdfdf&#x27;,</span><br><span class="line">        // button</span><br><span class="line">        &#x27;@btn-primary-color&#x27;: &#x27;#fff&#x27;,</span><br><span class="line">        &#x27;@btn-primary-bg&#x27;: &#x27;#1890FF&#x27;,</span><br><span class="line">        // &#x27;@btn-default-color&#x27;: &#x27;#fff&#x27;,</span><br><span class="line">        &#x27;@btn-default-bg&#x27;: &#x27;transparent&#x27;,</span><br><span class="line">        ...lightTheme,</span><br><span class="line">      &#125;</span><br><span class="line">      : &#123;</span><br><span class="line">        &#x27;primary-color&#x27;: defaultSettings.primaryColor,</span><br><span class="line">        // common</span><br><span class="line">        &#x27;@border-style&#x27;: &#x27;1px solid rgba(255, 255, 255, .1)&#x27;,</span><br><span class="line">        &#x27;@primary-border-1&#x27;: &#x27;1px solid rgba(31, 145, 255, 0.3)&#x27;,</span><br><span class="line">        // home</span><br><span class="line">        &#x27;@home-color&#x27;: &#x27;#4CBEFF&#x27;,</span><br><span class="line">        &#x27;@home-warn-color&#x27;: &#x27;#FF4D4F&#x27;,</span><br><span class="line">        &#x27;@home_border&#x27;: &#x27;1px solid rgba(74, 189, 187, 0.3)&#x27;,</span><br><span class="line">        &#x27;@text-color-inverse&#x27;: &#x27;#1F91FF&#x27;,</span><br><span class="line">        // bg</span><br><span class="line">        &#x27;@bg-color-1&#x27;: &#x27;rgba(18, 36, 74, 0.85)&#x27;,</span><br><span class="line">        &#x27;@bg-color-2&#x27;: &#x27;rgba(26, 38, 71, 0.85)&#x27;,</span><br><span class="line">        &#x27;@bg-color-3&#x27;: &#x27;rgba(18, 36, 74, 0.60)&#x27;,</span><br><span class="line">        &#x27;@bg-color-4&#x27;: &#x27;#1A253D&#x27;, // 新版弹窗背景色</span><br><span class="line">        &#x27;@bg-color-5&#x27;: &#x27;rgba(65, 74, 74, 0.4)&#x27;, // 点位-配置算法背景色</span><br><span class="line">        &#x27;@bg-color-6&#x27;: &#x27;rgba(28, 43, 43, 1)&#x27;, // 点位-配置算法顶部栏色</span><br><span class="line">        // font</span><br><span class="line">        &#x27;@font-color-1&#x27;: &#x27;#ffffff&#x27;,</span><br><span class="line">        &#x27;@font-color-2&#x27;: &#x27;#9AA7B3&#x27;,</span><br><span class="line">        &#x27;@font-color-4&#x27;: &#x27;#1470CC&#x27;,</span><br><span class="line">        &#x27;@font-color-5&#x27;: &#x27;#65A8EA&#x27;,</span><br><span class="line">        &#x27;@font-color-6&#x27;: &#x27;#99FFFF&#x27;,</span><br><span class="line"></span><br><span class="line">        // antd</span><br><span class="line">        &#x27;@component-background&#x27;: &#x27;rgba(18, 36, 74, 1)&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@primary-color&#x27;: &#x27;#B6DBFF&#x27;, // 全局字体色</span><br><span class="line">        &#x27;@primary-1&#x27;: &#x27;rgba(106, 247, 224,.8)&#x27;,</span><br><span class="line">        &#x27;@primary-2&#x27;: &#x27;rgba(106, 247, 224,.6)&#x27;,</span><br><span class="line">        &#x27;@primary-border&#x27;: &#x27;1px solid rgba(0,0,0,.1)&#x27;,</span><br><span class="line">        &#x27;@primary-border-1&#x27;: &#x27;1px solid rgba(31, 145, 255, 0.3)&#x27;,</span><br><span class="line">        &#x27;@item-hover-bg&#x27;: &#x27;rgba(209,237,240,0.06)&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@heading-color&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@disabled-color&#x27;: &#x27;fade(#fff, 35%)&#x27;,</span><br><span class="line"></span><br><span class="line">        // button</span><br><span class="line">        &#x27;@btn-primary-color&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line">        &#x27;@btn-primary-bg&#x27;: &#x27;rgba(0, 75, 151, 1)&#x27;,</span><br><span class="line">        &#x27;@btn-default-color&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line">        &#x27;@btn-default-bg&#x27;: &#x27;transparent&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@btn-default-border&#x27;: &#x27;rgba(27, 55, 135, 1)&#x27;,</span><br><span class="line">        &#x27;@text-color&#x27;: &#x27;rgb(182, 219, 255)&#x27;,</span><br><span class="line">        &#x27;@text-color-secondary&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line">        &#x27;@text-color-inverse&#x27;: &#x27;#1F91FF&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@background-color-light&#x27;: &#x27;#1D3058&#x27;,</span><br><span class="line">        &#x27;@background-color-base&#x27;: &#x27;#1D3058&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@border-color-base&#x27;: &#x27;rgba(255,255,255,.1)&#x27;, // base border outline a component</span><br><span class="line">        &#x27;@border-color-split&#x27;: &#x27;rgba(255,255,255,.1)&#x27;, // split border inside a component</span><br><span class="line">        &#x27;@border-color-inverse&#x27;: &#x27;rgba(0,0,0,.1)&#x27;,</span><br><span class="line"></span><br><span class="line">        // menu</span><br><span class="line">        &#x27;@menu-item-active-bg&#x27;: &#x27;none&#x27;,</span><br><span class="line"></span><br><span class="line">        // table</span><br><span class="line">        &#x27;@table-header-bg&#x27;: &#x27;rgba(0,75,151,0.80)&#x27;,</span><br><span class="line">        &#x27;@table-bg&#x27;: &#x27;none&#x27;,</span><br><span class="line">        &#x27;@table-select-bg&#x27;: &#x27;rgba(106, 247, 224, 0.06)&#x27;,</span><br><span class="line">        &#x27;@table-selected-row-bg&#x27;: &#x27;rgba(106, 247, 224, 0.06)&#x27;,</span><br><span class="line">        &#x27;@modal-content-bg&#x27;: &#x27;rgba(18,36,74,0.85)&#x27;,</span><br><span class="line">        &#x27;@drawer-bg&#x27;: &#x27;rgba(18,36,74,0.85)&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@breadcrumb-base-color&#x27;: &#x27;#1F91FF&#x27;,</span><br><span class="line">        &#x27;@breadcrumb-separator-color&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line">        &#x27;@breadcrumb-last-item-color&#x27;: &#x27;#B6DBFF&#x27;,</span><br><span class="line">        // select</span><br><span class="line">        &#x27;@select-border-color&#x27;: &#x27;rgba(24, 144, 255, 1)&#x27;,</span><br><span class="line">        // &#x27;@select-background&#x27;: &#x27;#303A39&#x27;,</span><br><span class="line">        &#x27;@select-item-selected-bg&#x27;: &#x27;rgba(209, 237, 240, 0.06)&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@tree-node-selected-bg&#x27;: &#x27;rgba(31,145,255,.8)&#x27;,</span><br><span class="line">        &#x27;@tree-node-hover-bg&#x27;: &#x27;rgba(31,145,255,.3)&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@checkbox-color&#x27;: &#x27;#1F91FF&#x27;,</span><br><span class="line">        // input</span><br><span class="line">        &#x27;@input-hover-border-color&#x27;: &#x27;#9FB6B8&#x27;,</span><br><span class="line">        // &#x27;@input-bg&#x27;: &#x27;#303A39&#x27;,</span><br><span class="line">        &#x27;@input-placeholder-color&#x27;: &#x27;#97ABAD&#x27;,</span><br><span class="line">        &#x27;@input-color&#x27;: &#x27;#D1EDF0&#x27;,</span><br><span class="line"></span><br><span class="line">        &#x27;@divider-color&#x27;: &#x27;rgba(74,189,187,0.3)&#x27;,</span><br><span class="line"></span><br><span class="line">        // 其他</span><br><span class="line">        &#x27;@line-bg&#x27;: &#x27;rgba(209, 237, 240, 0.8)&#x27;,</span><br><span class="line">        &#x27;@card-bg&#x27;: &#x27;rgba(209, 237, 240, 0.06)&#x27;,</span><br><span class="line">        &#x27;@table-second-bg&#x27;: &#x27;rgba(209,237,240,0.06)&#x27;,</span><br><span class="line">        &#x27;@right-pannel-title-bg&#x27;: &#x27;rgba(74,189,187,.1)&#x27;,</span><br><span class="line"></span><br><span class="line">        // title</span><br><span class="line">        &#x27;@title-font-color&#x27;: &#x27;#1F91FF&#x27;,</span><br><span class="line">      &#125;,</span><br><span class="line">  externals: &#123;</span><br><span class="line">    BMap: &#x27;BMap&#x27;,</span><br><span class="line">    AMap: &#x27;AMap&#x27;,</span><br><span class="line">    AMapUI: &#x27;AMapUI&#x27;,</span><br><span class="line">    &#x27;@antv/data-set&#x27;: &#x27;DataSet&#x27;,</span><br><span class="line">  &#125;,</span><br><span class="line">  proxy: &#123;</span><br><span class="line">    &#x27;/twin&#x27;: &#123;</span><br><span class="line">      target: &#x27;http://172.21.72.155:9560&#x27;,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/aiRecognize-web&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      pathRewrite: &#123; &#x27;^/aiRecognize-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#x27;/energy-manage&#x27;: &#123;</span><br><span class="line">      // target: &#x27;http://172.21.72.176:30008/energy-manage&#x27;, // 开发环境</span><br><span class="line">      target: &#x27;http://172.21.72.185:8111/energy-manage&#x27;, // 浙江测试环境</span><br><span class="line">      // target: &#x27;http://10.45.135.159:9091/roomck-ene&#x27;, // 本地环境</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/energy-manage&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#x27;/video-web&#x27;: &#123;</span><br><span class="line">      // target: &#x27;http://172.21.72.175:8103/video-web&#x27;,</span><br><span class="line">      // target: &#x27;http://172.21.72.185:30009/video-web&#x27;,</span><br><span class="line">      // target: &#x27;http://10.45.135.174:9097/video-web&#x27;,</span><br><span class="line">      target: &#x27;http://172.21.72.176:30008/video-web&#x27;,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      secure: false,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/video-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#x27;/ivs-web&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      pathRewrite: &#123; &#x27;^/ivs-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    // &#x27;/ivs-manage&#x27;: &#123;</span><br><span class="line">    //   target,</span><br><span class="line">    //   changeOrigin: true,</span><br><span class="line">    //   logLevel: &#x27;debug&#x27;,</span><br><span class="line">    //   // pathRewrite: &#123; &#x27;^/ivs-manage&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    // &#125;,</span><br><span class="line">    &#x27;/ec-service&#x27;: &#123;</span><br><span class="line">      target: ecService,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/quartz-service&#x27;: &#123;</span><br><span class="line">      target: ecService,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      // logLevel: &#x27;debug&#x27;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/roomck-web&#x27;: &#123;</span><br><span class="line">      // target: &#x27;http://10.45.134.211:8099&#x27;,</span><br><span class="line">      // target: &#x27;http://localhost:8099&#x27;,</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/ivs-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/roomck-zhejiang&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/roomck-zhejiang&#x27;: &#x27;/zhejiang-cm&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#x27;/zhejiang-cm&#x27;: &#123;</span><br><span class="line">      // target,</span><br><span class="line">      target: &#x27;http://10.45.135.12:8095&#x27;,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/ivs-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line"></span><br><span class="line">    &#x27;/guangdong-cm&#x27;: &#123;</span><br><span class="line">      // target: &#x27;http://localhost:8095&#x27;, // 开发环境</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/energy-manage&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/roomck-monitor&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      // target: &#x27;http://10.45.135.159:8090&#x27;,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // timeout: 5000,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/ivs-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/shaanxi-ct&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      // target: &#x27;http://10.45.135.174:8095&#x27;,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      // pathRewrite: &#123; &#x27;^/ivs-web&#x27;: &#x27;&#x27; &#125;,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/cloud-ct&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      secure: false,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/beijing-cm&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">      secure: false,</span><br><span class="line">    &#125;,</span><br><span class="line">    &#x27;/video-gateway-process&#x27;: &#123;</span><br><span class="line">      target,</span><br><span class="line">      changeOrigin: true,</span><br><span class="line">      logLevel: &#x27;debug&#x27;,</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;,</span><br><span class="line">  ignoreMomentLocale: true,</span><br><span class="line">  lessLoaderOptions: &#123;</span><br><span class="line">    javascriptEnabled: true,</span><br><span class="line">  &#125;,</span><br><span class="line">  disableRedirectHoist: true,</span><br><span class="line">  cssLoaderOptions: &#123;</span><br><span class="line">    modules: true,</span><br><span class="line">    getLocalIdent: (context, localIdentName, localName) =&gt; &#123;</span><br><span class="line">      if (</span><br><span class="line">        context.resourcePath.includes(&#x27;node_modules&#x27;) ||</span><br><span class="line">        context.resourcePath.includes(&#x27;ant.design.pro.less&#x27;) ||</span><br><span class="line">        context.resourcePath.includes(&#x27;global.less&#x27;)</span><br><span class="line">      ) &#123;</span><br><span class="line">        return localName;</span><br><span class="line">      &#125;</span><br><span class="line">      const match = context.resourcePath.match(/src(.*)/);</span><br><span class="line">      if (match &amp;&amp; match[1]) &#123;</span><br><span class="line">        const antdProPath = match[1].replace(&#x27;.less&#x27;, &#x27;&#x27;);</span><br><span class="line">        const arr = antdProPath</span><br><span class="line">          .split(&#x27;/&#x27;)</span><br><span class="line">          .map(a =&gt; a.replace(/([A-Z])/g, &#x27;-$1&#x27;))</span><br><span class="line">          .map(a =&gt; a.toLowerCase());</span><br><span class="line">        return `antd-pro$&#123;arr.join(&#x27;-&#x27;)&#125;-$&#123;localName&#125;`.replace(/--/g, &#x27;-&#x27;);</span><br><span class="line">      &#125;</span><br><span class="line">      return localName;</span><br><span class="line">    &#125;,</span><br><span class="line">  &#125;,</span><br><span class="line">  manifest: &#123;</span><br><span class="line">    basePath: &#x27;./&#x27;,</span><br><span class="line">  &#125;,</span><br><span class="line"></span><br><span class="line">  // 路由的前缀</span><br><span class="line">  // base: process.env.NODE_ENV === &#x27;development&#x27; ? &#x27;&#x27; : &#x27;/aiRecognize-web/&#x27;,</span><br><span class="line">  // exportStatic: true,</span><br><span class="line">  // 静态资源的前缀</span><br><span class="line">  // publicPath: &#x27;/aiRecognize-web/&#x27;,</span><br><span class="line"></span><br><span class="line">  // 路由的前缀</span><br><span class="line">  // base: process.env.NODE_ENV === &#x27;development&#x27; ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">  // exportStatic: true, // nginx 打包</span><br><span class="line">  // 静态资源的前缀</span><br><span class="line">  // publicPath: &#x27;/&#x27;,</span><br><span class="line">  // chainWebpack: webpackPlugin,</span><br><span class="line">  // publicPath: process.env.NODE_ENV === &#x27;development&#x27; ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">  // cssPublicPath: process.env.NODE_ENV === &#x27;development&#x27; ? &#x27;&#x27; : &#x27;/mz-ivs/&#x27;,</span><br><span class="line">  ...uglifyJSOptions,</span><br><span class="line">  ...(appPrefix</span><br><span class="line">    ? &#123;</span><br><span class="line">      base: appPrefix,</span><br><span class="line">      publicPath: `/$&#123;appPrefix&#125;/`,</span><br><span class="line">    &#125;</span><br><span class="line">    : null),</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p>以上主要是配置了以下信息</p>
+<ol>
+<li>插件配置<br>使用了 umi-plugin-react 插件，配置了 Ant Design、Dva、目标浏览器版本等。<br>根据环境变量 APP_TYPE，可能会添加 umi-plugin-ga 插件用于 Google Analytics。</li>
+<li>环境变量<br>定义了一些环境变量，如 APP_TYPE、IS_DEV、SERVER_CONTEXT 等，用于在项目中使用。<br>根据环境变量 process.env.NODE_ENV 判断当前环境是开发环境还是生产环境。</li>
+<li>代理配置<br>使用 proxy 属性配置了多个代理，用于将前端请求转发到不同的后端服务。<br>每个代理配置项包含 target、changeOrigin、logLevel 等属性。</li>
+<li>主题配置<br>使用了 Ant Design 的主题定制功能，通过 theme 属性配置主题颜色和样式。<br>根据 process.env.THEME_COLOR 的值选择不同的主题配置。</li>
+<li>路由和静态资源配置<br>使用 routes 属性指定路由配置。<br>使用 publicPath 和 base 属性配置静态资源和路由的前缀。</li>
+<li>其他配置<br>ignoreMomentLocale：设置为 true，忽略 moment.js 的本地化文件。<br>lessLoaderOptions：配置 Less 的加载选项。<br>cssLoaderOptions：配置 CSS 模块的选项，指定如何生成 CSS 类名。<br>manifest：配置生成的 manifest 文件的基本路径。</li>
+<li>自定义插件<br>在开发环境下，可能会根据 enableDevLoginModal 的值添加自定义插件 .&#x2F;config&#x2F;devLogMiddlewarePlugin.js。</li>
+</ol>
+<h3 id="dva-是什么"><a href="#dva-是什么" class="headerlink" title="dva 是什么"></a>dva 是什么</h3><p>Dva.js 是一个基于 React 和 Redux 的轻量级框架，适用于构建数据驱动的前端应用。 它的核心特点包括：简化 Redux 的使用、内置异步处理和路由管理、强大的插件机制。Dva.js 通过将 Redux、Redux-saga 和 React-Router 等工具集成在一起，使开发者可以更高效地管理应用的状态和异步操作</p>
+<ol>
+<li><p><strong>简化的 Redux 使用</strong>：</p>
+<ul>
+<li>Dva 封装了 Redux 的复杂性，使得状态管理变得更加简单。它通过模型（Model）的概念来组织代码，将状态、异步请求和订阅整合在一起。</li>
+</ul>
+</li>
+<li><p><strong>内置的副作用管理</strong>：</p>
+<ul>
+<li>Dva 使用 Redux-saga 进行副作用管理，这使得处理异步操作（如数据获取）更加直观和可管理。</li>
+</ul>
+</li>
+<li><p><strong>模型（Model）驱动</strong>：</p>
+<ul>
+<li>Dva 的核心是模型，一个模型通常包括 state（状态）、reducers（同步操作）、effects（异步操作）和 subscriptions（订阅数据源）。</li>
+</ul>
+</li>
+<li><p><strong>路由集成</strong>：</p>
+<ul>
+<li>Dva 内置了 React Router 的支持，可以轻松地进行路由管理。</li>
+</ul>
+</li>
+<li><p><strong>插件机制</strong>：</p>
+<ul>
+<li>Dva 提供了插件机制，可以通过插件扩展 Dva 的功能，如状态持久化、错误处理等。</li>
+</ul>
+</li>
+<li><p><strong>简化的 API</strong>：</p>
+<ul>
+<li>Dva 提供了简化的 API，使得开发者可以更快速地上手和使用。</li>
+</ul>
+</li>
+</ol>
+<h3 id="Hooks-是什么"><a href="#Hooks-是什么" class="headerlink" title="Hooks 是什么"></a>Hooks 是什么</h3><p>官方文档 <a target="_blank" rel="noopener" href="https://react.docschina.org/docs/hooks-state.html">https://react.docschina.org/docs/hooks-state.html</a></p>
+<p>Hooks 是 React 16.8 引入的一项特性，旨在让开发者在函数组件中使用状态和其他 React 特性，而无需编写类组件。Hooks 提供了一种更加简洁、灵活的方式来管理组件的状态和生命周期。以下是一些关键的内置 Hooks 及其用途：</p>
+<ol>
+<li><p><strong>useState</strong>：</p>
+<ul>
+<li>用于在函数组件中添加状态。它返回一个状态变量和一个更新该状态的函数。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [count, setCount] = <span class="title function_">useState</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useEffect</strong>：</p>
+<ul>
+<li>用于在函数组件中处理副作用（例如数据获取、订阅、手动 DOM 操作等）。它相当于类组件中的 <code>componentDidMount</code>、<code>componentDidUpdate</code> 和 <code>componentWillUnmount</code> 的组合。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title function_">useEffect</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 执行副作用操作</span></span><br><span class="line">  <span class="keyword">return</span> <span class="function">() =&gt;</span> &#123;</span><br><span class="line">    <span class="comment">// 清理操作</span></span><br><span class="line">  &#125;;</span><br><span class="line">&#125;, [dependencies]); <span class="comment">// 依赖项数组</span></span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useContext</strong>：</p>
+<ul>
+<li>用于在组件树中共享全局数据，而无需通过 props 逐层传递。它使得组件能够访问 React 的 Context。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> value = <span class="title function_">useContext</span>(<span class="title class_">MyContext</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useReducer</strong>：</p>
+<ul>
+<li>类似于 Redux 的 reducer 概念，用于在组件中管理复杂的 state 逻辑。它是 <code>useState</code> 的替代方案，适合处理复杂的状态更新。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> [state, dispatch] = <span class="title function_">useReducer</span>(reducer, initialState);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useCallback</strong>：</p>
+<ul>
+<li>用于返回一个 memoized 回调函数，避免在组件重新渲染时不必要的函数重建，适合性能优化。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memoizedCallback = <span class="title function_">useCallback</span>(<span class="function">() =&gt;</span> &#123;</span><br><span class="line">  <span class="comment">// 函数逻辑</span></span><br><span class="line">&#125;, [dependencies]);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useMemo</strong>：</p>
+<ul>
+<li>用于返回一个 memoized 值，避免在组件重新渲染时不必要的计算。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> memoizedValue = <span class="title function_">useMemo</span>(<span class="function">() =&gt;</span> <span class="title function_">computeExpensiveValue</span>(a, b), [a, b]);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>useRef</strong>：</p>
+<ul>
+<li>用于访问 DOM 元素或在组件的整个生命周期内保持不变的值。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> inputRef = <span class="title function_">useRef</span>(<span class="literal">null</span>);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ol>
+<h3 id="AHooks-是什么"><a href="#AHooks-是什么" class="headerlink" title="AHooks 是什么"></a>AHooks 是什么</h3><p>官方文档 <a target="_blank" rel="noopener" href="https://ahooks.js.org/zh-CN">https://ahooks.js.org/zh-CN</a><br>AHooks 是由 Ant Design 团队开发的一个高质量且可靠的 React Hooks 库。它提供了一系列开箱即用的 Hooks，旨在提高开发效率，帮助开发者快速构建 React 应用。这些 Hooks 涉及状态管理、生命周期、DOM 操作、网络请求等常见的场景。以下是 AHooks 的一些特点和常用功能：</p>
+<ol>
+<li><p><strong>丰富的 Hooks 集合</strong>：</p>
+<ul>
+<li>AHooks 提供了大量常用的 Hooks，例如 <code>useRequest</code>、<code>useToggle</code>、<code>useLocalStorageState</code>、<code>useDebounceEffect</code> 等，涵盖了数据请求、状态管理、性能优化等多个方面。</li>
+</ul>
+</li>
+<li><p>**<code>useRequest</code>**：</p>
+<ul>
+<li>一个强大的 Hooks，用于处理异步请求。它支持请求的生命周期管理、并发控制、轮询、缓存等功能。</li>
+<li>示例：<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> &#123; data, error, loading &#125; = <span class="title function_">useRequest</span>(fetchUserData);</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+<li><p><strong>状态管理和 DOM 操作</strong>：</p>
+<ul>
+<li>提供了 <code>useToggle</code>、<code>useBoolean</code>、<code>useSetState</code> 等 Hooks，用于简化状态管理。</li>
+<li>还有 <code>useClickAway</code>、<code>useEventListener</code> 等 Hooks，用于处理 DOM 事件。</li>
+</ul>
+</li>
+<li><p><strong>性能优化</strong>：</p>
+<ul>
+<li>提供了 <code>useDebounce</code>、<code>useThrottle</code> 等 Hooks，帮助开发者在处理频繁触发的操作时进行性能优化。</li>
+</ul>
+</li>
+<li><p><strong>易于使用</strong>：</p>
+<ul>
+<li>AHooks 的设计理念是易于使用和集成。即使是复杂的异步操作，也可以通过简单的 API 快速实现。</li>
+</ul>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">springboot 环境访问数据库失败原因分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-22 16:42:54 / 修改时间：16:55:33" itemprop="dateCreated datePublished" datetime="2023-11-22T16:42:54+08:00">2023-11-22</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/22/springboot-%E7%8E%AF%E5%A2%83%E8%AE%BF%E9%97%AE%E6%95%B0%E6%8D%AE%E5%BA%93%E5%A4%B1%E8%B4%A5%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>场景 本地环境正常启动，一访问数据库就报数据库异常。 一直报以下错误。反复检查SQL 写的没问题。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException: You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near &#x27;&#x27; at line 1</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance0(Native Method)</span><br><span class="line">	at sun.reflect.NativeConstructorAccessorImpl.newInstance(NativeConstructorAccessorImpl.java:62)</span><br><span class="line">	at sun.reflect.DelegatingConstructorAccessorImpl.newInstance(DelegatingConstructorAccessorImpl.java:45)</span><br><span class="line">	at java.lang.reflect.Constructor.newInstance(Constructor.java:423)</span><br></pre></td></tr></table></figure>
+<p>于是写了测试类进行测试，发现还是报那个错误。这里开始感觉应该是配置文件的问题。反复检查之后，终于发现问题所在。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">package com.iwhalecloud;</span><br><span class="line">import com.iwhalecloud.sas.OperationWebApplication;</span><br><span class="line">import org.junit.Test;</span><br><span class="line">import org.junit.runner.RunWith;</span><br><span class="line">import org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line">import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;</span><br><span class="line">import org.springframework.boot.test.context.SpringBootTest;</span><br><span class="line">import org.springframework.test.context.junit4.SpringRunner;</span><br><span class="line">import org.springframework.test.context.web.WebAppConfiguration;</span><br><span class="line">import javax.sql.DataSource;</span><br><span class="line">import java.sql.Connection;</span><br><span class="line">import java.sql.ResultSet;</span><br><span class="line">import java.sql.SQLException;</span><br><span class="line">import java.sql.Statement;</span><br><span class="line">@RunWith(SpringRunner.class)</span><br><span class="line">@SpringBootTest(classes = OperationWebApplication.class)</span><br><span class="line">@WebAppConfiguration</span><br><span class="line">public class WebTest &#123;</span><br><span class="line">    @Autowired</span><br><span class="line">    DataSourceProperties dataSourceProperties;</span><br><span class="line">    @Autowired</span><br><span class="line">     DataSource dataSource;</span><br><span class="line">    @Test</span><br><span class="line">    public void query() &#123;</span><br><span class="line">        // 获取配置的数据源</span><br><span class="line">        java.util.Date date = new java.util.Date();</span><br><span class="line">        java.sql.Date date2 = new java.sql.Date(date.getTime());</span><br><span class="line">        try &#123;</span><br><span class="line">            Connection conn = dataSource.getConnection();</span><br><span class="line">            Statement stmt = conn.createStatement();</span><br><span class="line">            String sql;</span><br><span class="line">            sql = &quot;SELECT * FROM cc_organization&quot;;</span><br><span class="line">            ResultSet rs = stmt.executeQuery(sql);</span><br><span class="line">        &#125; catch (SQLException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(date2);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>问题在于这个配置属性的语句有问题,不小心删除了一个 1。 导致本地环境访问数据库一直访问不了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">spring.datasource.hikari.connection-test-query=SELECT  </span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" class="post-title-link" itemprop="url">RTMP协议了解</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2023-11-20 17:14:10 / 修改时间：17:27:31" itemprop="dateCreated datePublished" datetime="2023-11-20T17:14:10+08:00">2023-11-20</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/20/RTMP%E5%8D%8F%E8%AE%AE%E4%BA%86%E8%A7%A3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>105</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ol>
+<li>Adobe 公司基于 Flash Player 播放器对应的音视频 flv 封装格式提出的一种，基于TCP 的数据传输协议。</li>
+<li>具有稳定、兼容性强、高穿透的特点。</li>
+<li>用于流媒体直播、点播等场景。常用于推推流方（主播）的稳定传输需求。</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2023/11/10/2023-11-10-bug-%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -920,341 +1353,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/" class="post-title-link" itemprop="url">性能秘诀</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-06-21 11:16:02" itemprop="dateCreated datePublished" datetime="2021-06-21T11:16:02+08:00">2021-06-21</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-08-06 13:26:11" itemprop="dateModified" datetime="2021-08-06T13:26:11+08:00">2021-08-06</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>9 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="1-最小事务"><a href="#1-最小事务" class="headerlink" title="1.最小事务"></a>1.最小事务</h2><p>原理: 将原大事务裁减为较小单次事务，避免整个大事务引起资源独占时间过长的问题。<br>适用场景：在大事务中需独占使用的资源的处理逻辑，宜将热点数据独立一个新事务， 独立于主事务外，使热点数据尽可能小、尽可能快的结束，减少资源占用的时间，提高并发能力 。</p>
-<h2 id="2-乐观锁"><a href="#2-乐观锁" class="headerlink" title="2. 乐观锁"></a>2. 乐观锁</h2><p>原理：乐观锁假设不会发生并发冲突，只是在提交时检查数据的原子性。相反的，悲观锁是假定会有并发操作，互斥其他对数据的操作。乐观锁对资源占用时间代价少。<br>适用场景：在高并发下多个事务同时修改数据库中同一条记录、争抢同一资源的场景，如：实体状态、属性的更新、访问同一资源等场景宜用乐观锁。</p>
-<h2 id="3-批量处理"><a href="#3-批量处理" class="headerlink" title="3. 批量处理"></a>3. 批量处理</h2><p>原理: 对于业务类似的操作，可采用批处理模式，避免循环单实体操作，减少网络的交互次数。<br>适用场景：需要处理的数据规模较大的场景，宜通过批量处理的方式，减少交互次数，提高性能。</p>
-<h2 id="4-分页查询"><a href="#4-分页查询" class="headerlink" title="4. 分页查询"></a>4. 分页查询</h2><p>原理: 当查询的数据较多时，在服务端做分页处理，单次查询返回的数据量较少，以减轻网络传输的压力。<br>适用场景：对查询返回结果的数据量较大的场景，宜通过服务端分页，减少返回的数据量，提高查询性能。</p>
-<h2 id="5-异步处理"><a href="#5-异步处理" class="headerlink" title="5. 异步处理"></a>5. 异步处理</h2><p>原理: 异步执行，提升请求的响应速度 。<br>适用场景：事务独立性强、耗时较长的业务过程。例如：汇总 、计提折旧、上报下发、异步集成等，宜异步处理。</p>
-<h2 id="6-并行处理"><a href="#6-并行处理" class="headerlink" title="6. 并行处理"></a>6. 并行处理</h2><p>原理: 采用多线程、并行计算 ，充分利用 CPU 等硬件资源，提升性能。<br>适用场景：同一业务场景需要处理多个业务过程，且业务处理过程无必要关联时，宜采用并行处理。</p>
-<h2 id="7-分区分表"><a href="#7-分区分表" class="headerlink" title="7.分区分表"></a>7.分区分表</h2><p>原理: 由于直接读写存量数据过多的大表所导致的IO 、内存压力，会给系统带来较大的性能问题 。对于该类表，可分区或者分表存储。<br>适用场景：单表数据量较大，数据列较多，由于系统IO 、内存等因素引起并发写入、查询响应慢等性能问题突出的场景宜用分区分表。</p>
-<h2 id="8-按索引查询"><a href="#8-按索引查询" class="headerlink" title="8.按索引查询"></a>8.按索引查询</h2><p>原理: 索引是对数据库表中一列或多列的值进行排序的一种结构，使用索引可快速访问数据表的特定信息 。创建索引的一个主要目的就是加快检索表的数据。<br>适用场景：存量数据规模较大的业务数据查询。</p>
-<h2 id="9-数据冗余"><a href="#9-数据冗余" class="headerlink" title="9.数据冗余"></a>9.数据冗余</h2><p>原理: 在一个数据集合范围内重复的数据称为数据冗余。特定场景下，可通过通过冗余存储方式，降低查询复杂度，减少交互次数，提升性能。<br>适用场景：基础数据变化频率不高，数据同步时效要求不高，冗余数据能够提高性能。（两张表，需要查询的表冗余另一张表的一些字段，方便查询）</p>
-<h2 id="10-预处理数据"><a href="#10-预处理数据" class="headerlink" title="10.预处理数据"></a>10.预处理数据</h2><p>原理: 对于处理步骤复杂（或数据量大，重复利用度较高的中间数据，可抽象成预置数据， 使该数据消费者减少复杂度和数据吞吐量，从而提升系统的响应性能。<br>适用场景：业务数据关联存储的表多，处理逻辑复杂的查询、统计分析等功能，宜预处理为预置数据 。</p>
-<ol>
-<li>场景描述：<br>  分布式光伏发电项目在并网完成后进行发电，财务部门每月按照营销提供的项目发电量与上网电量进行结算账务处理。<br>  分布式光伏结算-结算处理-结算确定查询功能。据实施地实际使用反馈，分布式光伏结算的结算处理查询很慢，无法满足日常的正常使用，<br>  同时结算处理是分布式光伏结算业务的核心功能，更需要进行优化，达到性能测试指标的要求，让使用者对分布式光伏结算应用的性能有一个较大较好的改观。</li>
-<li>性能提升方案：预加工数据：<br>未结算数据集成过来后，进行预处理，将未结算的数据写入到未结算表中，进行价格及数据异常状态的判断处理。</li>
-</ol>
-<h2 id="11-读写分离"><a href="#11-读写分离" class="headerlink" title="11.读写分离"></a>11.读写分离</h2><p>原理: 通过对数据读写操作的分类访问，分散和降低数据库访问压力，均衡IO ；并可以针对读和写的特点优化其性能。<br>适用场景：对于读写不均衡，读多变化少的数据访问存在性能问题的，推荐采用读写分离模式，例如：待办事项等，宜进行读写分离。</p>
-<ol>
-<li>读写分离<br> 将读操作和写操作分离到不同的数据库上，避免主服务器出现性能瓶颈；主服务器进行写操作时，<br> 不影响查询应用服务器的查询性能，降低阻塞，提高并发； 数据拥有多个容灾副本，提高数据安全性，<br> 同时当主服务器故障时，可立即切换到其他服务器，提高系统可用性；</li>
-<li>读写分离原理(Mysql)<br> 第一步：Master（主服务器）将操作记录到binary log（二进制日志文件当中）。即每个事务更新数据完成之前先把操作记录在日志文件中，Mysql将事务串行的写入二进制日志文件中，写入日志文件完成之后，Master通知存储引擎提交事务(注：对数据的操作成为一次二进制的日志事件[binary log event]);<br> 第二步：slave（从服务器）把binary log拷贝到relay log（中介日志）相当于缓存作用，存储在从服务器的缓存中，首先slave会开始一个工作线程（I&#x2F;O线程），I&#x2F;O线程会在Master上打开一个普通的连接，然后读取binary log事件，如果已经跟上master，就会睡眠，并等待Master产生新的事件，I&#x2F;O线程将读取的这些事件写入到relay log；<br> 第三步：slave从做中介日志事件（relay log），sql线程读取relay log事件并执行更新从服务器上的数据，使其与Master上的数据一致。<br>　　总结：主服务器把操作记录到binary log——&gt;从服务器将binary log中的数据同步到relay log（中介日志中）——&gt;从服务器读取中介日志执行同步数据</li>
-</ol>
-<h2 id="12-应用缓存"><a href="#12-应用缓存" class="headerlink" title="12.应用缓存"></a>12.应用缓存</h2><p>原理: 为减少服务端访问数据库的交互，服务端缓存变化频率低的热点数据， 减轻数据库访问压力。<br>适用场景：对于变动率低、频繁读取的体系类数据，通过缓存方式，避免频繁访问数据库。例如：财务组织、行政组织、科目、分类、岗位、权限体系等，宜用缓存。</p>
-<h2 id="13-按需取数"><a href="#13-按需取数" class="headerlink" title="13.按需取数"></a>13.按需取数</h2><p>原理: 根据业务的需要，分析其需的最小数据范围，排除与本次业务操作无关数据，以减少不必要的数据处理与数据传输。<br>适用场景：数据实体的字段较多或者数据量大的场景。宜按需要取数据。</p>
-<h2 id="14-模型封装"><a href="#14-模型封装" class="headerlink" title="14.模型封装"></a>14.模型封装</h2><p>原理: 对于一些复合模型，如果在客户端组装相关属性需要和服务端交互多次。可在服务端处理合并客户端模型减少网络交互次数。<br>适用场景：客户端ID名称转换、关联数据的集中展示等，影响到数据加载、转换的性能及用户体验的，宜进行模型封装。</p>
-<h2 id="15-分层加载"><a href="#15-分层加载" class="headerlink" title="15.分层加载"></a>15.分层加载</h2><p>原理: 客户端需要获取有较大量的数据，但其展示或者计算时只使用到部分数据，可逐层按需加载数据。该方式也是一种延迟加载（ lazy load ）。<br>适用场景：有层级关系、主从关系、先后顺序的实体查询， 宜分层加载。</p>
-<h2 id="16-多线程取数"><a href="#16-多线程取数" class="headerlink" title="16.多线程取数"></a>16.多线程取数</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> List&lt;Map&gt; <span class="title function_">findPageData</span><span class="params">(<span class="keyword">final</span> IEcpDataContext context,</span></span><br><span class="line"><span class="params">		<span class="keyword">final</span> Map&lt;String, String&gt; newConditions, <span class="keyword">final</span> List&lt;Integer&gt; gids)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">	<span class="keyword">final</span> List&lt;Map&gt; resultData = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Map&gt;();</span><br><span class="line">	newConditions.put(<span class="string">&quot;compid&quot;</span>, context.getBusinessContext().getOrgId());</span><br><span class="line">   <span class="keyword">final</span> <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis(); <span class="comment">//开始时间</span></span><br><span class="line">	<span class="keyword">final</span> <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> gids.size();</span><br><span class="line">	<span class="type">int</span> <span class="variable">pageIndex</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> <span class="variable">to</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> <span class="variable">pageSize</span> <span class="operator">=</span> <span class="number">1000</span>; <span class="comment">//一次查询多少条， 最多为1000,不然数据库会报错。用的 in</span></span><br><span class="line">    <span class="comment">//需要查询的次数</span></span><br><span class="line">       <span class="type">int</span> <span class="variable">times</span> <span class="operator">=</span> size / pageSize;</span><br><span class="line">       <span class="keyword">if</span> (size % pageSize != <span class="number">0</span>) &#123;</span><br><span class="line">           times = times + <span class="number">1</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//Callable用于产生结果</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;Callable&lt;List&gt;&gt; tasks = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Callable&lt;List&gt;&gt;();</span><br><span class="line">     <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; times; i++) &#123;</span><br><span class="line">		to = pageIndex * pageSize;</span><br><span class="line">		<span class="keyword">if</span> (to &gt; size) &#123;</span><br><span class="line">			to = size;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">final</span> List&lt;Integer&gt; pageGids = gids.subList(pageSize * (pageIndex - <span class="number">1</span>), to);</span><br><span class="line">           <span class="keyword">final</span> Callable&lt;List&gt; qfe = <span class="keyword">new</span> <span class="title class_">ThredQuery</span>(newConditions, pageGids);</span><br><span class="line">           tasks.add(qfe);</span><br><span class="line">		pageIndex = pageIndex + <span class="number">1</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//定义固定长度的线程池  防止线程过多</span></span><br><span class="line">       <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">15</span>);</span><br><span class="line">       <span class="comment">//Future用于获取结果</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;Future&lt;List&gt;&gt; futures = executorService.invokeAll(tasks);</span><br><span class="line">       <span class="comment">//处理线程返回结果</span></span><br><span class="line">       <span class="keyword">if</span> (futures != <span class="literal">null</span> &amp;&amp; futures.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">           <span class="keyword">for</span> (Future&lt;List&gt; future : futures) &#123;</span><br><span class="line">            resultData.addAll(future.get());</span><br><span class="line">           &#125; </span><br><span class="line">       &#125;</span><br><span class="line">       executorService.shutdown(); <span class="comment">//关闭线程池</span></span><br><span class="line">       <span class="keyword">final</span> <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">       System.out.println(<span class="string">&quot;线程查询数据用时:&quot;</span> + (end - start) + <span class="string">&quot;ms&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> resultData;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 在此写上类的相关说明.&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xiayuanjian &lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0.0 2021-8-5&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.5.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;rawtypes&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThredQuery</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;List&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 条件.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	 <span class="keyword">private</span> Map&lt;String, String&gt; newConditions;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前id.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Integer&gt; pageGids;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/** 构造方法.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> newConditions 条件.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pageGids gid.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ThredQuery</span><span class="params">(<span class="keyword">final</span> Map&lt;String, String&gt; newConditions, <span class="keyword">final</span> List&lt;Integer&gt; pageGids)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.newConditions = newConditions;</span><br><span class="line">        <span class="built_in">this</span>.pageGids = pageGids;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@see</span> java.util.concurrent.Callable#call()</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> List <span class="title function_">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//调用业务方法查询数据，返回集合</span></span><br><span class="line">        <span class="keyword">return</span>  (List) getSettleDataQueryDao().findPageData(newConditions, pageGids);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">浏览器输入url后发生什么 </a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2021-05-11 11:31:25 / 修改时间：11:54:23" itemprop="dateCreated datePublished" datetime="2021-05-11T11:31:25+08:00">2021-05-11</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>56</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>1.解析dns<br>2.建立tcp连接<br>3.发起http请求<br>4.接受响应结果<br>5.浏览器解析html<br>6.浏览器布局渲染</p>
-<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2>
-
-<p><img src="/../_posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/1.jpg" alt="这是图片" title="Magic Gardens"></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">redis 的使用</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-14 17:18:52" itemprop="dateCreated datePublished" datetime="2021-04-14T17:18:52+08:00">2021-04-14</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-10 19:04:12" itemprop="dateModified" datetime="2022-05-10T19:04:12+08:00">2022-05-10</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>972</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="centos-7-忘记密码方法"><a href="#centos-7-忘记密码方法" class="headerlink" title="centos 7 忘记密码方法"></a>centos 7 忘记密码方法</h2><ol>
-<li>按键盘e键，来进入编辑界面</li>
-<li>找到Linux 16的那一行，将 ro 改为 rw init&#x3D;&#x2F;sysroot&#x2F;bin&#x2F;sh</li>
-<li>按下 ctrl+x ，使用单用户模式启动</li>
-<li>chroot &#x2F;sysroot</li>
-<li>passwd root  如果乱码 输入 LANG&#x3D;en 然后 mount-o rw,remount &#x2F;. 再试</li>
-<li>touch &#x2F;.autorelabel</li>
-<li>exit</li>
-<li>reboot</li>
-</ol>
-<h2 id="redis-的使用"><a href="#redis-的使用" class="headerlink" title="redis 的使用"></a>redis 的使用</h2><ol>
-<li>登录虚拟机  账号 root  密码 123456</li>
-</ol>
-<h3 id="服务端启动"><a href="#服务端启动" class="headerlink" title="服务端启动"></a>服务端启动</h3><ol start="2">
-<li>默认启动redis ： &#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-server  命令窗口被占用，不能使用命令</li>
-<li>配置文件启动  增加 redis.conf 文件。改动以下配置项<ol>
-<li>daemonize 控制是否后台运行 </li>
-<li>logfile  指定日志文件位置</li>
-<li>dir     指定redis工作目录</li>
-<li>bind    192.168.177.128</li>
-</ol>
-</li>
-<li>启动命令<br>redis-server文件路径 redis.conf文件路径<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/loacl/redis/redis-server  /usr/loacl/redis/redis.conf</span><br></pre></td></tr></table></figure>
-查看启动端口号<br>ps aux|grep redis</li>
-</ol>
-<h3 id="客户端启动"><a href="#客户端启动" class="headerlink" title="客户端启动"></a>客户端启动</h3><p>&#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-cli     默认 -h 127.0.0.1 - p 6379  </p>
-<p>&#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-cli -h 192.168.177.128</p>
-<h2 id="redis-数据类型"><a href="#redis-数据类型" class="headerlink" title="redis 数据类型"></a>redis 数据类型</h2><p>redis中的数据，都是键值对，不同数据类型指的是键值对值的类型</p>
-<ol>
-<li>String 类型 redis中最基本的类型。二进制安全，不必担心由于编码等问题导致二进制数据变化。所以String可以包含任何数据，比如图片和序列化的对象。最大容量为512M.</li>
-<li>list类型  字符串列表   push peek pop</li>
-<li>set String类型的无序集合</li>
-<li>hash 类型  键值对集合</li>
-<li>zset String类型元素的集合 每个元素会跟一个分数</li>
-</ol>
-<h2 id="redis-设置密码"><a href="#redis-设置密码" class="headerlink" title="redis 设置密码"></a>redis 设置密码</h2><p> config set requirepass <a href="mailto:&#x65;&#x63;&#112;&#64;&#x79;&#103;&#x73;&#x6f;&#x66;&#116;&#46;&#x63;&#x6f;&#x6d;">&#x65;&#x63;&#112;&#64;&#x79;&#103;&#x73;&#x6f;&#x66;&#116;&#46;&#x63;&#x6f;&#x6d;</a></p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1323,7 +1421,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1334,7 +1432,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1370,12 +1468,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">170k</span>
+    <span title="站点总字数">181k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:09</span>
+    <span title="站点阅读时长">5:29</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

@@ -161,6 +161,341 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/" class="post-title-link" itemprop="url">性能秘诀</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-06-21 11:16:02" itemprop="dateCreated datePublished" datetime="2021-06-21T11:16:02+08:00">2021-06-21</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-06 13:26:11" itemprop="dateModified" datetime="2021-08-06T13:26:11+08:00">2021-08-06</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/06/21/%E6%80%A7%E8%83%BD%E7%A7%98%E8%AF%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>9 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="1-最小事务"><a href="#1-最小事务" class="headerlink" title="1.最小事务"></a>1.最小事务</h2><p>原理: 将原大事务裁减为较小单次事务，避免整个大事务引起资源独占时间过长的问题。<br>适用场景：在大事务中需独占使用的资源的处理逻辑，宜将热点数据独立一个新事务， 独立于主事务外，使热点数据尽可能小、尽可能快的结束，减少资源占用的时间，提高并发能力 。</p>
+<h2 id="2-乐观锁"><a href="#2-乐观锁" class="headerlink" title="2. 乐观锁"></a>2. 乐观锁</h2><p>原理：乐观锁假设不会发生并发冲突，只是在提交时检查数据的原子性。相反的，悲观锁是假定会有并发操作，互斥其他对数据的操作。乐观锁对资源占用时间代价少。<br>适用场景：在高并发下多个事务同时修改数据库中同一条记录、争抢同一资源的场景，如：实体状态、属性的更新、访问同一资源等场景宜用乐观锁。</p>
+<h2 id="3-批量处理"><a href="#3-批量处理" class="headerlink" title="3. 批量处理"></a>3. 批量处理</h2><p>原理: 对于业务类似的操作，可采用批处理模式，避免循环单实体操作，减少网络的交互次数。<br>适用场景：需要处理的数据规模较大的场景，宜通过批量处理的方式，减少交互次数，提高性能。</p>
+<h2 id="4-分页查询"><a href="#4-分页查询" class="headerlink" title="4. 分页查询"></a>4. 分页查询</h2><p>原理: 当查询的数据较多时，在服务端做分页处理，单次查询返回的数据量较少，以减轻网络传输的压力。<br>适用场景：对查询返回结果的数据量较大的场景，宜通过服务端分页，减少返回的数据量，提高查询性能。</p>
+<h2 id="5-异步处理"><a href="#5-异步处理" class="headerlink" title="5. 异步处理"></a>5. 异步处理</h2><p>原理: 异步执行，提升请求的响应速度 。<br>适用场景：事务独立性强、耗时较长的业务过程。例如：汇总 、计提折旧、上报下发、异步集成等，宜异步处理。</p>
+<h2 id="6-并行处理"><a href="#6-并行处理" class="headerlink" title="6. 并行处理"></a>6. 并行处理</h2><p>原理: 采用多线程、并行计算 ，充分利用 CPU 等硬件资源，提升性能。<br>适用场景：同一业务场景需要处理多个业务过程，且业务处理过程无必要关联时，宜采用并行处理。</p>
+<h2 id="7-分区分表"><a href="#7-分区分表" class="headerlink" title="7.分区分表"></a>7.分区分表</h2><p>原理: 由于直接读写存量数据过多的大表所导致的IO 、内存压力，会给系统带来较大的性能问题 。对于该类表，可分区或者分表存储。<br>适用场景：单表数据量较大，数据列较多，由于系统IO 、内存等因素引起并发写入、查询响应慢等性能问题突出的场景宜用分区分表。</p>
+<h2 id="8-按索引查询"><a href="#8-按索引查询" class="headerlink" title="8.按索引查询"></a>8.按索引查询</h2><p>原理: 索引是对数据库表中一列或多列的值进行排序的一种结构，使用索引可快速访问数据表的特定信息 。创建索引的一个主要目的就是加快检索表的数据。<br>适用场景：存量数据规模较大的业务数据查询。</p>
+<h2 id="9-数据冗余"><a href="#9-数据冗余" class="headerlink" title="9.数据冗余"></a>9.数据冗余</h2><p>原理: 在一个数据集合范围内重复的数据称为数据冗余。特定场景下，可通过通过冗余存储方式，降低查询复杂度，减少交互次数，提升性能。<br>适用场景：基础数据变化频率不高，数据同步时效要求不高，冗余数据能够提高性能。（两张表，需要查询的表冗余另一张表的一些字段，方便查询）</p>
+<h2 id="10-预处理数据"><a href="#10-预处理数据" class="headerlink" title="10.预处理数据"></a>10.预处理数据</h2><p>原理: 对于处理步骤复杂（或数据量大，重复利用度较高的中间数据，可抽象成预置数据， 使该数据消费者减少复杂度和数据吞吐量，从而提升系统的响应性能。<br>适用场景：业务数据关联存储的表多，处理逻辑复杂的查询、统计分析等功能，宜预处理为预置数据 。</p>
+<ol>
+<li>场景描述：<br>  分布式光伏发电项目在并网完成后进行发电，财务部门每月按照营销提供的项目发电量与上网电量进行结算账务处理。<br>  分布式光伏结算-结算处理-结算确定查询功能。据实施地实际使用反馈，分布式光伏结算的结算处理查询很慢，无法满足日常的正常使用，<br>  同时结算处理是分布式光伏结算业务的核心功能，更需要进行优化，达到性能测试指标的要求，让使用者对分布式光伏结算应用的性能有一个较大较好的改观。</li>
+<li>性能提升方案：预加工数据：<br>未结算数据集成过来后，进行预处理，将未结算的数据写入到未结算表中，进行价格及数据异常状态的判断处理。</li>
+</ol>
+<h2 id="11-读写分离"><a href="#11-读写分离" class="headerlink" title="11.读写分离"></a>11.读写分离</h2><p>原理: 通过对数据读写操作的分类访问，分散和降低数据库访问压力，均衡IO ；并可以针对读和写的特点优化其性能。<br>适用场景：对于读写不均衡，读多变化少的数据访问存在性能问题的，推荐采用读写分离模式，例如：待办事项等，宜进行读写分离。</p>
+<ol>
+<li>读写分离<br> 将读操作和写操作分离到不同的数据库上，避免主服务器出现性能瓶颈；主服务器进行写操作时，<br> 不影响查询应用服务器的查询性能，降低阻塞，提高并发； 数据拥有多个容灾副本，提高数据安全性，<br> 同时当主服务器故障时，可立即切换到其他服务器，提高系统可用性；</li>
+<li>读写分离原理(Mysql)<br> 第一步：Master（主服务器）将操作记录到binary log（二进制日志文件当中）。即每个事务更新数据完成之前先把操作记录在日志文件中，Mysql将事务串行的写入二进制日志文件中，写入日志文件完成之后，Master通知存储引擎提交事务(注：对数据的操作成为一次二进制的日志事件[binary log event]);<br> 第二步：slave（从服务器）把binary log拷贝到relay log（中介日志）相当于缓存作用，存储在从服务器的缓存中，首先slave会开始一个工作线程（I&#x2F;O线程），I&#x2F;O线程会在Master上打开一个普通的连接，然后读取binary log事件，如果已经跟上master，就会睡眠，并等待Master产生新的事件，I&#x2F;O线程将读取的这些事件写入到relay log；<br> 第三步：slave从做中介日志事件（relay log），sql线程读取relay log事件并执行更新从服务器上的数据，使其与Master上的数据一致。<br>　　总结：主服务器把操作记录到binary log——&gt;从服务器将binary log中的数据同步到relay log（中介日志中）——&gt;从服务器读取中介日志执行同步数据</li>
+</ol>
+<h2 id="12-应用缓存"><a href="#12-应用缓存" class="headerlink" title="12.应用缓存"></a>12.应用缓存</h2><p>原理: 为减少服务端访问数据库的交互，服务端缓存变化频率低的热点数据， 减轻数据库访问压力。<br>适用场景：对于变动率低、频繁读取的体系类数据，通过缓存方式，避免频繁访问数据库。例如：财务组织、行政组织、科目、分类、岗位、权限体系等，宜用缓存。</p>
+<h2 id="13-按需取数"><a href="#13-按需取数" class="headerlink" title="13.按需取数"></a>13.按需取数</h2><p>原理: 根据业务的需要，分析其需的最小数据范围，排除与本次业务操作无关数据，以减少不必要的数据处理与数据传输。<br>适用场景：数据实体的字段较多或者数据量大的场景。宜按需要取数据。</p>
+<h2 id="14-模型封装"><a href="#14-模型封装" class="headerlink" title="14.模型封装"></a>14.模型封装</h2><p>原理: 对于一些复合模型，如果在客户端组装相关属性需要和服务端交互多次。可在服务端处理合并客户端模型减少网络交互次数。<br>适用场景：客户端ID名称转换、关联数据的集中展示等，影响到数据加载、转换的性能及用户体验的，宜进行模型封装。</p>
+<h2 id="15-分层加载"><a href="#15-分层加载" class="headerlink" title="15.分层加载"></a>15.分层加载</h2><p>原理: 客户端需要获取有较大量的数据，但其展示或者计算时只使用到部分数据，可逐层按需加载数据。该方式也是一种延迟加载（ lazy load ）。<br>适用场景：有层级关系、主从关系、先后顺序的实体查询， 宜分层加载。</p>
+<h2 id="16-多线程取数"><a href="#16-多线程取数" class="headerlink" title="16.多线程取数"></a>16.多线程取数</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> List&lt;Map&gt; <span class="title function_">findPageData</span><span class="params">(<span class="keyword">final</span> IEcpDataContext context,</span></span><br><span class="line"><span class="params">		<span class="keyword">final</span> Map&lt;String, String&gt; newConditions, <span class="keyword">final</span> List&lt;Integer&gt; gids)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">	<span class="keyword">final</span> List&lt;Map&gt; resultData = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Map&gt;();</span><br><span class="line">	newConditions.put(<span class="string">&quot;compid&quot;</span>, context.getBusinessContext().getOrgId());</span><br><span class="line">   <span class="keyword">final</span> <span class="type">long</span> <span class="variable">start</span> <span class="operator">=</span> System.currentTimeMillis(); <span class="comment">//开始时间</span></span><br><span class="line">	<span class="keyword">final</span> <span class="type">int</span> <span class="variable">size</span> <span class="operator">=</span> gids.size();</span><br><span class="line">	<span class="type">int</span> <span class="variable">pageIndex</span> <span class="operator">=</span> <span class="number">1</span>;</span><br><span class="line">	<span class="type">int</span> <span class="variable">to</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">	<span class="type">int</span> <span class="variable">pageSize</span> <span class="operator">=</span> <span class="number">1000</span>; <span class="comment">//一次查询多少条， 最多为1000,不然数据库会报错。用的 in</span></span><br><span class="line">    <span class="comment">//需要查询的次数</span></span><br><span class="line">       <span class="type">int</span> <span class="variable">times</span> <span class="operator">=</span> size / pageSize;</span><br><span class="line">       <span class="keyword">if</span> (size % pageSize != <span class="number">0</span>) &#123;</span><br><span class="line">           times = times + <span class="number">1</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//Callable用于产生结果</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;Callable&lt;List&gt;&gt; tasks = <span class="keyword">new</span> <span class="title class_">ArrayList</span>&lt;Callable&lt;List&gt;&gt;();</span><br><span class="line">     <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; times; i++) &#123;</span><br><span class="line">		to = pageIndex * pageSize;</span><br><span class="line">		<span class="keyword">if</span> (to &gt; size) &#123;</span><br><span class="line">			to = size;</span><br><span class="line">		&#125;</span><br><span class="line">		<span class="keyword">final</span> List&lt;Integer&gt; pageGids = gids.subList(pageSize * (pageIndex - <span class="number">1</span>), to);</span><br><span class="line">           <span class="keyword">final</span> Callable&lt;List&gt; qfe = <span class="keyword">new</span> <span class="title class_">ThredQuery</span>(newConditions, pageGids);</span><br><span class="line">           tasks.add(qfe);</span><br><span class="line">		pageIndex = pageIndex + <span class="number">1</span>;</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="comment">//定义固定长度的线程池  防止线程过多</span></span><br><span class="line">       <span class="keyword">final</span> <span class="type">ExecutorService</span> <span class="variable">executorService</span> <span class="operator">=</span> Executors.newFixedThreadPool(<span class="number">15</span>);</span><br><span class="line">       <span class="comment">//Future用于获取结果</span></span><br><span class="line">       <span class="keyword">final</span> List&lt;Future&lt;List&gt;&gt; futures = executorService.invokeAll(tasks);</span><br><span class="line">       <span class="comment">//处理线程返回结果</span></span><br><span class="line">       <span class="keyword">if</span> (futures != <span class="literal">null</span> &amp;&amp; futures.size() &gt; <span class="number">0</span>) &#123;</span><br><span class="line">           <span class="keyword">for</span> (Future&lt;List&gt; future : futures) &#123;</span><br><span class="line">            resultData.addAll(future.get());</span><br><span class="line">           &#125; </span><br><span class="line">       &#125;</span><br><span class="line">       executorService.shutdown(); <span class="comment">//关闭线程池</span></span><br><span class="line">       <span class="keyword">final</span> <span class="type">long</span> <span class="variable">end</span> <span class="operator">=</span> System.currentTimeMillis();</span><br><span class="line">       System.out.println(<span class="string">&quot;线程查询数据用时:&quot;</span> + (end - start) + <span class="string">&quot;ms&quot;</span>);</span><br><span class="line">	<span class="keyword">return</span> resultData;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * TODO 在此写上类的相关说明.&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@author</span> xiayuanjian &lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@version</span> 1.0.0 2021-8-5&lt;br&gt;</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@see</span> </span></span><br><span class="line"><span class="comment"> * <span class="doctag">@since</span> JDK 1.5.0</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@SuppressWarnings(&quot;rawtypes&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThredQuery</span> <span class="keyword">implements</span> <span class="title class_">Callable</span>&lt;List&gt; &#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 条件.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">	 <span class="keyword">private</span> Map&lt;String, String&gt; newConditions;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 当前id.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> List&lt;Integer&gt; pageGids;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">/** 构造方法.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> newConditions 条件.</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> pageGids gid.</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">ThredQuery</span><span class="params">(<span class="keyword">final</span> Map&lt;String, String&gt; newConditions, <span class="keyword">final</span> List&lt;Integer&gt; pageGids)</span> &#123;</span><br><span class="line">        <span class="built_in">this</span>.newConditions = newConditions;</span><br><span class="line">        <span class="built_in">this</span>.pageGids = pageGids;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * &#123;<span class="doctag">@inheritDoc</span>&#125;</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@see</span> java.util.concurrent.Callable#call()</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> List <span class="title function_">call</span><span class="params">()</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="comment">//调用业务方法查询数据，返回集合</span></span><br><span class="line">        <span class="keyword">return</span>  (List) getSettleDataQueryDao().findPageData(newConditions, pageGids);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">浏览器输入url后发生什么 </a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-05-11 11:31:25 / 修改时间：11:54:23" itemprop="dateCreated datePublished" datetime="2021-05-11T11:31:25+08:00">2021-05-11</time>
+            </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/05/11/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>56</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>1.解析dns<br>2.建立tcp连接<br>3.发起http请求<br>4.接受响应结果<br>5.浏览器解析html<br>6.浏览器布局渲染</p>
+<h2 id="图示"><a href="#图示" class="headerlink" title="图示"></a>图示</h2>
+
+<p><img src="/../_posts/%E6%B5%8F%E8%A7%88%E5%99%A8%E8%BE%93%E5%85%A5url%E5%90%8E%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88/1.jpg" alt="这是图片" title="Magic Gardens"></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">redis 的使用</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-14 17:18:52" itemprop="dateCreated datePublished" datetime="2021-04-14T17:18:52+08:00">2021-04-14</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2022-05-10 19:04:12" itemprop="dateModified" datetime="2022-05-10T19:04:12+08:00">2022-05-10</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/04/14/redis-%E7%9A%84%E4%BD%BF%E7%94%A8/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>972</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="centos-7-忘记密码方法"><a href="#centos-7-忘记密码方法" class="headerlink" title="centos 7 忘记密码方法"></a>centos 7 忘记密码方法</h2><ol>
+<li>按键盘e键，来进入编辑界面</li>
+<li>找到Linux 16的那一行，将 ro 改为 rw init&#x3D;&#x2F;sysroot&#x2F;bin&#x2F;sh</li>
+<li>按下 ctrl+x ，使用单用户模式启动</li>
+<li>chroot &#x2F;sysroot</li>
+<li>passwd root  如果乱码 输入 LANG&#x3D;en 然后 mount-o rw,remount &#x2F;. 再试</li>
+<li>touch &#x2F;.autorelabel</li>
+<li>exit</li>
+<li>reboot</li>
+</ol>
+<h2 id="redis-的使用"><a href="#redis-的使用" class="headerlink" title="redis 的使用"></a>redis 的使用</h2><ol>
+<li>登录虚拟机  账号 root  密码 123456</li>
+</ol>
+<h3 id="服务端启动"><a href="#服务端启动" class="headerlink" title="服务端启动"></a>服务端启动</h3><ol start="2">
+<li>默认启动redis ： &#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-server  命令窗口被占用，不能使用命令</li>
+<li>配置文件启动  增加 redis.conf 文件。改动以下配置项<ol>
+<li>daemonize 控制是否后台运行 </li>
+<li>logfile  指定日志文件位置</li>
+<li>dir     指定redis工作目录</li>
+<li>bind    192.168.177.128</li>
+</ol>
+</li>
+<li>启动命令<br>redis-server文件路径 redis.conf文件路径<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/usr/loacl/redis/redis-server  /usr/loacl/redis/redis.conf</span><br></pre></td></tr></table></figure>
+查看启动端口号<br>ps aux|grep redis</li>
+</ol>
+<h3 id="客户端启动"><a href="#客户端启动" class="headerlink" title="客户端启动"></a>客户端启动</h3><p>&#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-cli     默认 -h 127.0.0.1 - p 6379  </p>
+<p>&#x2F;usr&#x2F;loacl&#x2F;redis&#x2F;redis-cli -h 192.168.177.128</p>
+<h2 id="redis-数据类型"><a href="#redis-数据类型" class="headerlink" title="redis 数据类型"></a>redis 数据类型</h2><p>redis中的数据，都是键值对，不同数据类型指的是键值对值的类型</p>
+<ol>
+<li>String 类型 redis中最基本的类型。二进制安全，不必担心由于编码等问题导致二进制数据变化。所以String可以包含任何数据，比如图片和序列化的对象。最大容量为512M.</li>
+<li>list类型  字符串列表   push peek pop</li>
+<li>set String类型的无序集合</li>
+<li>hash 类型  键值对集合</li>
+<li>zset String类型元素的集合 每个元素会跟一个分数</li>
+</ol>
+<h2 id="redis-设置密码"><a href="#redis-设置密码" class="headerlink" title="redis 设置密码"></a>redis 设置密码</h2><p> config set requirepass <a href="mailto:&#x65;&#x63;&#112;&#64;&#x79;&#103;&#x73;&#x6f;&#x66;&#116;&#46;&#x63;&#x6f;&#x6d;">&#x65;&#x63;&#112;&#64;&#x79;&#103;&#x73;&#x6f;&#x66;&#116;&#46;&#x63;&#x6f;&#x6d;</a></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/18/webservice-%E6%B5%8B%E8%AF%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -939,491 +1274,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/29/%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/29/%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">跨域问题 </a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-02-29 20:33:52 / 修改时间：20:47:05" itemprop="dateCreated datePublished" datetime="2020-02-29T20:33:52+08:00">2020-02-29</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/29/%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/29/%E8%B7%A8%E5%9F%9F%E9%97%AE%E9%A2%98/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>121</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>1 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="什么是跨域？如何解决跨域问题？"><a href="#什么是跨域？如何解决跨域问题？" class="headerlink" title="什么是跨域？如何解决跨域问题？"></a>什么是跨域？如何解决跨域问题？</h3><p>跨域：指的是浏览器不能执行其他网站的脚本。它是由浏览器的同源策略造成的，是浏览器施加的安全限制。</p>
-<p>同源策略：域名，协议，端口相同。</p>
-<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
-<li>JSONP</li>
-</ol>
-<p>只支持GET请求，不支持POST请求</p>
-<ol start="2">
-<li>代理</li>
-</ol>
-<p>代理模式从后端绕过浏览器端</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/19/springboot-SSH-SSM-%E6%A1%86%E6%9E%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/19/springboot-SSH-SSM-%E6%A1%86%E6%9E%B6/" class="post-title-link" itemprop="url">springboot,SSH,SSM 框架</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-19 22:30:51" itemprop="dateCreated datePublished" datetime="2020-02-19T22:30:51+08:00">2020-02-19</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-03-07 19:54:08" itemprop="dateModified" datetime="2022-03-07T19:54:08+08:00">2022-03-07</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/19/springboot-SSH-SSM-%E6%A1%86%E6%9E%B6/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/19/springboot-SSH-SSM-%E6%A1%86%E6%9E%B6/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.4k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>8 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h3><p>  Spring是一个生态体系（也可以说是技术体系），是集大成者，它包含了Spring Framework、Spring Boot、Spring Cloud等（还包括Spring Cloud data flow、spring data、spring integration、spring batch、spring security、spring hateoas）</p>
-<h3 id="Spring-Framework"><a href="#Spring-Framework" class="headerlink" title="Spring Framework"></a>Spring Framework</h3><p>Spring Framework是整个spring生态的基石，它可是硬生生的消灭了Java官方主推的企业级开发标准EJB，从而实现一统天下。Spring官方对Spring Framework简短描述：为依赖注入、事务管理、WEB应用、数据访问等提供了核心的支持。Spring Framework专注于企业级应用程序的“管道”，以便开发团队可以专注于应用程序的业务逻辑。</p>
-<p>笔者要提醒的是，千万不要把Spring和Spring Framework搞混淆了，很多文章都错误的定义了spring：spring是一个一站式的轻量级的java开发框架，核心是控制反转（IoC）和面向切面（AOP），针对于开发的WEB层(springMVC)、业务层(IoC)、持久层(jdbcTemplate)等都提供了多种配置解决方案。这是Spring Framework的定义，至于Spring，是整个生态。</p>
-<p>但是，无论Spring Framework接口如何简化，设计如何优美，始终无法摆脱被动的境况：由于它自身并非容器，所以基本上不得不随JavaEE容器启动而装载，例如Tomcat、Jetty、JBoss等。然而Spring Boot的出现，改变了Spring Framework甚至整个Spring技术体系的现状（摘自小马哥的《SpringBoot编程思想》）。</p>
-<h3 id="Springboot的概念："><a href="#Springboot的概念：" class="headerlink" title="Springboot的概念："></a><strong>Springboot的概念：</strong></h3><p>  是提供的全新框架，使用来简化Spring的初始搭建和开发过程，使用了特定的方式来进行配置，让开发人员不在需要定义样板化的配置。此框架不需要配置xml，依赖于像MAVEN这样的构建系统。</p>
-<h4 id="Springboot的优点："><a href="#Springboot的优点：" class="headerlink" title="Springboot的优点："></a><strong>Springboot的优点：</strong></h4><ol>
-<li><p>减少了大量的开发时间并提高了生产力。</p>
-</li>
-<li><p>避免了编写大量的样板代码，注释和XML配置。</p>
-</li>
-<li><p>解决了Spring的弊端。</p>
-</li>
-<li><p>快速整合第三方框架，无需配置文件。</p>
-</li>
-<li><p>代码少了、配置文件少了、不需要对第三方框架烦恼了、项目精简了，对整个团队的开发及维护来说，更大的节约了成本。</p>
-</li>
-<li><p>使用Java开发基于Spring的应用程序非常容易。</p>
-</li>
-</ol>
-<h4 id="Springboot的缺点："><a href="#Springboot的缺点：" class="headerlink" title="Springboot的缺点："></a><strong>Springboot的缺点：</strong></h4><ol>
-<li><p>修复bug较慢，报错时难以定位到该点。</p>
-</li>
-<li><p>集成度较高，不易了解底层。<br>总结：简单、快速、方便地搭建项目；对主流开发框架的无配置集成；极大提高了开发、部署效率。</p>
-</li>
-</ol>
-<h3 id="SSM的概念："><a href="#SSM的概念：" class="headerlink" title="SSM的概念："></a><strong>SSM的概念：</strong></h3><p>SSM框架，是三层结合所成的框架，分别是，Spring，SpringMVC，MyBatis所组成。Spring依赖注入来管理各层，面向切面编程管理事务，日志和权限。SpringMVC代表了Model，View，Controller接收外部请求,进行分发和处理。Mybatis是基于jdbc的框架,主要用来操作数据库,并且将业务实体和数据表联系起来。</p>
-<h3 id="Spring的概念："><a href="#Spring的概念：" class="headerlink" title="Spring的概念："></a><strong>Spring的概念：</strong></h3><p>Spring是一个开源开发框架，Spring主要用来开发java应用，构建J2EE平台的web应用。其核心就是提供一种新的机制管理业务对象及其依赖关系。</p>
-<h4 id="Spring的优点："><a href="#Spring的优点：" class="headerlink" title="Spring的优点："></a>Spring的优点：</h4><ol>
-<li><p>容器：Spring是一个容器，包含并管理对象的生命周期和配置。</p>
-</li>
-<li><p>支持AOP：Spring提供了对AOP的支持，它允许将一些通用任务，如安全、事物、日志等进行集中式处理，从而提高了程序的复用性。</p>
-</li>
-<li><p>轻量级框架：Spring是轻量级框架，其基本的版本大约2M。</p>
-</li>
-<li><p>控制反转  ：Spring通过控制反转实现松散耦合,对象们给它们的依赖,而不是创建或者查找依赖的对象们方便解耦,简化开发。</p>
-</li>
-<li><p>方便程序的测试：Spring提供了对Junit4的支持，可以通过注解方便的测试Spring程序。</p>
-</li>
-<li><p>降低Jave EE API的使用难度：Spring对Java EE开发中非常难用的一些API（如JDBC），都提供了封装，使这些API应用难度大大降低。</p>
-</li>
-<li><p>方便集成各种优秀框架：Spring不排斥各种优秀的开源框架，其内部提供了对各种优秀框架（如Struts、MyBatis等）的直接支持。</p>
-</li>
-<li><p>支持声明式事务处理：只需要通过配置就可以完成对事物的管理，而无须手动编程。</p>
-</li>
-</ol>
-<h4 id="Spring的缺点："><a href="#Spring的缺点：" class="headerlink" title="Spring的缺点："></a>Spring的缺点：</h4><ol>
-<li><p>依赖反射，反射影响进程。</p>
-</li>
-<li><p>太过于依赖设计模式。</p>
-</li>
-<li><p>控制器过于灵活。</p>
-</li>
-<li><p>不支持分布式应用。</p>
-</li>
-</ol>
-<h3 id="SpringMVC的概念"><a href="#SpringMVC的概念" class="headerlink" title="SpringMVC的概念:"></a><strong>SpringMVC的概念:</strong></h3><p>属于Spring框架的一部分，用来简化MVC架构的web应用程序开发。</p>
-<h4 id="SpringMVC的优点："><a href="#SpringMVC的优点：" class="headerlink" title="SpringMVC的优点："></a>SpringMVC的优点：</h4><ol>
-<li><p>拥有强大的灵活性，非侵入性和可配置性</p>
-</li>
-<li><p>提供了一个前端控制器DispatcherServlet，开发者无需额外开发控制器对象</p>
-</li>
-<li><p>分工明确，包括控制器、验证器、命令对象、模型对象、处理程序映射视图解析器，每一个功能实现由一个专门的对象负责完成</p>
-</li>
-<li><p>可以自动绑定用户输入，并正确的转换数据类型</p>
-</li>
-<li><p>可重用的业务代码：可以使用现有的业务对象作为命令或表单对象，而不需要去扩展某个特定框架的基类。</p>
-</li>
-</ol>
-<h4 id="SpringMVC的缺点："><a href="#SpringMVC的缺点：" class="headerlink" title="SpringMVC的缺点："></a>SpringMVC的缺点：</h4><ol>
-<li><p>Servlet API 耦合难以脱离容器独立运行。</p>
-</li>
-<li><p>太过于细分，开发效率低。</p>
-</li>
-</ol>
-<h4 id="Spring和Springboot的区别："><a href="#Spring和Springboot的区别：" class="headerlink" title="Spring和Springboot的区别："></a>Spring和Springboot的区别：</h4><ol>
-<li><p>Spring Boot可以建立独立的Spring应用程序；</p>
-</li>
-<li><p>内嵌了如Tomcat，Jetty和Undertow这样的容器，也就是说可以直接跑起来，用不着再做部署工作了。</p>
-</li>
-<li><p>无需再像Spring那样搞一堆繁琐的xml文件的配置；</p>
-</li>
-<li><p>可以自动配置Spring；</p>
-</li>
-<li><p>提供的POM可以简化Maven的配置；</p>
-</li>
-</ol>
-<h4 id="Springboot和SpringMVC的区别："><a href="#Springboot和SpringMVC的区别：" class="headerlink" title="Springboot和SpringMVC的区别："></a>Springboot和SpringMVC的区别：</h4><p>Spring 是一个“引擎”；</p>
-<p>Spring MVC 是基于Spring的一个 MVC 框架 ；</p>
-<p>Spring Boot 是基于Spring的条件注册的一套快速开发整合包。</p>
-<h3 id="mybatis的概念："><a href="#mybatis的概念：" class="headerlink" title="mybatis的概念："></a><strong>mybatis的概念：</strong></h3><p>MyBatis是一个简化和实现了 Java 数据持久化层(persistence layer)的开源框架，它抽象了大量的JDBC冗余代码，并提供了一个简单易用的API和数据库交互。MyBatis的前身是iBATIS，iBATIS于2002年由ClintonBegin创建。MyBatis3是iBATIS的全新设计，支持注解和Mapper。</p>
-<h4 id="mybatis的优点："><a href="#mybatis的优点：" class="headerlink" title="mybatis的优点："></a>mybatis的优点：</h4><ol>
-<li><p>与JDBC相比，减少了50%以上的代码量。</p>
-</li>
-<li><p>MyBatis是最简单的持久化框架，小巧并且简单易学。</p>
-</li>
-<li><p>MyBatis灵活，不会对应用程序或者数据库的现有设计强加任何影响，SQL写在XML里，从程序代码中彻底分离，降低耦合度，便于统一管理和优化，可重用。</p>
-</li>
-<li><p>提供XML标签，支持编写动态SQL语句（XML中使用if, else）。</p>
-</li>
-<li><p>提供映射标签，支持对象与数据库的ORM字段关系映射（在XML中配置映射关系，也可以使用注解）。</p>
-</li>
-</ol>
-<h4 id="mybatis的缺点："><a href="#mybatis的缺点：" class="headerlink" title="mybatis的缺点："></a>mybatis的缺点：</h4><ol>
-<li>SQL语句的编写工作量较大，对开发人员的SQL语句编写有一定的水平要求。</li>
-<li>SQL语句过于依赖数据库，不能随意更换数据库。</li>
-<li>拼接复杂SQL语句时不灵活。</li>
-</ol>
-<h3 id="SSH的概念："><a href="#SSH的概念：" class="headerlink" title="SSH的概念："></a><strong>SSH的概念：</strong></h3><p>SSH框架是JAVA EE中三种框架所集成。分别为Struts，Spring，Hibernate框架所组成，是当前比较流行的JAVA WEB开源框架。<br>集成SSH框架的系统从职责上分为四层：表示层、业务逻辑层、数据持久层和域模块层，以帮助开发人员在短期内搭建结构清晰、可复用性好、维护方便的Web应用程序。使用Struts作为系统的整体基础架构，负责MVC的分离，在Struts框架的模型部分，控制业务跳转，利用Hibernate框架对持久层提供支持，Spring做管理，管理struts和hibernate。</p>
-<h3 id="Struts2的概念："><a href="#Struts2的概念：" class="headerlink" title="Struts2的概念："></a><strong>Struts2的概念：</strong></h3><p>Struts2是一个基于MVC设计模式的Web应用框架，相当于一个servlet，在MVC设计模式中，Struts2作为控制器(Controller)来建立模型与视图的数据交互。Struts2在Struts1融合webwork。</p>
-<h4 id="Struts2的优势："><a href="#Struts2的优势：" class="headerlink" title="Struts2的优势："></a>Struts2的优势：</h4><ol>
-<li>实现了MVC模式，层次结构清晰，使程序员只需关注业务逻辑的实现。</li>
-<li>丰富的标签库，大大提高了开发的效率。</li>
-<li>Struts2提供丰富的拦截器实现。</li>
-<li>通过配置文件，就可以掌握整个系统各个部分之间的关系。</li>
-<li>异常处理机制，只需在配置文件中配置异常的映射，即可对异常做相应的处理。</li>
-<li>Struts2的可扩展性高。</li>
-<li>面向切面编程的思想在Strut2中也有了很好的体现。体现了拦截器的使用，拦截器就是一个一个的小功能单位，用户可以将这些拦截器合并成一个大的拦截器，这个合成的拦截器就像单独的拦截器一样，只要将它配置到一个、Action中就可以。</li>
-</ol>
-<h4 id="Struts2的缺点："><a href="#Struts2的缺点：" class="headerlink" title="Struts2的缺点："></a>Struts2的缺点：</h4><ol>
-<li>校验较繁琐，多字段时出错返回不同。</li>
-<li>安全性太低。</li>
-<li>获取传参时较麻烦。</li>
-</ol>
-<h3 id="Hibernate的概念："><a href="#Hibernate的概念：" class="headerlink" title="Hibernate的概念："></a><strong>Hibernate的概念：</strong></h3><p>Hibernate是一个Java领域的持久层的ORM（对象&#x2F;关系映射）框架。与各种数据库，SQL语句打交道，是数据持久化的一种解决方案。ORM框架是不同于MVC的另一种思想框架，适用范围也与MVC截然不同。类似功能的框架还有SUN的JDO、Oracle公司的TopLink、Apache的iBatis和openJPA等。</p>
-<h4 id="Hibernate的优点："><a href="#Hibernate的优点：" class="headerlink" title="Hibernate的优点："></a>Hibernate的优点：</h4><ol>
-<li>对象&#x2F;关系数据库映射(Basic O&#x2F;R Mapping)它使用时只需要操纵对象，使开发更对象化，抛弃了数据库中心的思想，完全的面向对象思想。</li>
-<li>透明持久化(Persistent)带有持久化状态的、具有业务功能的单线程对象，此对象生存期很短。这些对象可能是普通的JavaBeans&#x2F;POJO，这个对象没有实现第三方框架或者接口，唯一特殊的是他们正与（仅仅一个）Session相关联。一旦这个Session被关闭，这些对象就会脱离持久化状态，这样就可被应用程序的任何层自由使用。</li>
-<li>事务Transaction 应用程序用来指定原子操作单元范围的对象，它是单线程的，生命周期很短。它通过抽象将应用从底层具体的JDBC、JTA以及CORBA事务隔离开。某些情况下，一个Session之内可能包含多个Transaction对象。尽管是否使用该对象是可选的，但无论是使用底层的API还是使用Transaction对象，事务边界的开启与关闭是必不可少的。</li>
-<li>它没有侵入性，即所谓的轻量级框架。</li>
-<li>移植性会很好。</li>
-<li>缓存机制。提供一级缓存和二级缓存。</li>
-</ol>
-<h4 id="Hibernate的缺点："><a href="#Hibernate的缺点：" class="headerlink" title="Hibernate的缺点："></a>Hibernate的缺点：</h4><ol>
-<li>持久层封装过于完整，导致开发人员无法对SQL进行优化，无法灵活应用原生SQL。</li>
-<li>批量数据处理的时候是较弱势。</li>
-<li></li>
-<li>框架中使用ORM原则，导致配置过于复杂，遇到大项目，维护和问题不断。</li>
-<li>配置文件复杂。</li>
-</ol>
-<h3 id="Spring-ioc-容器作用"><a href="#Spring-ioc-容器作用" class="headerlink" title="Spring ioc 容器作用"></a>Spring ioc 容器作用</h3><ol>
-<li>创建对象    1.调用无参构造 2.带参数构造 3.工厂创建对象 静态方法 和非静态方法</li>
-<li>处理对象依赖关系  通过DI，依赖注入 1. 通过构造 <constuctor-arg> 2. 通过set 方法 对相应的属性进行注入 <property></li>
-<li></li>
-<li></property>3. 通过p命名空间  4.自动装配</li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/02/05/%E5%B8%B8%E8%A7%81loder/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/02/05/%E5%B8%B8%E8%A7%81loder/" class="post-title-link" itemprop="url">常见loder及插件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-02-05 12:09:04" itemprop="dateCreated datePublished" datetime="2020-02-05T12:09:04+08:00">2020-02-05</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-28 11:27:55" itemprop="dateModified" datetime="2024-12-28T11:27:55+08:00">2024-12-28</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E5%89%8D%E7%AB%AF/" itemprop="url" rel="index"><span itemprop="name">前端</span></a>
-                </span>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2020/02/05/%E5%B8%B8%E8%A7%81loder/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2020/02/05/%E5%B8%B8%E8%A7%81loder/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="常见的-loader"><a href="#常见的-loader" class="headerlink" title="常见的 loader"></a>常见的 loader</h2><h3 id="1-文件"><a href="#1-文件" class="headerlink" title="1.文件"></a>1.文件</h3><p>raw-loader 加载文件原始内容（utf-8）</p>
-<p>val-loader 将代码作为模块执行，并将 exports 转为 JS 代码</p>
-<p>url-loader 像 file loader 一样工作，但如果文件小于限制，可以返回 data URL</p>
-<p>file-loader 将文件发送到输出文件夹，并返回（相对）URL</p>
-<h3 id="2-JSON"><a href="#2-JSON" class="headerlink" title="2.JSON"></a>2.JSON</h3><p>json-loader 加载 JSON 文件（默认包含）</p>
-<p>json5-loader 加载和转译 JSON 5 文件</p>
-<p>cson-loader 加载和转译 CSON 文件</p>
-<h3 id="3-转换编译-Transpiling"><a href="#3-转换编译-Transpiling" class="headerlink" title="3.转换编译(Transpiling)"></a>3.转换编译(Transpiling)</h3><p>script-loader 在全局上下文中执行一次 JavaScript 文件（如在 script 标签），不需要解析</p>
-<p>babel-loader 加载 ES2015+ 代码，然后使用 Babel 转译为 ES5</p>
-<p>buble-loader 使用 Bublé 加载 ES2015+ 代码，并且将代码转译为 ES5</p>
-<p>traceur-loader 加载 ES2015+ 代码，然后使用 Traceur 转译为 ES5</p>
-<p>ts-loader 或 awesome-typescript-loader 像 JavaScript 一样加载 TypeScript 2.0+</p>
-<p>coffee-loader 像 JavaScript 一样加载 CoffeeScript</p>
-<h3 id="4-模板-Templating"><a href="#4-模板-Templating" class="headerlink" title="4.模板(Templating)"></a>4.模板(Templating)</h3><p>html-loader 导出 HTML 为字符串，需要引用静态资源</p>
-<p>pug-loader 加载 Pug 模板并返回一个函数</p>
-<p>jade-loader 加载 Jade 模板并返回一个函数</p>
-<p>markdown-loader 将 Markdown 转译为 HTML</p>
-<p>react-markdown-loader 使用 markdown-parse parser(解析器) 将 Markdown 编译为 React 组件</p>
-<p>posthtml-loader 使用 PostHTML 加载并转换 HTML 文件</p>
-<p>handlebars-loader 将 Handlebars 转移为 HTML</p>
-<p>markup-inline-loader 将内联的 SVG&#x2F;MathML 文件转换为 HTML。在应用于图标字体，或将 CSS<br>动画应用于 SVG 时非常有用。</p>
-<h3 id="5-样式"><a href="#5-样式" class="headerlink" title="5.样式"></a>5.样式</h3><p>style-loader 将模块的导出作为样式添加到 DOM 中</p>
-<p>css-loader 解析 CSS 文件后，使用 import 加载，并且返回 CSS 代码</p>
-<p>less-loader 加载和转译 LESS 文件</p>
-<p>sass-loader 加载和转译 SASS&#x2F;SCSS 文件</p>
-<p>postcss-loader 使用 PostCSS 加载和转译 CSS&#x2F;SSS 文件</p>
-<p>stylus-loader 加载和转译 Stylus 文件</p>
-<h3 id="6-清理和测试-Linting-Testing"><a href="#6-清理和测试-Linting-Testing" class="headerlink" title="6.清理和测试(Linting &amp;&amp; Testing)"></a>6.清理和测试(Linting &amp;&amp; Testing)</h3><p>mocha-loader 使用 mocha 测试（浏览器&#x2F;NodeJS）</p>
-<p>eslint-loader PreLoader，使用 ESLint 清理代码</p>
-<p>jshint-loader PreLoader，使用 JSHint 清理代码</p>
-<p>jscs-loader PreLoader，使用 JSCS 检查代码样式</p>
-<p>coverjs-loader PreLoader，使用 CoverJS 确定测试覆盖率</p>
-<h3 id="7-框架-Frameworks"><a href="#7-框架-Frameworks" class="headerlink" title="7.框架(Frameworks)"></a>7.框架(Frameworks)</h3><p>vue-loader 加载和转译 Vue 组件</p>
-<p>polymer-loader 使用选择预处理器(preprocessor)处理，并且 require() 类似一等模块<br>(first-class)的 Web 组件</p>
-<p>angular2-template-loader 加载和转译 Angular 组件</p>
-<h2 id="常见插件"><a href="#常见插件" class="headerlink" title="常见插件"></a>常见插件</h2><p><a target="_blank" rel="noopener" href="http://tangjiusheng.com/vue/155.html">参考网站</a></p>
-<p>htmlWebpackPlugin</p>
-<p>创建一个在内存中生成 html 的插件。该插件把打包好的 bundle.js 追加到页面中去</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="title class_">htmlWebpackPlugin</span>(</span><br><span class="line">    &#123;</span><br><span class="line">        template:path.join(_dirname,<span class="string">&#x27;./src/index.html&#x27;</span>)</span><br><span class="line">        filename: <span class="string">&#x27;index2.html&#x27;</span> <span class="comment">//生成</span></span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
-
-<p>extract-text-webpack-plugin</p>
-<p>该插件的主要是为了抽离 css 样式,防止将样式打包在 js 中引起页面样式加载错乱的现象。</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">                test: /\.css$/,</span><br><span class="line">                use: ExtractTextPlugin.extract(&#123;</span><br><span class="line">                    fallback: <span class="string">&#x27;style-loader&#x27;</span>,</span><br><span class="line">                    use: [<span class="string">&#x27;css-loader?&#x27;</span> + JSON.stringify(&#123;</span><br><span class="line">                        discardComments: &#123;</span><br><span class="line">                            removeAll: <span class="literal">true</span></span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;)]</span><br><span class="line">                &#125;)</span><br><span class="line">            &#125;</span><br></pre></td></tr></table></figure>
-
-<p>用法 ExtractTextPlugin.extract(options:loader|object)</p>
-<p>1.options.use:指需要什么样的 loader 去编译文件</p>
-<p>2.options.fallback:编译后用什么 loader 来提取 css 文件</p>
-<p>3.options.publicfile:用来覆盖项目路径,生成该 css 文件的文件路径</p>
-<p>CleanWebpackPlugin</p>
-<p>当我们修改带 hash 的文件并进行打包时，每打包一次就会生成一个新的文件，而旧的文件并没有删除。为了解决这种情况，我们可以使用 clean-webpack-plugin 在打包之前将文件先清除，之后再打包出最新的文件</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">const</span> <span class="variable">CleanWebpackPlugin</span> <span class="operator">=</span> require(<span class="string">&#x27;clean-webpack-plugin&#x27;</span>); <span class="comment">//使用前需要安装clean-webpack-plugin</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> <span class="title class_">CleanWebpackPlugin</span>(</span><br><span class="line">     [<span class="string">&#x27;dist/main.*.js&#x27;</span>,<span class="string">&#x27;dist/manifest.*.js&#x27;</span>],　 <span class="comment">//匹配删除的文件</span></span><br><span class="line">     &#123;</span><br><span class="line">         root: __dirname,  <span class="comment">//根目录</span></span><br><span class="line">         verbose:  <span class="literal">true</span>,  <span class="comment">//开启在控制台输出信息</span></span><br><span class="line">         dry: <span class="literal">false</span>    <span class="comment">//启用删除文件</span></span><br><span class="line">     &#125;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1492,7 +1342,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1503,7 +1353,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1539,12 +1389,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">170k</span>
+    <span title="站点总字数">181k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:09</span>
+    <span title="站点阅读时长">5:29</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>

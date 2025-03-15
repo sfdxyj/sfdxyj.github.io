@@ -161,6 +161,316 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-10-19-使用多线程调用外部接口缺陷处理 -Use multithreading to invoke external interface defect handling</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-10-19 21:55:19" itemprop="dateCreated datePublished" datetime="2024-10-19T21:55:19+08:00">2024-10-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-10-26 20:01:57" itemprop="dateModified" datetime="2024-10-26T20:01:57+08:00">2024-10-26</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/10/19/2024-10-19-%E4%BD%BF%E7%94%A8%E5%A4%9A%E7%BA%BF%E7%A8%8B%E8%B0%83%E7%94%A8%E5%A4%96%E9%83%A8%E6%8E%A5%E5%8F%A3%E7%BC%BA%E9%99%B7%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>8.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>16 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述-Problem-description"><a href="#问题描述-Problem-description" class="headerlink" title="问题描述 - Problem description"></a>问题描述 - Problem description</h3><p>调用外部系统同步机架下的u位数据，发现有的u位数据没有正常同步过来。 -The external system is called to synchronize the U-bit data under the rack, and the existing U-bit data is not synchronized properly.<br>因为u位数据数量很多，对方系统没有提供批量同步的接口。所以使用多线程的方法调用。下面是调用代码。-Because of the large amount of U-bit data, the other system does not provide an interface for batch synchronization. So use multi-threaded method calls. Here’s the call code.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">     long startTime = System.currentTimeMillis();</span><br><span class="line">     List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">     log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">     if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">         return;</span><br><span class="line">     &#125;</span><br><span class="line">     String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">     Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">            sk, System.currentTimeMillis(), nonce);</span><br><span class="line">     String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">     CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">     List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">     for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">         CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">             @Override</span><br><span class="line">             public void run() &#123;</span><br><span class="line">                 try &#123;</span><br><span class="line">                     commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                     String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                     CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                     if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                         return;</span><br><span class="line">                     &#125;</span><br><span class="line">                     List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                     List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                     if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                         for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                             RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                             transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                             roomckCloudResUS.add(roomckResU);</span><br><span class="line">                         &#125;</span><br><span class="line">                     &#125;</span><br><span class="line">                     roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                 &#125;</span><br><span class="line">                 catch (Exception e) &#123;</span><br><span class="line">                     log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                     log.error(e.getMessage(), e);</span><br><span class="line">                 &#125;</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;, ThreadUtils.ioPool);</span><br><span class="line">         futureList.add(future);</span><br><span class="line">     &#125;</span><br><span class="line">     CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">     log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line"> &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="问题分析-problem-analysis"><a href="#问题分析-problem-analysis" class="headerlink" title="问题分析 - problem analysis"></a>问题分析 - problem analysis</h3><ol>
+<li>我犯了一个很基础的错误，commonRequestDTO 是多线程共享的，赋值的时候没有加锁，导致传的参数可能被其他线程覆盖了。所以有的u位数据没有同步。 - I made a very basic mistake, commonRequestDTO is shared by multiple threads, and there is no lock when assigning the value, which causes the passed parameters to be overridden by other threads. So some U-bit data is not synchronized</li>
+<li>分析日志发现。当接口多次调用的时候。对方服务器接口会返回500，拒绝服务. 代码没有重试机制，缺少健壮性。</li>
+</ol>
+<ul>
+<li>Analyze log findings. When an interface is called multiple times. The other server interface will return a 500 and refuse service. The code has no retry mechanism and lacks robustness.</li>
+</ul>
+<ol start="3">
+<li>调用外部接口获取密钥的 header 是所有线程共用的。而这个同步数据有点多。大概需要30分钟才能同步完成。而接口的密钥有效性只有2分钟，所以在2分钟之后后面再次调用接口会出现认证失败。</li>
+</ol>
+<ul>
+<li>The header that calls an external interface to obtain a key is shared by all threads. And this synchronization data is a bit much. It takes about 30 minutes to sync. The key validity of the interface is only 2 minutes, so if the API is called again after 2 minutes, the authentication will fail</li>
+</ul>
+<h3 id="问题解决-problem-solution"><a href="#问题解决-problem-solution" class="headerlink" title="问题解决 - problem solution"></a>问题解决 - problem solution</h3><ol>
+<li>对commonRequestDTO.setId(roomckCloudResCabinet.getId()); 这行代码加锁 -Lock the line of code: <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"> synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>代码加上重试机制 优化后代码 - Code with retry mechanism, optimized code as follows<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br></pre></td><td class="code"><pre><span class="line">@Async</span><br><span class="line">@Scheduled(cron = &quot;$&#123;task.ucabinetdata.sync.cron&#125;&quot;)</span><br><span class="line">@SchedulerLock(name = &quot;CloudCt_task.ucabinetdata.sync&quot;, lockAtLeastForString = &quot;PT30M&quot;, lockAtMostForString = &quot;PT60M&quot;)</span><br><span class="line">public void syncStation() &#123;</span><br><span class="line">    log.info(&quot;开始同步机架U位数据....&quot;);</span><br><span class="line">    long startTime = System.currentTimeMillis();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; roomckCloudResCabinets = roomckCloudResCabinetMapper.queryAllCloudData();</span><br><span class="line">    log.info(&quot;机架数据数量：&quot; + roomckCloudResCabinets.size());</span><br><span class="line">    if (roomckCloudResCabinets.isEmpty()) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    String nonce = UUID.randomUUID().toString().replace(&quot;-&quot;, &quot;&quot;);</span><br><span class="line">    Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak,</span><br><span class="line">           sk, System.currentTimeMillis(), nonce);</span><br><span class="line">    String url = cloudServerUrl + ApiSkAKConst.UCABINETDATA_SYNC_URL;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    List&lt;CompletableFuture&gt; futureList = new ArrayList&lt;&gt;();</span><br><span class="line">    List&lt;RoomckCloudResCabinet&gt; failedCabinets = Collections.synchronizedList(new ArrayList&lt;&gt;());</span><br><span class="line">    for (RoomckCloudResCabinet roomckCloudResCabinet : roomckCloudResCabinets) &#123;</span><br><span class="line">        CompletableFuture future = CompletableFuture.runAsync(new Runnable() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void run() &#123;</span><br><span class="line">                try &#123;</span><br><span class="line">                    synchronized (commonRequestDTO) &#123;</span><br><span class="line">                        commonRequestDTO.setId(roomckCloudResCabinet.getId());</span><br><span class="line">                    &#125;</span><br><span class="line">                    String response = HttpUtil.createPost(url).addHeaders(header).body(JSONUtil.toJsonStr(commonRequestDTO)).execute().body();</span><br><span class="line">                    CabinetUResultDTO  result =  JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                    if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                        return;</span><br><span class="line">                    &#125;</span><br><span class="line">                    List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                    List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                    if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                        for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                            RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                            transferUCabinet(roomckCloudResCabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                            roomckCloudResUS.add(roomckResU);</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;</span><br><span class="line">                    roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                &#125;</span><br><span class="line">                catch (Exception e) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + roomckCloudResCabinet.getId() + &quot;下的U位数据同步失败。&quot;);</span><br><span class="line">                    failedCabinets.add(roomckCloudResCabinet);</span><br><span class="line">                    log.error(e.getMessage(), e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;, ThreadUtils.ioPool);</span><br><span class="line">        futureList.add(future);</span><br><span class="line">    &#125;</span><br><span class="line">    CompletableFuture.allOf(futureList.toArray(new CompletableFuture[0])).join();</span><br><span class="line">    log.info(&quot;机架U位同步完成.耗时&quot; + (System.currentTimeMillis() - startTime) + &quot;ms&quot;);</span><br><span class="line">    // 处理失败的请求</span><br><span class="line">    if (!failedCabinets.isEmpty()) &#123;</span><br><span class="line">        log.info(&quot;有&quot; + failedCabinets.size() + &quot;个机架调用接口失败。开始发起重试&quot;);</span><br><span class="line">        retryFailedRequests(failedCabinets, header, url);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">private void retryFailedRequests(List&lt;RoomckCloudResCabinet&gt; failedCabinets, Map&lt;String, String&gt; header, String url) &#123;</span><br><span class="line">    CommonRequestDTO commonRequestDTO = new CommonRequestDTO();</span><br><span class="line">    for (RoomckCloudResCabinet cabinet : failedCabinets) &#123;</span><br><span class="line">        int retryCount = 0;</span><br><span class="line">        boolean success = false;</span><br><span class="line">        while (retryCount &lt; MAX_RETRIES &amp;&amp; !success) &#123;</span><br><span class="line">            try &#123;</span><br><span class="line">                synchronized (commonRequestDTO) &#123;</span><br><span class="line">                    commonRequestDTO.setId(cabinet.getId());</span><br><span class="line">                &#125;</span><br><span class="line">                String response = HttpUtil.createPost(url)</span><br><span class="line">                        .addHeaders(header)</span><br><span class="line">                        .body(JSONUtil.toJsonStr(commonRequestDTO))</span><br><span class="line">                        .execute().body();</span><br><span class="line">                CabinetUResultDTO result = JSON.parseObject(response).toJavaObject(CabinetUResultDTO.class);</span><br><span class="line">                if (result.getResultObject() == null || result.getResultObject().isEmpty()) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                if (result.getResultObject().get(0) == null) &#123;</span><br><span class="line">                    break;</span><br><span class="line">                &#125;</span><br><span class="line">                List&lt;UCabinetDataDTO&gt; uCabinetDataDTOList = JSONArray.parseArray(</span><br><span class="line">                        result.getResultObject().get(0).getList().toString(), UCabinetDataDTO.class);</span><br><span class="line">                List&lt;RoomckCloudResU&gt; roomckCloudResUS = new ArrayList&lt;&gt;();</span><br><span class="line">                if (uCabinetDataDTOList != null) &#123;</span><br><span class="line">                    for (UCabinetDataDTO uCabinetDataDTO : uCabinetDataDTOList) &#123;</span><br><span class="line">                        RoomckCloudResU roomckResU = new RoomckCloudResU();</span><br><span class="line">                        transferUCabinet(cabinet, uCabinetDataDTO, roomckResU);</span><br><span class="line">                        roomckCloudResUS.add(roomckResU);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                roomckCloudUsCabinetMapper.insertOrUpdateBatch(roomckCloudResUS);</span><br><span class="line">                success = true; // 如果成功则退出重试循环</span><br><span class="line">            &#125; catch (Exception e) &#123;</span><br><span class="line">                retryCount++;</span><br><span class="line">                log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试第&quot; + retryCount + &quot;次失败。&quot;);</span><br><span class="line">                log.error(e.getMessage(), e);</span><br><span class="line">                if (retryCount &gt;= MAX_RETRIES) &#123;</span><br><span class="line">                    log.info(&quot;机架id为&quot; + cabinet.getId() + &quot;的重试已达到最大次数。&quot;);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<li>每次调用接口的时候都重新获取密钥 把 Map&lt;String, String&gt; header &#x3D; GetCloudSignUtil.getHeaders(ak,sk, System.currentTimeMillis(), nonce); 放到方法内部。</li>
+</ol>
+<ul>
+<li>Each time the interface is called, the key is re-obtained, and the <code>Map&lt;String, String&gt; header = GetCloudSignUtil.getHeaders(ak, sk, System.currentTimeMillis(), nonce);</code> is placed within the method.</li>
+</ul>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-10-07-手机app端登录不上,session获取不到,问题处理 - The mobile app cannot be logged in, the session cannot be obtained, and the problem is handled</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-10-07 16:43:34" itemprop="dateCreated datePublished" datetime="2024-10-07T16:43:34+08:00">2024-10-07</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-10-19 22:01:48" itemprop="dateModified" datetime="2024-10-19T22:01:48+08:00">2024-10-19</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/10/07/2024-10-07-%E6%89%8B%E6%9C%BAapp%E7%AB%AF%E7%99%BB%E5%BD%95%E4%B8%8D%E4%B8%8Asession%E8%8E%B7%E5%8F%96%E4%B8%8D%E5%88%B0%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="问题描述-Problem-description"><a href="#问题描述-Problem-description" class="headerlink" title="问题描述 - Problem description"></a>问题描述 - Problem description</h3><p>web 能正常登录机房系统。 手机app却不能正常登录 - Web can log in to the computer room system normally. The mobile app cannot be logged in normally</p>
+<h2 id="以下是报错日志-The-following-is-the-error-log报错代码-error-code通过日志分析。发现当app登录时，一直获取不到对应的sessionID-但是很奇怪的是app端和web端后台都是访问同一个接口。web-端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。-因为app端配置了反向代理。访问的登录接口为-http-172-21-72-176-8311-roomck-app-aiFactoryServer-system-session-verificationCode，它带了-roomck-app-前缀。-而服务器设置了-Path-aiFactoryServer-HttpOnly-路径必须以-aiFactoryServer开头才会携带cookie-所以app一直不能正常登录系统。"><a href="#以下是报错日志-The-following-is-the-error-log报错代码-error-code通过日志分析。发现当app登录时，一直获取不到对应的sessionID-但是很奇怪的是app端和web端后台都是访问同一个接口。web-端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。-因为app端配置了反向代理。访问的登录接口为-http-172-21-72-176-8311-roomck-app-aiFactoryServer-system-session-verificationCode，它带了-roomck-app-前缀。-而服务器设置了-Path-aiFactoryServer-HttpOnly-路径必须以-aiFactoryServer开头才会携带cookie-所以app一直不能正常登录系统。" class="headerlink" title="以下是报错日志 -  The following is the error log报错代码 - error code通过日志分析。发现当app登录时，一直获取不到对应的sessionID. 但是很奇怪的是app端和web端后台都是访问同一个接口。web 端能正常登录，可以获取到session，app端却不能。使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。 因为app端配置了反向代理。访问的登录接口为 http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode，它带了 &#x2F;roomck-app 前缀。 而服务器设置了 Path&#x3D;&#x2F;aiFactoryServer; HttpOnly 路径必须以&#x2F;aiFactoryServer开头才会携带cookie,所以app一直不能正常登录系统。"></a>以下是报错日志 -  The following is the error log<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : requestSessionId= null</span><br><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : session.getId()= BECF178C43BE3DD1B060A3775EE5E0F5</span><br><span class="line">2024-10-07 15:33:03.366  INFO 19 --- [nio-7106-exec-3] .a.a.s.s.FormLoginUsernamePasswordFilter : session.getId()= BECF178C43BE3DD1B060A3775EE5E0F5</span><br><span class="line">2024-10-07 15:33:03.367 ERROR 19 --- [nio-7106-exec-3] c.i.a.c.e.h.C.doFilter() Line: 38        : CommonExceptionHandlerFilter拦截异常null</span><br><span class="line">java.lang.NullPointerException: null</span><br><span class="line">        at com.iwhalecloud.aiFactory.auth.server.security.FormLoginUsernamePasswordFilter.checkVerificationCode(FormLoginUsernamePasswordFilter.java:737) ~[common-auth-server-1.0.jar!/:na]</span><br><span class="line">        at com.iwhalecloud.aiFactory.auth.server.security.FormLoginUsernamePasswordFilter.attemptAuthentication(FormLoginUsernamePasswordFilter.java:396) ~[common-auth-server-1.0.jar!/:na]</span><br><span class="line">        at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:231) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter.doFilter(AbstractAuthenticationProcessingFilter.java:221) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.FilterChainProxy$VirtualFilterChain.doFilter(FilterChainProxy.java:361) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:107) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line">        at org.springframework.security.web.authentication.logout.LogoutFilter.doFilter(LogoutFilter.java:93) ~[spring-security-web-5.8.12.jar!/:5.8.12]</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>报错代码 - error code<br><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String verificationCode = portalSessionUtil.getLocalSessionAttr(session.getId(), &quot;VERIFICATION_CODE&quot;).toString();</span><br><span class="line"></span><br></pre></td></tr></table></figure><br>通过日志分析。发现当app登录时，一直获取不到对应的sessionID. 但是很奇怪的是app端和web端后台都是访问同一个接口。web 端能正常登录，可以获取到session，app端却不能。<br>使用postMan不断调试。终于发现问题所在。使用app端访问接口是不会设置cookie的。 因为app端配置了反向代理。访问的登录接口为 <a target="_blank" rel="noopener" href="http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode%EF%BC%8C%E5%AE%83%E5%B8%A6%E4%BA%86">http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode，它带了</a> &#x2F;roomck-app 前缀。 而服务器设置了 Path&#x3D;&#x2F;aiFactoryServer; HttpOnly 路径必须以&#x2F;aiFactoryServer开头才会携带cookie,所以app一直不能正常登录系统。</h2><p>Through log analysis, it was found that when the app logs in, it consistently fails to obtain the corresponding sessionID. However, it is quite strange that both the app side and the web backend are accessing the same interface. The web side can log in normally and obtain a session, but the app side cannot.</p>
+<p>Continuously debugged using postMan. Finally, the problem was found. When accessing the interface from the app end, cookies are not set. This is because the app end is configured with a reverse proxy. The login interface accessed is <a target="_blank" rel="noopener" href="http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode">http://172.21.72.176:8311/roomck-app/aiFactoryServer/system/session/verificationCode</a>, which includes the &#x2F;roomck-app prefix. However, the server is set to Path&#x3D;&#x2F;aiFactoryServer; HttpOnly, and the path must start with &#x2F;aiFactoryServer to carry the cookie. Therefore, the app has been unable to log in to the system normally.</p>
+<h3 id="解决办法-Solution-Method"><a href="#解决办法-Solution-Method" class="headerlink" title="解决办法 - Solution Method"></a>解决办法 - Solution Method</h3><p>为了不增加安全风险，前端调整访问路径。并在nginx 增加对应的代理规则 - In order not to increase security risks, the front-end adjusts the access path and add the corresponding proxy rule to nginx</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="夏远建">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="夏远建的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" class="post-title-link" itemprop="url">2024-09-10 sftp上传下载问题处理</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-10 16:42:15" itemprop="dateCreated datePublished" datetime="2024-09-10T16:42:15+08:00">2024-09-10</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-09-11 11:32:42" itemprop="dateModified" datetime="2024-09-11T11:32:42+08:00">2024-09-11</time>
+              </span>
+
+          
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2024/09/10/2024-09-10-sftp%E4%B8%8A%E4%BC%A0%E4%B8%8B%E8%BD%BD%E9%97%AE%E9%A2%98%E5%A4%84%E7%90%86/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>6 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h3 id="sftp-下载调试"><a href="#sftp-下载调试" class="headerlink" title="sftp 下载调试"></a>sftp 下载调试</h3><p>公司sftp服务器因安全策略本地无法直接连接。不好调试问题。本机windows安装sftp服务.<br>下载freeSSHd 作为sftp 服务端，下载FileZilla 做客户端。<br>调试上传功能无问题，下载的时候出现 java.io.IOException: Pipe closed 下载文件内容无法正常下载<br>下载代码</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public InputStream downloadFile(String filePath, int operationTimeout) &#123;</span><br><span class="line">      ExecutorService executor = Executors.newSingleThreadExecutor();</span><br><span class="line">      Future&lt;InputStream&gt; future = executor.submit(() -&gt; &#123;</span><br><span class="line">          ChannelSftp channelSftp = null;</span><br><span class="line">          try &#123;</span><br><span class="line">              channelSftp = setupJsch();</span><br><span class="line">              return channelSftp.get(filePath);</span><br><span class="line">          &#125; catch (Exception e) &#123;</span><br><span class="line">              log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">              throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">          &#125; finally &#123;</span><br><span class="line">              if (channelSftp != null &amp;&amp; channelSftp.isConnected()) &#123;</span><br><span class="line">                  channelSftp.disconnect();</span><br><span class="line">                  try &#123;</span><br><span class="line">                      channelSftp.getSession().disconnect();</span><br><span class="line">                  &#125; catch (JSchException e) &#123;</span><br><span class="line">                      log.error(&quot;SFTP 会话断开失败&quot;, e);</span><br><span class="line">                  &#125;</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;);</span><br><span class="line">      try &#123;</span><br><span class="line">          return future.get(operationTimeout, TimeUnit.MILLISECONDS);</span><br><span class="line">      &#125; catch (TimeoutException e) &#123;</span><br><span class="line">          future.cancel(true);</span><br><span class="line">          log.error(&quot;SFTP 下载文件超时: &quot; + filePath, e);</span><br><span class="line">          throw new RuntimeException(&quot;SFTP 下载文件超时&quot;, e);</span><br><span class="line">      &#125; catch (Exception e) &#123;</span><br><span class="line">          log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">          throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">      &#125; finally &#123;</span><br><span class="line">          executor.shutdown();</span><br><span class="line">      &#125;</span><br><span class="line">  &#125; </span><br></pre></td></tr></table></figure>
+<p>这段代码可能会导致“管道关闭”问题，主要原因是 ChannelSftp 的连接在任务完成后立即被关闭，而返回的 InputStream 依赖于这个连接。如果在关闭连接后尝试读取 InputStream，就会出现 java.io.IOException: Pipe closed 异常。</p>
+<h3 id="解决办法"><a href="#解决办法" class="headerlink" title="解决办法"></a>解决办法</h3><ol>
+<li>使用管道流<br>可以使用 PipedInputStream 和 PipedOutputStream 来在任务和主线程之间传递数据，这样可以在任务完成后关闭 ChannelSftp 连接，但仍然能读取数据。</li>
+<li>在任务中读取数据<br>在任务中读取数据并将其存储在内存中（例如，使用 ByteArrayOutputStream），然后返回一个新的 InputStream<br>改进代码<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line">public InputStream downloadFile(String filePath, int operationTimeout) &#123;</span><br><span class="line">    ExecutorService executor = Executors.newSingleThreadExecutor();</span><br><span class="line">    Future&lt;byte[]&gt; future = executor.submit(() -&gt; &#123;</span><br><span class="line">        ChannelSftp channelSftp = null;</span><br><span class="line">        try &#123;</span><br><span class="line">            channelSftp = setupJsch();</span><br><span class="line">            try (InputStream inputStream = channelSftp.get(filePath);</span><br><span class="line">                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) &#123;</span><br><span class="line">                byte[] buffer = new byte[1024];</span><br><span class="line">                int bytesRead;</span><br><span class="line">                while ((bytesRead = inputStream.read(buffer)) != -1) &#123;</span><br><span class="line">                    outputStream.write(buffer, 0, bytesRead);</span><br><span class="line">                &#125;</span><br><span class="line">                return outputStream.toByteArray();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; catch (Exception e) &#123;</span><br><span class="line">            log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">            throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">        &#125; finally &#123;</span><br><span class="line">            if (channelSftp != null &amp;&amp; channelSftp.isConnected()) &#123;</span><br><span class="line">                channelSftp.disconnect();</span><br><span class="line">                try &#123;</span><br><span class="line">                    channelSftp.getSession().disconnect();</span><br><span class="line">                &#125; catch (JSchException e) &#123;</span><br><span class="line">                    log.error(&quot;SFTP 会话断开失败&quot;, e);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    try &#123;</span><br><span class="line">        byte[] fileData = future.get(operationTimeout, TimeUnit.MILLISECONDS);</span><br><span class="line">        return new ByteArrayInputStream(fileData);</span><br><span class="line">    &#125; catch (TimeoutException e) &#123;</span><br><span class="line">        future.cancel(true);</span><br><span class="line">        log.error(&quot;SFTP 下载文件超时: &quot; + filePath, e);</span><br><span class="line">        throw new RuntimeException(&quot;SFTP 下载文件超时&quot;, e);</span><br><span class="line">    &#125; catch (Exception e) &#123;</span><br><span class="line">        log.error(&quot;SFTP 下载文件失败: &quot; + filePath, e);</span><br><span class="line">        throw new RuntimeException(&quot;SFTP 下载文件失败&quot;, e);</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/10/2024-09-10-%E8%A7%86%E9%A2%91%E6%96%87%E4%BB%B6%E5%90%88%E6%88%90%E5%A4%84%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -797,314 +1107,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/" class="post-title-link" itemprop="url">2024-05-29-运用策略模式与范型编程实现功能</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-05-29 19:31:26 / 修改时间：20:03:34" itemprop="dateCreated datePublished" datetime="2024-05-29T19:31:26+08:00">2024-05-29</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/29/2024-05-29-%E8%BF%90%E7%94%A8%E7%AD%96%E7%95%A5%E6%A8%A1%E5%BC%8F%E4%B8%8E%E8%8C%83%E5%9E%8B%E7%BC%96%E7%A8%8B%E5%AE%9E%E7%8E%B0%E5%8A%9F%E8%83%BD/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.8k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="需求描述"><a href="#需求描述" class="headerlink" title="需求描述"></a>需求描述</h3><p>需要实现根据不同部门发送不同的消息模板。每个消息模板内取数方式都不一样。另外需要根据不同模板下载不同的文件。<br>实现不同的下载方法。</p>
-<h3 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h3><ol>
-<li>对于不同的消息模板，使用FreeMaker模板引擎编写不同的消息模板。</li>
-<li>运用策略模式，实现不同的消息发送服务。<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">// 注入实现StrategyMethodService接口的实现类</span><br><span class="line"> @Autowired</span><br><span class="line"> Map&lt;String, StrategyMethodService&gt; stringStrategyMethodServiceMap = new ConcurrentHashMap&lt;&gt;();</span><br><span class="line"></span><br><span class="line"> public StrategyMethodService getStrategyService(String serviceCode) &#123;</span><br><span class="line">     StrategyMethodService strategyService = stringStrategyMethodServiceMap.get(serviceCode);</span><br><span class="line">     if (strategyService == null) &#123;</span><br><span class="line">         throw new BusinessRuntimeException(&quot;13000003&quot;);</span><br><span class="line">     &#125;</span><br><span class="line">     return strategyService;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure></li>
-<li>使用范型编程编写通用的下载方法，提升代码灵活性与复用性。T extends excelData 不仅仅可以限定参数的范围。方法内部还可以使用父类的属性和方法。十分灵活和方便。</li>
-</ol>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">// 不同消息实现类调用该方法</span><br><span class="line">private &lt;T extends excelData&gt; List&lt;T&gt; getExcelData(Condition data, Class&lt;T&gt; tClass)  &#123;</span><br><span class="line">    // 在这个方法内部，可以使用excelData的一些属性和方法，</span><br><span class="line">&#125;</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-<h3 id="范型限制类型"><a href="#范型限制类型" class="headerlink" title="范型限制类型"></a>范型限制类型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">T extends SomeClass: 这种限制要求范型参数必须是某个类（或其子类）的类型。例如，T extends Number 要求范型参数必须是 Number 类（或其子类）的类型。</span><br><span class="line"></span><br><span class="line">T super SomeClass: 这种限制要求范型参数必须是某个类（或其父类）的类型。例如，T super Integer 要求范型参数必须是 Integer 类（或其父类）的类型。</span><br><span class="line"></span><br><span class="line">T extends Interface: 这种限制要求范型参数必须实现某个接口。例如，T extends Comparable 要求范型参数必须实现 Comparable 接口。</span><br><span class="line"></span><br><span class="line">T extends SomeClass &amp; Interface: 这种限制要求范型参数必须是某个类（或其子类）的类型，并且实现了指定的接口。例如，T extends Number &amp; Comparable 要求范型参数必须是 Number 类（或其子类）的类型，并且实现了 Comparable 接口。</span><br><span class="line"></span><br><span class="line">T extends Enum: 这种限制要求范型参数必须是枚举类型。</span><br></pre></td></tr></table></figure>
-
-<h3 id="业务代码实现逻辑"><a href="#业务代码实现逻辑" class="headerlink" title="业务代码实现逻辑"></a>业务代码实现逻辑</h3><p>预警通知逻辑<br>1.扫描应急预警通知单 预警状态为已发布（5），预警性质为初次发布（1）的数据，关联应急事件表，返回所有需要发送的实体信息。<br>2.遍历所有需要发布的实体信息。<br>3.调用防御部署算法入库预估数据，根据事件id过滤，重复的事件只调用一次算法。<br>4.发送预警发布信息。发送信息枚举为0。已经发送过的不在发送。<br>5.遍历需要发送信息的不同部门模版信息服务。根据不同的信息枚举调用不同的消息服务。<br>6.对应消息实现类实现不同模版的取数。实现逻辑， 一进入实现类，首先判定该消息是否已经发送过（查询预警行动分析表）。如果已经发送过。返回消息null; 外部根据返回的信息是否为空，判定是否继续往下执行。如果第一次发送。则走下面逻辑。不同模版取不同的数据。取数完成之后。调用转换业务分析-清单数据的实体类方法。 入库清单数据，注意如果一个部门有多个清单，需要入库多个清单数据。（主要逻辑是取对应业务表的主键id入库。实现下载方法时根据该id关联对应的业务表取数）。主要作用是为了之后下载清单用。取到数据后，把对应的数据塞到模版对应的变量当中，使用的技术是freeMarker. 对应的模版文件在资源文件的templates下。<br>7.实现清单下载。大概框架写好了，只要补充不同的清单数据实现逻辑即可</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/" class="post-title-link" itemprop="url">2024-05-28-智能体相关功能技术实现</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2024-05-28 15:11:59 / 修改时间：17:28:53" itemprop="dateCreated datePublished" datetime="2024-05-28T15:11:59+08:00">2024-05-28</time>
-            </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/28/2024-05-28-%E6%99%BA%E8%83%BD%E4%BD%93%E7%9B%B8%E5%85%B3%E5%8A%9F%E8%83%BD%E6%8A%80%E6%9C%AF%E5%AE%9E%E7%8E%B0/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h3 id="判断器组件功能"><a href="#判断器组件功能" class="headerlink" title="判断器组件功能"></a>判断器组件功能</h3><h4 id="功能描述："><a href="#功能描述：" class="headerlink" title="功能描述："></a>功能描述：</h4><p>  在智能体编排界面，选择判断器组件。输入表达式。表达式为真走一个流程；为假走另一个流程。<br>表达式是规则表达式； 例如 a &gt; b; a 与 b 分别为编排界面输入的变量名。可能是上游的引用，也可能是赋值。</p>
-<h4 id="技术实现："><a href="#技术实现：" class="headerlink" title="技术实现："></a>技术实现：</h4><p>功能实现简单引入com.googlecode.aviator 对表达式进行预处理。由AviatorEvaluator去判断表达器真假</p>
-<pre><code>            Expression compiledExp = AviatorEvaluator.compile(exp, true);
-            Map&lt;String, Object&gt; env = new HashMap&lt;&gt;(inputs);
-            Boolean result = (Boolean) compiledExp.execute(env);
-</code></pre>
-<p><img src="/../images/judgement.JPG" alt="img">   </p>
-<h3 id="迭代器组件功能"><a href="#迭代器组件功能" class="headerlink" title="迭代器组件功能"></a>迭代器组件功能</h3><h4 id="功能描述"><a href="#功能描述" class="headerlink" title="功能描述"></a>功能描述</h4><p>  把上游传过来的数据根据输入的迭代器表达转换成字符串的形式。上游传过来的数据可能是list, 也有可能是map. 需要根据输入的迭代器表达式输出字符串。如果是list则需要循环遍历出list所有的数据。<br>例子： 迭代器配置: ‘\{\{output.q\}\} &#x3D;哈&#x3D;\{\{output.a\}\}’  |||<br>最终下游大模型节点得到这个字符串：<br>’接口规范1&#x3D;哈&#x3D;问题1|||接口规范2&#x3D;哈&#x3D;问题1|||接口规范3&#x3D;哈&#x3D;问题1|||接口规范4&#x3D;哈&#x3D;问题1|||接口规范5&#x3D;哈&#x3D;问题1‘<br><img src="/../images/iterator.JPG" alt="img"></p>
-<h4 id="技术实现"><a href="#技术实现" class="headerlink" title="技术实现"></a>技术实现</h4><ol>
-<li>从功能描述可知，第一个.前面的是变量名，需要使用java 正则表达式Pattern，Matcher。把它切割出来。才能得到对应数据。</li>
-<li>引入com.google.gson。因为上游传入的参数可能是Map, 也有可能是List. 需要判断传入的数据是哪种类型。gson 提供了api方便我们判断</li>
-<li>需要考虑嵌套数据。map 里面某个属性可能还嵌套其他属性。比如输入的表达式可能是 a.b.c 需要取出a的孙子节点c的数据。实现细节， 需要同时使用 com.google.gson 和java 正则表达式实现。</li>
-</ol>
-<h3 id="数据库组件功能"><a href="#数据库组件功能" class="headerlink" title="数据库组件功能"></a>数据库组件功能</h3><p> 功能描述： 在sql表达框内输入sql。 使用 \{\{\}\}\ 把变量名括起来。只支持查询语句<br> 功能实现比较简单。</p>
-<ol>
-<li>使用java正则表达式 取出变量名</li>
-<li>找到对应变量名 把它替换成？。使用预处理方式执行sql;防止sql 注入。</li>
-<li>直接使用jdbc模板类把参数名填充执行sql语句。</li>
-</ol>
-<h3 id="意图识别功能-（实现的主要是针对excel文档问答场景）"><a href="#意图识别功能-（实现的主要是针对excel文档问答场景）" class="headerlink" title="意图识别功能 （实现的主要是针对excel文档问答场景）"></a>意图识别功能 （实现的主要是针对excel文档问答场景）</h3><h4 id="功能描述-1"><a href="#功能描述-1" class="headerlink" title="功能描述"></a>功能描述</h4><p>  用户输入一个问题，需要去判断这个问题是否存在知识库当中。如果不存在。需要根据问题进行分析。返回3个最可能用户问的问题。后台还会返回转换后的参数交给下游及知识库去精确匹配以提升准确率。</p>
-<h4 id="技术实现-1"><a href="#技术实现-1" class="headerlink" title="技术实现"></a>技术实现</h4><p>   完成该功能，需要前置功能: 知识库管理功能，知识构建功能, 术语管理功能。</p>
-<ol>
-<li>知识库管理功能主要是知识库的权限隔离，增删改查功能。</li>
-<li>知识构建主要是把word文档，excel文档进行embedding向量化，存储到向量库（redis集群实现的）和pgsql库。<br>针对excel文档，还需区分实体和概念入术语表。实体是表格里的数据。概念是表头的数据。</li>
-<li>术语管理功能。术语的增删改查功能以及同义词的管理功能</li>
-<li>界面编排界面，需要指定参数哪个知识库，实体和概念对应的知识库和文件是哪个</li>
-</ol>
-<h4 id="意图识别实现思路"><a href="#意图识别实现思路" class="headerlink" title="意图识别实现思路"></a>意图识别实现思路</h4><p>  初期实现思路是通过结巴分词对问题进行分词，然后根据分词结果与术语匹配。发现性能很差而且分词不准，并且结巴分词java版已经停止维护。 优化思路是先根据编排界面的查询术语库，根据术语库把问题进行分词。如果问题中包含术语。则把对应包含的术语。区分概念和实体与编排界面上配置的参数一一匹配上。另外如果配置了同义词。还需对问题进行同义词替换。把同义词替换成术语。如果参数一一匹配上了。最终把用户输入的一句话。输出转换成一个Map形式交给下游。里面包含了实体和概念对应所在的文件，知识库。从而使得在知识库进行向量搜索时，大大提升准确率。如果有参数没有匹配上。及说明知识库中不包含用户所在的问题。即要返回3个最可能用户问的问题返回。初期实现思路是，写好提升词；直接把问题和术语直接丢个大模型。让大模型给我生成用户最可能要问的问题。然而，这种实现思路，会出现以下问题，一是性能问题。调用大模型需要时间。二是准确率问题， 不同的大模型用相同的提示词返回答案不一致。往往调试好的提示词，换一个大模型就不行了，导致返回的问题一直回答不了陷入死循环。最后抛弃了这种实现方式。采用的是lucene + hanlp 技术实现。通过hanlp 对问题进行分词。找出最相似的实体， 和最相似的概念。 然后进行拼接问题。缺点是问题模式有点固定。不像大模型返回的问题自然。优点是能确保返回的问题是可以被回答出来的。</p>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="夏远建">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="夏远建的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/" class="post-title-link" itemprop="url">2024-05-09-bug修复</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-05-09 09:28:19" itemprop="dateCreated datePublished" datetime="2024-05-09T09:28:19+08:00">2024-05-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-05-28 15:02:29" itemprop="dateModified" datetime="2024-05-28T15:02:29+08:00">2024-05-28</time>
-              </span>
-
-          
-  
-  <span class="post-meta-item">
-    
-      <span class="post-meta-item-icon">
-        <i class="far fa-comment"></i>
-      </span>
-      <span class="post-meta-item-text">Valine：</span>
-    
-    <a title="valine" href="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/#valine-comments" itemprop="discussionUrl">
-      <span class="post-comments-count valine-comment-count" data-xid="/2024/05/09/2024-05-09-bug%E4%BF%AE%E5%A4%8D/" itemprop="commentCount"></span>
-    </a>
-  </span>
-  
-  <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>825</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="bug描述"><a href="#bug描述" class="headerlink" title="bug描述"></a>bug描述</h4><p>使用java 正则表达式处理数据，报错</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Pattern pattern = Pattern.compile(&quot;\\&#123;\\&#123;(.+?)\\&#125;\\&#125;&quot;);</span><br><span class="line">      Matcher matcher = pattern.matcher(iteratorExp);</span><br><span class="line">      StringBuffer buffer = new StringBuffer();</span><br><span class="line">      while (matcher.find()) &#123;</span><br><span class="line">          String variableName = matcher.group(1); // 获取变量名</span><br><span class="line">          if (jsonElement.isJsonObject()) &#123;</span><br><span class="line">              JsonObject jsonObject = jsonElement.getAsJsonObject();</span><br><span class="line">              JsonElement jsonment = getElementByPath(jsonObject, variableName, key);</span><br><span class="line">              if (jsonment != null) &#123;</span><br><span class="line">                  String escapedText = jsonment.getAsString().replaceAll(&quot;\\$&quot;, &quot;\\\\\\$&quot;).replaceAll(&quot;/&quot;, &quot;\\\\/&quot;);</span><br><span class="line">                  matcher.appendReplacement(buffer, escapedText);</span><br><span class="line">              &#125;</span><br><span class="line">          &#125;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line">      matcher.appendTail(buffer);</span><br><span class="line">      return buffer.toString();</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<h4 id="bug分析"><a href="#bug分析" class="headerlink" title="bug分析"></a>bug分析</h4><p>.*+?|()[]{}^$\ 在正则表达式中存在特殊含义，当数据存在这些字符时，需要对其转义  Pattern.quote(input);</p>
-<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><ol>
-<li>转义x<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">String escaped = Pattern.quote(input);</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
-</ol>
-
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1173,7 +1175,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">65</span>
+          <span class="site-state-item-count">68</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -1184,7 +1186,7 @@
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
-        <span class="site-state-item-count">28</span>
+        <span class="site-state-item-count">29</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -1220,12 +1222,12 @@
     <span class="post-meta-item-icon">
       <i class="fa fa-chart-area"></i>
     </span>
-    <span title="站点总字数">170k</span>
+    <span title="站点总字数">181k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
-    <span title="站点阅读时长">5:09</span>
+    <span title="站点阅读时长">5:29</span>
 </div>
   <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
   </div>
